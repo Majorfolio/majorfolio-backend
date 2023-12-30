@@ -1,0 +1,8 @@
+version: '3'
+services:
+  trothcam:
+    image: rlaxoqkf/majorfolio:latest
+    container_name: majorfolio
+    restart: always
+    ports:
+      - 8080:8080
