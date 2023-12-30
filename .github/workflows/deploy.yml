@@ -4,7 +4,7 @@ name: Majorfolio-Backend-CICD
 # event trigger
 on:
   push:
-    branches: [ "feat/MF-24" ]
+    branches: [ "main" ]
 
 permissions: write-all
 
