@@ -1,12 +1,13 @@
 package majorfolio.backend.global.advice;
 
+import majorfolio.backend.global.exception.ExceptionResponse;
+import majorfolio.backend.global.exception.JsonConvertException;
+import majorfolio.backend.global.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import psychat.backend.global.exception.ExceptionResponse;
-import psychat.backend.global.exception.JsonConvertException;
-import psychat.backend.global.exception.NotFoundException;
+
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
