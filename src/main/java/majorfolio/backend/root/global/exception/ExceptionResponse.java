@@ -1,4 +1,4 @@
-package majorfolio.backend.global.exception;
+package majorfolio.backend.root.global.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

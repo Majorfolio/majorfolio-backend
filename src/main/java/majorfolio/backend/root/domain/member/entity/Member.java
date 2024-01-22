@@ -1,4 +1,4 @@
-package majorfolio.backend.user.domain;
+package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,11 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "memeber")
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,8 +32,8 @@ public class User {
     @Column(nullable = false)
     private boolean emailVerified;
 
-    public static User of(Long id, String kakaoId, String email, String nickname, int profilePic, Boolean emailVerified) {
-        return User.builder()
+    public static Member of(Long id, String kakaoId, String email, String nickname, int profilePic, Boolean emailVerified) {
+        return Member.builder()
                 .id(id)
                 .kakaoId(kakaoId)
                 .email(email)

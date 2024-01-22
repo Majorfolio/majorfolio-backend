@@ -1,8 +1,8 @@
-package majorfolio.backend.global.advice;
+package majorfolio.backend.root.global.advice;
 
-import majorfolio.backend.global.exception.ExceptionResponse;
-import majorfolio.backend.global.exception.JsonConvertException;
-import majorfolio.backend.global.exception.NotFoundException;
+import majorfolio.backend.root.global.exception.ExceptionResponse;
+import majorfolio.backend.root.global.exception.JsonConvertException;
+import majorfolio.backend.root.global.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
