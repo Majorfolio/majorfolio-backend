@@ -1,3 +1,12 @@
+/**
+ * Memeber
+ *
+ * 0.0.1
+ *
+ * 2024.01.23
+ *
+ * Majorfolio
+ */
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
@@ -11,6 +20,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+/**
+ * memeber테이블 생성
+ *
+ * @author 김영록
+ * @version 0.0.1
+ */
 @Builder
 @Entity
 @NoArgsConstructor
