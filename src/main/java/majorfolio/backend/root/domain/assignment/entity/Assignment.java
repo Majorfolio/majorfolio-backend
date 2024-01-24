@@ -19,5 +19,15 @@ public class Assignment {
 
     private LocalDateTime deadline;
 
-    // Constructors, Getters, and Setters
+    private String image_url;
+
+    private Long price;
+
+    private String status;
+
+    private String file_url;
+
+
+
+
 }
