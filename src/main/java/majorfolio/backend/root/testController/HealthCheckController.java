@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> ba88a3e (feat: domain -> entity로 패키지 구조 변경 && assignment, analytics entity 생성)
 package majorfolio.backend.root.testController;
 
 import org.springframework.web.bind.annotation.GetMapping;

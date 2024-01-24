@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/main/java/majorfolio/backend/root/global/exceptionHandler/ApiExceptionHandler.java
-package majorfolio.backend.root.global.exceptionHandler;
-========
 package majorfolio.backend.root.global.advice;
->>>>>>>> ba88a3e (feat: domain -> entity로 패키지 구조 변경 && assignment, analytics entity 생성):src/main/java/majorfolio/backend/root/global/advice/ApiExceptionHandler.java
 
 import majorfolio.backend.root.global.exception.ExceptionResponse;
 import majorfolio.backend.root.global.exception.JsonConvertException;

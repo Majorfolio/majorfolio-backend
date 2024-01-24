@@ -1,4 +1,4 @@
-package majorfolio.backend;
+package majorfolio.backend.root;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

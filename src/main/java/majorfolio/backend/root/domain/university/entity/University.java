@@ -1,8 +1,16 @@
 package majorfolio.backend.root.domain.university.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "University")
 public class University {
     @Id
@@ -10,4 +18,10 @@ public class University {
     private Long id;
 
     private String name;
+
+    public static University of(String name){
+        return University.builder()
+                .name(name)
+                .build();
+    }
 }
