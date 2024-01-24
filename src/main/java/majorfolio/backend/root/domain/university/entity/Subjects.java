@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Subjects {
     @Id
+    @Column(name = "subject_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
