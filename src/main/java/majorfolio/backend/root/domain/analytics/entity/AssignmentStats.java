@@ -2,6 +2,7 @@ package majorfolio.backend.root.domain.analytics.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import majorfolio.backend.root.domain.assignment.entity.Assignment;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Table(name = "AssignmentStats")
 public class AssignmentStats {
@@ -27,10 +29,21 @@ public class AssignmentStats {
 
     private Long likes;
 
+    private Long bookmarks;
+
+    private Long totalSales;
+
     private LocalDateTime timestamp;
 
-    public AssignmentStats(Long id) {
-        this.id = id;
+    public static AssignmentStats of(Assignment assignment, Long views, Long likes, Long bookmarks,
+                                     Long totalSales, LocalDateTime timestamp){
+        return AssignmentStats.builder()
+                .assignment(assignment)
+                .views(views)
+                .likes(likes)
+                .bookmarks(bookmarks)
+                .totalSales(totalSales)
+                .timestamp(timestamp)
+                .build();
     }
-
 }
