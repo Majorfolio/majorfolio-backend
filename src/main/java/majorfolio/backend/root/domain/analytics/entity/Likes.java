@@ -24,5 +24,4 @@ public class Likes {
 
     private LocalDateTime timestamp;
 
-    // Constructors, Getters, and Setters
 }
