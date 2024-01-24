@@ -24,13 +24,11 @@ public class MemberUniv {
     @Column(nullable = false)
     private String studentId;
 
-    @OneToOne
-    @JoinColumn(name = "major_id", nullable = false)
-    private Major mainMajor;
 
-    @OneToMany
-    @JoinColumn(name = "major_id")
-    private List<Major> subMajor;
+    private String mainMajor;
+
+
+    private String subMajor;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -40,7 +38,7 @@ public class MemberUniv {
     @JoinColumn(name = "university_id", nullable = false)
     private University university;
 
-    public static MemberUniv of(String studentId, Major mainMajor, List<Major> subMajor,
+    public static MemberUniv of(String studentId, String mainMajor, String subMajor,
                                 Member member, University university){
         return MemberUniv.builder()
                 .studentId(studentId)
