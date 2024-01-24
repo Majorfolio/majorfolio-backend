@@ -25,5 +25,4 @@ public class Views {
 
     private LocalDateTime timestamp;
 
-    // Constructors, Getters, and Setters
 }
