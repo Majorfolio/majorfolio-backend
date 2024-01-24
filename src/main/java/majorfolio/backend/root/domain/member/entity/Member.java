@@ -1,3 +1,5 @@
+package majorfolio.backend.root.domain.member.entity;
+
 /**
  * Memeber
  *
@@ -7,13 +9,12 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.member.entity;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,6 +27,14 @@ import java.time.LocalDateTime;
  * @author 김영록
  * @version 0.0.1
  */
+
+/**
+ * member builder 생성 및 수정 (01.24)
+ *
+ * @author 김태혁
+ * @version 0.0.1
+ *
+ */
 @Builder
 @Entity
 @NoArgsConstructor
@@ -37,10 +46,11 @@ public class Member {
     @Column(name = "user_id")
     private Long id;
 
-    private String Email;
-    private Boolean EmailVerified;
-    private Boolean PersonalInformationIsagree;
-    private Boolean ServiceIsagree;
+    private String email;
+    private String nickname;
+    private Boolean emailVerified;
+    private Boolean personalInformationIsagree;
+    private Boolean serviceIsagree;
     private String status;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
@@ -51,5 +61,17 @@ public class Member {
     @JoinColumn(name="kakao_id")
     private UserToken userToken;
 
-
+    public static Member of(String email, String nickname, Boolean emailVerified,
+                            Boolean personalInformationIsagree, Boolean serviceIsagree,
+                            String status, UserToken userToken){
+        return Member.builder()
+                .email(email)
+                .nickname(nickname)
+                .emailVerified(emailVerified)
+                .personalInformationIsagree(personalInformationIsagree)
+                .serviceIsagree(serviceIsagree)
+                .status(status)
+                .userToken(userToken)
+                .build();
+    }
 }

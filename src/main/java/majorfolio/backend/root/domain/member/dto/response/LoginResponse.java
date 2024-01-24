@@ -7,7 +7,7 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.member.dto;
+package majorfolio.backend.root.domain.member.dto.response;
 
 import lombok.*;
 
@@ -24,4 +24,12 @@ public class LoginResponse {
     private Boolean isMember;
     private String accessToken;
     private String refreshToken;
+
+    public static LoginResponse of(Boolean isMember, String accessToken, String refreshToken){
+        return LoginResponse.builder()
+                .isMember(isMember)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 }

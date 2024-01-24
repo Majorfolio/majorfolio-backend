@@ -11,7 +11,7 @@ package majorfolio.backend.root.domain.member.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.member.dto.LoginResponse;
+import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.service.MemberService;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.web.bind.annotation.PostMapping;

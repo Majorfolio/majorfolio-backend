@@ -10,7 +10,7 @@
 package majorfolio.backend.root.domain.member.service;
 
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.domain.member.dto.LoginResponse;
+import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.entity.UserToken;
 import majorfolio.backend.root.domain.member.repository.MemberRepository;
 import majorfolio.backend.root.domain.member.repository.UserTokenRepository;
@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
  * @author 김영록
  * @version 0.0.1
  */
+
 @Service
 @Slf4j
 public class MemberService {
@@ -54,6 +55,9 @@ public class MemberService {
      * @param nonce
      * @param state
      * @return
+     *
+     *
+     * LoginResponse, userToken 생성 빌더로 변경
      */
     public LoginResponse memberLogin(Long kakaoId, String nonce, String state){
         Boolean isMember = false;
@@ -81,19 +85,11 @@ public class MemberService {
         Long expireRefreshToken = Duration.ofDays(14).toMillis(); // 만료 시간 2주
         String refreshToken = JwtUtil.createRefreshToken(secretKey, expireRefreshToken);
 
+        UserToken userToken = UserToken.of(kakaoId, nonce, state, refreshToken);
+
         //리프레쉬 토큰 db에 저장
-        UserToken userToken = UserToken.builder()
-                .id(kakaoId)
-                .nonce(nonce)
-                .state(state)
-                .refreshToken(refreshToken)
-                .build();
         userTokenRepository.save(userToken);
 
-        return LoginResponse.builder()
-                .isMember(isMember)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return LoginResponse.of(isMember, accessToken, refreshToken);
     }
 }

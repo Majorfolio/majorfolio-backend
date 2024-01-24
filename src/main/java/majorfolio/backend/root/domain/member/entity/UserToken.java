@@ -19,6 +19,12 @@ import lombok.*;
  * @author 김영록
  * @version 0.0.1
  */
+
+/**
+ * user-token builder 생성 (01.24)
+ * @author 김태혁
+ * @version 0.0.1
+ */
 @Builder
 @Entity
 @AllArgsConstructor
@@ -32,4 +38,13 @@ public class UserToken {
     private String nonce;
     private String refreshToken;
     private String state;
+
+    public static UserToken of(Long id, String nonce, String refreshToken, String state){
+        return UserToken.builder()
+                .id(id)
+                .nonce(nonce)
+                .refreshToken(refreshToken)
+                .state(state)
+                .build();
+    }
 }
