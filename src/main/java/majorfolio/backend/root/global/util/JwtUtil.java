@@ -1,3 +1,12 @@
+/**
+ * JwtUtil
+ *
+ * 0.0.1
+ *
+ * 2024.01.23
+ *
+ * Majorfolio
+ */
 package majorfolio.backend.root.global.util;
 
 import io.jsonwebtoken.Claims;
@@ -10,8 +19,19 @@ import org.springframework.boot.json.JsonParser;
 
 import java.util.*;
 
+/**
+ * Jwt를 다루는 여러 메소드들을 취합해 놓은 클래스임
+ *
+ * @author 김영록
+ * @version 0.0.1
+ */
 @Slf4j
 public class JwtUtil {
+    /**
+     * 토큰을 해더와 페이로드로 분리해주는 메소드이다.
+     * @param token token을 파라미터로 넘겨줌
+     * @return 헤더와 페이로드를 담고힜는 map형식의 자료구조
+     */
     public static Map<String, String> getTokenInfo(String token){
 
 //        Map<String, Object> requestArray = jsonParser.parseMap(token);
@@ -27,6 +47,11 @@ public class JwtUtil {
         return requestInfo;
     }
 
+    /**
+     * 토큰의 페이로드 부분을 디코딩해주는 메소드이다.
+     * @param token token을 파라미터로 넘겨줌
+     * @return
+     */
     public static Map<String, Object> getTokenPayload(String token){
         JsonParser jsonParser = new BasicJsonParser();
         Map<String, String> requestInfo = getTokenInfo(token);
@@ -39,6 +64,11 @@ public class JwtUtil {
         return payloadArray;
     }
 
+    /**
+     * 토큰의 헤더 부분을 디코딩해주는 메소드이다.
+     * @param token token을 파라미터로 넘겨줌
+     * @return
+     */
     public static Map<String, Object> getTokenHeader(String token){
         JsonParser jsonParser = new BasicJsonParser();
         Map<String, String> requestInfo = getTokenInfo(token);
@@ -53,13 +83,36 @@ public class JwtUtil {
         return headerArray;
     }
 
+    /**
+     * 토큰에서 유저의 이름을 뽑아내는 메소드 이다.
+     * @param token token을 파라미터로 넘겨줌
+     * @param secretKey 토큰을 디코딩하기 위해 쓰이는 시크릿키
+     * @return
+     */
     public static String getUserName(String token, String secretKey){
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("userName", String.class);
     }
 
+    /**
+     * 토큰이 만료되었는지 여부를 알려주는 메소드이다.
+     * @param token token을 파라미터로 넘겨줌
+     * @param secretKey 토큰을 디코딩하기 위해 쓰이는 시크릿키
+     * @return
+     */
     public static boolean isExpired(String token, String secretKey){
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date()); // expired 된게 지금보다 전인가? -> 그러면 만료된거임
     }
+
+    /**
+     * 액세스 토큰을 발급해주는 메소드이다.
+     * 다음 2개 파라미터는 액세스 토큰 claim에 넣어줄 정보를 나타냄
+     * @param userId member테이블의 id정보
+     * @param kakaoId user_token테이블의 kakaoId정보
+     *                -----
+     * @param secretKey 토큰을 디코딩하기 위해 쓰이는 시크릿키
+     * @param expiredMs 만료시간 설정(2시간으로 설정함)
+     * @return
+     */
     public static String createAccessToken(Long userId, Long kakaoId, String secretKey, Long expiredMs){
         //token에 들어있는 유저 정보를 사용하기 위함
         // token에 유저 정보 담기 위해 claim사용
@@ -76,6 +129,12 @@ public class JwtUtil {
                 .compact(); //jwt토큰 발행
     }
 
+    /**
+     * 리프레쉬 토큰을 발급해주는 메소드이다.
+     * @param secretKey 토큰을 디코딩하기 위해 쓰이는 시크릿키
+     * @param expiredMs 만료시간 설정(2주로 설정함)
+     * @return
+     */
     public static String createRefreshToken(String secretKey, Long expiredMs){
         Claims claims = Jwts.claims();
         return Jwts.builder()
