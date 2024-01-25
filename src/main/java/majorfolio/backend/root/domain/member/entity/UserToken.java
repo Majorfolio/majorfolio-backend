@@ -1,4 +1,3 @@
-package majorfolio.backend.root.domain.member.entity;
 
 /**
  * UserToken
@@ -9,6 +8,9 @@ package majorfolio.backend.root.domain.member.entity;
  *
  * Majorfolio
  */
+
+package majorfolio.backend.root.domain.member.entity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -32,7 +34,7 @@ public class UserToken {
     private String nonce;
     private String refreshToken;
     private String state;
-
+  
     public static UserToken of(Long id, String nonce, String refreshToken, String state){
         return UserToken.builder()
                 .id(id)
@@ -42,3 +44,4 @@ public class UserToken {
                 .build();
     }
 }
+

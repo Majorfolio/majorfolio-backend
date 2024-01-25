@@ -1,4 +1,3 @@
-package majorfolio.backend.root.domain.member.entity;
 
 /**
  * Memeber
@@ -9,12 +8,14 @@ package majorfolio.backend.root.domain.member.entity;
  *
  * Majorfolio
  */
+
+package majorfolio.backend.root.domain.member.entity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -44,6 +45,7 @@ public class Member {
     @Column(name = "user_id")
     private Long id;
 
+
     private String email;
     private String nickname;
     private Boolean emailVerified;
@@ -51,6 +53,7 @@ public class Member {
     private Boolean personalInformationIsagree;
     @ColumnDefault("true")
     private Boolean serviceIsagree;
+
     private String status;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
@@ -70,4 +73,5 @@ public class Member {
                 .userToken(userToken)
                 .build();
     }
+
 }
