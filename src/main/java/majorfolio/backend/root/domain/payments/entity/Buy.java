@@ -23,7 +23,6 @@ public class Buy {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @Column(name = "buyer_id")
     private Member member;
 
     @ManyToOne

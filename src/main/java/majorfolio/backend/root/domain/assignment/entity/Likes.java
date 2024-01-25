@@ -1,11 +1,10 @@
-package majorfolio.backend.root.domain.analytics.entity;
+package majorfolio.backend.root.domain.assignment.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import majorfolio.backend.root.domain.assignment.entity.Assignment;
 import majorfolio.backend.root.domain.member.entity.Member;
 
 import java.time.LocalDateTime;

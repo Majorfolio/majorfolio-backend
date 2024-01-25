@@ -20,17 +20,20 @@ public class Subjects {
     private String name;
     private String professor;
     private String semester;
+    private String major;
 
     @ManyToOne
     @JoinColumn(name = "university_id", nullable = false)
     private University university;
 
-    public static Subjects of(String name, String professor, String semester, University university){
+
+    public static Subjects of(String name, String professor, String semester, University university, String major){
         return Subjects.builder()
                 .name(name)
                 .professor(professor)
                 .semester(semester)
                 .university(university)
+                .major(major)
                 .build();
     }
 }
