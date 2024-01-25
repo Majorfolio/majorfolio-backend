@@ -1,3 +1,4 @@
+
 /**
  * Memeber
  *
@@ -7,6 +8,7 @@
  *
  * Majorfolio
  */
+
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
@@ -25,6 +27,12 @@ import java.time.LocalDateTime;
  *
  * @author 김영록
  * @version 0.0.1
+ *
+ * member 테이블 수정(01.24)
+ *
+ * @author 김영록
+ * @version 0.0.1
+ *
  */
 @Builder
 @Entity
@@ -37,10 +45,15 @@ public class Member {
     @Column(name = "user_id")
     private Long id;
 
-    private String Email;
-    private Boolean EmailVerified;
-    private Boolean PersonalInformationIsagree;
-    private Boolean ServiceIsagree;
+
+    private String email;
+    private String nickname;
+    private Boolean emailVerified;
+    @ColumnDefault("true")
+    private Boolean personalInformationIsagree;
+    @ColumnDefault("true")
+    private Boolean serviceIsagree;
+
     private String status;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
@@ -51,5 +64,14 @@ public class Member {
     @JoinColumn(name="kakao_id")
     private UserToken userToken;
 
+    public static Member of(String email, String nickname, Boolean emailVerified, String status, UserToken userToken){
+        return Member.builder()
+                .email(email)
+                .nickname(nickname)
+                .emailVerified(emailVerified)
+                .status(status)
+                .userToken(userToken)
+                .build();
+    }
 
 }
