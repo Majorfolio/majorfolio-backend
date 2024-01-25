@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.JwtExpiredException;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
-import majorfolio.backend.root.global.exception.JwtUnsupportedTokenTypeException;
 import majorfolio.backend.root.global.provider.CustomJwkProvider;
 import majorfolio.backend.root.global.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,15 +58,8 @@ public class IdTokenInterceptor implements HandlerInterceptor {
     private static final String BASIC_TYPE_PREFIX = "Bearer";
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        final String authorization = request.getHeader("Authorization");
-        final boolean isBasicAuthentication = authorization != null && authorization.toLowerCase().startsWith(BASIC_TYPE_PREFIX.toLowerCase());
-
-        if (!isBasicAuthentication) {
-            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            throw new JwtUnsupportedTokenTypeException(UNSUPPORTED_TOKEN_TYPE);
-        }
-
-        String idToken = authorization.substring(BASIC_TYPE_PREFIX.length()).trim();
+        String idToken = request.getAttribute("token").toString();
+        log.info(idToken);
 
         Map<String, Object> payload = JwtUtil.getTokenPayload(idToken);
 

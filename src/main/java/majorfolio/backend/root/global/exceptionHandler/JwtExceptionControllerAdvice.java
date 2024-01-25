@@ -10,6 +10,7 @@
 package majorfolio.backend.root.global.exceptionHandler;
 
 import jakarta.annotation.Priority;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.JwtExpiredException;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
@@ -28,7 +29,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @Priority(0)
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class JwtExceptionControllerAdvice {
+
 
     /**
      * 지원하지 않는 토큰 타입일때의 예외처리
@@ -62,4 +65,5 @@ public class JwtExceptionControllerAdvice {
     public BaseErrorResponse handle_jwtInvalidException(JwtInvalidException e){
         return new BaseErrorResponse(e.getResponseStatus());
     }
+
 }

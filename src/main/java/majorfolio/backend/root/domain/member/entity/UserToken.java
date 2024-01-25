@@ -32,4 +32,19 @@ public class UserToken {
     private String nonce;
     private String refreshToken;
     private String state;
+
+    /**
+     * 빌더 패턴으로 객체 생성
+     * @param nonce
+     * @param refreshToken
+     * @param state
+     * @return
+     */
+    public static UserToken of(String nonce, String refreshToken, String state){
+        return UserToken.builder()
+                .nonce(nonce)
+                .refreshToken(refreshToken)
+                .state(state)
+                .build();
+    }
 }

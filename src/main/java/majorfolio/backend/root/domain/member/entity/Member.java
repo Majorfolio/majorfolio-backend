@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -37,10 +36,11 @@ public class Member {
     @Column(name = "user_id")
     private Long id;
 
-    private String Email;
-    private Boolean EmailVerified;
-    private Boolean PersonalInformationIsagree;
-    private Boolean ServiceIsagree;
+    private String nickName;
+    private String email;
+    private Boolean emailVerified;
+    private Boolean personalInformationIsagree;
+    private Boolean serviceIsagree;
     private String status;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
@@ -51,5 +51,28 @@ public class Member {
     @JoinColumn(name="kakao_id")
     private UserToken userToken;
 
-
+    /**
+     * 빌더 패턴으로 객체 생성 메소드
+     * @param email
+     * @param nickName
+     * @param emailVerified
+     * @param personalInformationIsagree
+     * @param serviceIsagree
+     * @param status
+     * @param userToken
+     * @return
+     */
+    public static Member of(String email,String nickName, Boolean emailVerified,
+                            Boolean personalInformationIsagree, Boolean serviceIsagree,
+                            String status, UserToken userToken){
+        return Member.builder()
+                .nickName(nickName)
+                .email(email)
+                .emailVerified(emailVerified)
+                .personalInformationIsagree(personalInformationIsagree)
+                .serviceIsagree(serviceIsagree)
+                .status(status)
+                .userToken(userToken)
+                .build();
+    }
 }
