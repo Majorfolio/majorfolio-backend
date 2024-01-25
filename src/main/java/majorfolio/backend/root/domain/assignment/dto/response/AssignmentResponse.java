@@ -13,10 +13,10 @@ public class AssignmentResponse {
     private String subjectName;
     private String univ;
     private String major;
-    private int like;
+    private Long like;
 
     public static AssignmentResponse of(Long id, String nickname, String subjectName,
-                                        String univ, String major, int like){
+                                        String univ, String major, Long like){
         return AssignmentResponse.builder()
                 .id(id)
                 .nickname(nickname)
