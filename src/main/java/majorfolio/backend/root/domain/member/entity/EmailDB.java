@@ -1,5 +1,5 @@
 /**
- * BuyList
+ * EmailDB
  *
  * 0.0.1
  *
@@ -10,25 +10,32 @@
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDate;
 
 /**
- * BuyList테이블 정의
+ * EmailDB DB테이블 처리
  *
  * @author 김영록
  * @version 0.0.1
  */
-@Builder
 @Entity
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class BuyList {
+@Setter
+public class EmailDB {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "buyList_id")
+    @Column(name = "email_id")
     private Long id;
+
+    private String email;
+    private String code;
+    private LocalDate expire;
+    private Boolean status;
+    private LocalDate emailDate;
+
 }

@@ -1,5 +1,5 @@
 /**
- * UserToken
+ * KakaoSocialLogin
  *
  * 0.0.1
  *
@@ -13,7 +13,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * user-token 테이블 생성
+ * KakaoSocialLogin DB테이블 정의
  * @author 김영록
  * @version 0.0.1
  */
