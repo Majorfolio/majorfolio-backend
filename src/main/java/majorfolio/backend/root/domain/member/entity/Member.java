@@ -14,10 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -31,25 +32,64 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@DynamicInsert
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
-    private String Email;
-    private Boolean EmailVerified;
-    private Boolean PersonalInformationIsagree;
-    private Boolean ServiceIsagree;
+    private String nickName;
+    private String email;
+    @UpdateTimestamp
+    private LocalDateTime updateEmail;
     private String status;
+    private String universityName;
+    private String major1;
+    private String major2;
+    private int studentId;
+    private String profileImage;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean personalAgree;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean serviceAgree;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean marketingAgree;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean noticeEvent;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean advertisement;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean postComment;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean emailAlarm;
+
+
     @UpdateTimestamp
     private LocalDateTime updatedAt;
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @OneToOne
-    @JoinColumn(name="kakao_id")
-    private UserToken userToken;
+    @JoinColumn(name = "basket_id")
+    private Basket basket;
+
+    @OneToOne
+    @JoinColumn(name = "buyList_id")
+    private BuyList buyList;
+
+    @OneToOne
+    @JoinColumn(name = "sellList_id")
+    private SellList sellList;
+
+    @OneToOne
+    @JoinColumn(name = "follower_id")
+    private FollwerList follwerList;
+
+    @OneToOne
+    @JoinColumn(name = "couponBox_id")
+    private CouponBox couponBox;
 
 
 }

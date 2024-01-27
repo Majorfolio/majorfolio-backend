@@ -9,9 +9,7 @@
  */
 package majorfolio.backend.root.domain.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 /**
@@ -25,11 +23,18 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserToken {
+public class KakaoSocialLogin {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="kakao_id")
     private Long id;
+    private Long kakaoNumber;
     private String nonce;
-    private String refreshToken;
     private String state;
+    private String refreshToken;
+
+
+    @OneToOne
+    @JoinColumn(name="member_id")
+    private Member member;
 }

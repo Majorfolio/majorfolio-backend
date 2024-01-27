@@ -9,7 +9,7 @@
  */
 package majorfolio.backend.root.domain.member.repository;
 
-import majorfolio.backend.root.domain.member.entity.UserToken;
+import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author 김영록
  * @version 0.0.1
  */
-public interface UserTokenRepository extends JpaRepository<UserToken, Long> {
-    UserToken findByRefreshToken(String refreshToken);
+public interface KakaoSocialLoginRepository extends JpaRepository<KakaoSocialLogin, Long> {
+    KakaoSocialLogin findByKakaoNumber(Long kakaoNumber);
+
 }

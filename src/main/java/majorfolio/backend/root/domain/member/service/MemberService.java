@@ -11,9 +11,9 @@ package majorfolio.backend.root.domain.member.service;
 
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.member.dto.LoginResponse;
-import majorfolio.backend.root.domain.member.entity.UserToken;
+import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.repository.MemberRepository;
-import majorfolio.backend.root.domain.member.repository.UserTokenRepository;
+import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.global.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,21 +29,15 @@ import java.util.NoSuchElementException;
 @Service
 @Slf4j
 public class MemberService {
-    private final UserTokenRepository userTokenRepository;
+    private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
     private final MemberRepository memberRepository;
 
 
     @Value("${jwt.secret}")
     private String secretKey;
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private String client_id;
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    private String redirect_uri;
 
-    private final int randomCodeLength = 20;
-
-    public MemberService(UserTokenRepository userTokenRepository, MemberRepository memberRepository) {
-        this.userTokenRepository = userTokenRepository;
+    public MemberService(KakaoSocialLoginRepository kakaoSocialLoginRepository, MemberRepository memberRepository) {
+        this.kakaoSocialLoginRepository = kakaoSocialLoginRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -57,38 +51,43 @@ public class MemberService {
      */
     public LoginResponse memberLogin(Long kakaoId, String nonce, String state){
         Boolean isMember = false;
-        Long userId;
-        try {
-            userId = memberRepository.findByUserToken(userTokenRepository.findById(kakaoId).get()).getId();
-        }catch (NoSuchElementException e){
-            userId = 0L;
-        }catch (NullPointerException e){
-            userId = 0L;
+        Long memberId;
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
+        if(kakaoSocialLogin == null){
+            // 카카오 소셜 로그인 객체가 없으면 만들어서 DB에 저장한다.
+            kakaoSocialLogin = KakaoSocialLogin.builder().build();
+            kakaoSocialLoginRepository.save(kakaoSocialLogin);
         }
-        if(userId == 0){
-            log.info("userId is null");
+        try {
+            //memberId = memberRepository.findByUserToken(kakaoSocialLoginRepository.findById(kakaoId).get()).getId();
+            memberId = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getId();
+        }catch (NoSuchElementException e){
+            memberId = 0L;
+        }catch (NullPointerException e){
+            memberId = 0L;
+        }
+        if(memberId == 0){
+            log.info("memberId is null");
         }
         else{
-            log.info("userId = {}", userId);
+            log.info("memberId = {}", memberId);
         }
-        if(userId != 0){
+        if(memberId != 0){
             isMember = true;
         }
 
         Long expireAccessToken = Duration.ofHours(2).toMillis(); // 만료 시간 2시간
-        String accessToken = JwtUtil.createAccessToken(userId, kakaoId, secretKey, expireAccessToken);
+        String accessToken = JwtUtil.createAccessToken(memberId, kakaoId, secretKey, expireAccessToken);
 
         Long expireRefreshToken = Duration.ofDays(14).toMillis(); // 만료 시간 2주
         String refreshToken = JwtUtil.createRefreshToken(secretKey, expireRefreshToken);
 
         //리프레쉬 토큰 db에 저장
-        UserToken userToken = UserToken.builder()
-                .id(kakaoId)
-                .nonce(nonce)
-                .state(state)
-                .refreshToken(refreshToken)
-                .build();
-        userTokenRepository.save(userToken);
+        kakaoSocialLogin.setKakaoNumber(kakaoId);
+        kakaoSocialLogin.setState(state);
+        kakaoSocialLogin.setNonce(nonce);
+        kakaoSocialLogin.setRefreshToken(refreshToken);
+        kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
         return LoginResponse.builder()
                 .isMember(isMember)
