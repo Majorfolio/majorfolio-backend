@@ -25,13 +25,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class EmailResponse {
-    private String email;
+    private Long emailId;
     private String code;
 
-    public static EmailResponse of(String email, String code){
+    public static EmailResponse of(Long emailId, String code){
         return EmailResponse
                 .builder()
-                .email(email)
+                .emailId(emailId)
                 .code(code)
                 .build();
     }

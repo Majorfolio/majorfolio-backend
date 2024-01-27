@@ -57,8 +57,9 @@ public enum BaseExceptionStatus implements ResponseStatus{
     EMAIL_ERROR(5000, HttpStatus.BAD_REQUEST.value(), "올바르지 않은 이메일입니다."),
     NOT_SCHOOL_EMAIL(5001, HttpStatus.BAD_REQUEST.value(), "학교 이메일이 아닙니다."),
     OVERLAP_EMAIL(5002, HttpStatus.BAD_REQUEST.value(), "이미 인증한 이메일 입니다."),
-
-    SEND_ERROR(5003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 서버에 문제가 발생했습니다.");
+    SEND_ERROR(5003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 서버에 문제가 발생했습니다."),
+    EXPIRED_CODE(5004, HttpStatus.BAD_REQUEST.value(), "인증 시간이 지났습니다."),
+    NOT_EQUAL_CODE(5005, HttpStatus.BAD_REQUEST.value(), "인증 코드가 다릅니다.");
 
 
     private final int code;

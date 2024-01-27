@@ -11,10 +11,7 @@ package majorfolio.backend.root.global.exceptionHandler;
 
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.global.exception.EmailException;
-import majorfolio.backend.root.global.exception.NotSchoolEmailException;
-import majorfolio.backend.root.global.exception.OverlapEmailException;
-import majorfolio.backend.root.global.exception.SendEmailException;
+import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.response.BaseErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -73,6 +70,28 @@ public class EmailExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(SendEmailException.class)
     public BaseErrorResponse handle_sendEmailException(SendEmailException e){
+        return new BaseErrorResponse(e.getResponseStatus());
+    }
+
+    /**
+     * 메일 코드 인증 시간이 지났을때의 예외처리
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ExpiredCodeException.class)
+    public BaseErrorResponse handle_expiredCoreException(ExpiredCodeException e){
+        return new BaseErrorResponse(e.getResponseStatus());
+    }
+
+    /**
+     * 메일 인증 코드가 다를때의 예외처리
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotEqualCodeException.class)
+    public BaseErrorResponse handle_notEqualCodeException(NotEqualCodeException e){
         return new BaseErrorResponse(e.getResponseStatus());
     }
 }

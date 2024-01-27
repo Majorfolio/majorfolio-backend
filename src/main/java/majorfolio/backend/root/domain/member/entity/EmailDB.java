@@ -13,6 +13,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * EmailDB DB테이블 처리
@@ -34,8 +35,8 @@ public class EmailDB {
 
     private String email;
     private String code;
-    private LocalDate expire;
+    private LocalDateTime expire;
     private Boolean status;
-    private LocalDate emailDate;
+    private LocalDateTime emailDate;
 
 }

@@ -10,6 +10,7 @@
 package majorfolio.backend.root.domain.member.service;
 
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.domain.member.dto.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.LoginResponse;
@@ -18,9 +19,7 @@ import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.repository.EmailDBRepository;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.domain.university.repository.UniversityRepository;
-import majorfolio.backend.root.global.exception.NotSchoolEmailException;
-import majorfolio.backend.root.global.exception.OverlapEmailException;
-import majorfolio.backend.root.global.exception.SendEmailException;
+import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.util.JwtUtil;
 import majorfolio.backend.root.global.util.RandomCodeUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
@@ -124,11 +124,11 @@ public class MemberService {
      */
     public EmailResponse emailAuth(EmailRequest emailRequest){
         String email = emailRequest.getEmail();
-        if(!isSchoolEmail(email)){
+        if(!checkSchoolEmail(email)){
             // 학교 이메일이 아닐 경우
             throw new NotSchoolEmailException(NOT_SCHOOL_EMAIL);
         }
-        if(!isOverlapEmail(email)){
+        if(!checkOverlapEmail(email)){
             //이미 인증할 이메일일 경우
             throw new OverlapEmailException(OVERLAP_EMAIL);
         }
@@ -157,7 +157,7 @@ public class MemberService {
             throw new SendEmailException(SEND_ERROR);
         }
 
-        LocalDate expire = LocalDate.now().plusDays(1); // 코드 유효기간 1일
+        LocalDateTime expire = LocalDateTime.now().plusDays(1); // 코드 유효기간 1일
 
         //DB에 저장
         emailDB.setExpire(expire);
@@ -166,7 +166,34 @@ public class MemberService {
         emailDB.setStatus(false);
         emailDBRepository.save(emailDB);
 
-        return EmailResponse.of(email, code);
+        return EmailResponse.of(emailDB.getId(), code);
+    }
+
+    /**
+     * 이메일 코드 대조 API 서비스 구현
+     * @param emailCodeRequest
+     */
+    public String emailCodeCompare(EmailCodeRequest emailCodeRequest){
+        Long emailId = emailCodeRequest.getEmailId();
+        String code = emailCodeRequest.getCode();
+        if(!checkExpireCode(emailId)){
+            //인증코드 만료시
+            throw new ExpiredCodeException(EXPIRED_CODE);
+        }
+        EmailDB emailDB = emailDBRepository.findById(emailId).get();
+        String answer = emailDB.getCode();
+
+        if(!code.equals(answer)){
+            // 인증 코드가 다를때
+            throw new NotEqualCodeException(NOT_EQUAL_CODE);
+        }
+
+        emailDB.setStatus(true);
+        emailDB.setEmailDate(LocalDateTime.now());
+
+        emailDBRepository.save(emailDB);
+
+        return "";
     }
 
 
@@ -175,7 +202,7 @@ public class MemberService {
      * @param email
      * @return
      */
-    public Boolean isSchoolEmail(String email){
+    public Boolean checkSchoolEmail(String email){
         String domain = email.split("@")[1];
         if(universityRepository.findByDomain(domain) == null){
             //학교 이메일이 아닐때
@@ -189,9 +216,22 @@ public class MemberService {
      * @param email
      * @return
      */
-    public Boolean isOverlapEmail(String email){
+    public Boolean checkOverlapEmail(String email){
         if(emailDBRepository.existsEmailDBByEmailAndStatus(email, true)){
             // 이미 인증한 이메일 일때
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 인증 코드가 만료되었는지 여부 검사메소드(인증코드 받고 하루뒤에 그걸 입력하면 인증 안되게 하기 위함)
+     * @param id
+     * @return
+     */
+    public Boolean checkExpireCode(Long id){
+        LocalDateTime exiredate = emailDBRepository.findById(id).get().getExpire();
+        if(exiredate.isBefore(LocalDateTime.now())){
             return false;
         }
         return true;

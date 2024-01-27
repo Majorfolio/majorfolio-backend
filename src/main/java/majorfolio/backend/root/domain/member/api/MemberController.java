@@ -11,19 +11,18 @@ package majorfolio.backend.root.domain.member.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import majorfolio.backend.root.domain.member.dto.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.LoginResponse;
 import majorfolio.backend.root.domain.member.service.MemberService;
 import majorfolio.backend.root.global.exception.EmailException;
+import majorfolio.backend.root.global.response.BaseErrorResponse;
 import majorfolio.backend.root.global.response.BaseResponse;
 import majorfolio.backend.root.global.util.BindingResultUtil;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.EMAIL_ERROR;
 
@@ -58,10 +57,15 @@ public class MemberController {
      * @return
      */
     @PostMapping("/school-email/code")
-    public BaseResponse<EmailResponse> emailAuthRequest(@RequestBody @Validated EmailRequest emailRequest, BindingResult bindingResult){
+    public BaseResponse<EmailResponse> sendEmailAuthCode(@RequestBody @Validated EmailRequest emailRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             throw new EmailException(EMAIL_ERROR, BindingResultUtil.getErrorMessages(bindingResult));
         }
         return new BaseResponse<>(memberService.emailAuth(emailRequest));
+    }
+
+    @GetMapping("/school-email/code")
+    public BaseResponse<String> emailCodeCompare(@RequestBody EmailCodeRequest emailCodeRequest){
+        return new BaseResponse<>(memberService.emailCodeCompare(emailCodeRequest));
     }
 }
