@@ -149,7 +149,6 @@ public class MemberService {
         String code = RandomCodeUtil.GenerateRandomCode(6);
         simpleMailMessage.setText("인증코드는: " + code + "입니다.");
 
-        javaMailSender.send(simpleMailMessage);
         try {
             javaMailSender.send(simpleMailMessage);
         }
