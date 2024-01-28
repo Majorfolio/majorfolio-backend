@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         Filter tokenFilter = new TokenFilter();

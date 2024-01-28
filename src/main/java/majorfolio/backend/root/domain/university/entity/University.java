@@ -1,3 +1,4 @@
+
 /**
  * University
  *
@@ -33,4 +34,5 @@ public class University {
     private Long id;
     private String universityName;
     private String domain;
+
 }

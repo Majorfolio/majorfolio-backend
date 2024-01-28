@@ -1,3 +1,4 @@
+
 /**
  * Member
  *
@@ -7,6 +8,7 @@
  *
  * Majorfolio
  */
+
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
@@ -26,6 +28,12 @@ import java.time.LocalDateTime;
  *
  * @author 김영록
  * @version 0.0.1
+ *
+ * member 테이블 수정(01.24)
+ *
+ * @author 김영록
+ * @version 0.0.1
+ *
  */
 @Builder
 @Entity
@@ -87,6 +95,5 @@ public class Member {
     @OneToOne
     @JoinColumn(name = "couponBox_id")
     private CouponBox couponBox;
-
 
 }

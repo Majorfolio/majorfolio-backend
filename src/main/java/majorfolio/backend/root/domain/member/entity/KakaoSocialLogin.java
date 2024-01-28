@@ -1,3 +1,4 @@
+
 /**
  * KakaoSocialLogin
  *
@@ -7,6 +8,7 @@
  *
  * Majorfolio
  */
+
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
@@ -38,3 +40,4 @@ public class KakaoSocialLogin {
     @JoinColumn(name="member_id")
     private Member member;
 }
+
