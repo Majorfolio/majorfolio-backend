@@ -1,6 +1,5 @@
-
 /**
- * University
+ * Basket
  *
  * 0.0.1
  *
@@ -8,7 +7,7 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.university.entity;
+package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,22 +16,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * University DB테이블 정의
+ * Basket DB테이블 정의
  *
  * @author 김영록
  * @version 0.0.1
  */
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
 @Entity
-public class University {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "university_id")
+    @Column(name = "basket_id")
     private Long id;
-    private String universityName;
-    private String domain;
-
 }

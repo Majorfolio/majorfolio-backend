@@ -1,6 +1,5 @@
-
 /**
- * University
+ * FollwerList
  *
  * 0.0.1
  *
@@ -8,7 +7,7 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.university.entity;
+package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,22 +16,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * University DB테이블 정의
+ * FollwerList DB테이블 정의
  *
  * @author 김영록
  * @version 0.0.1
  */
 @Builder
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Entity
-public class University {
+public class FollwerList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "university_id")
+    @Column(name = "follower_id")
     private Long id;
-    private String universityName;
-    private String domain;
-
 }

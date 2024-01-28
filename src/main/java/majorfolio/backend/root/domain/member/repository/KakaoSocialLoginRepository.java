@@ -1,5 +1,5 @@
 /**
- * MemberRepository
+ * KakaoSocialLoginRepository
  *
  * 0.0.1
  *
@@ -9,15 +9,15 @@
  */
 package majorfolio.backend.root.domain.member.repository;
 
-import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * member테이블의 Repository
- *
+ * KakaoSocialLogin 테이블의 Repository
  * @author 김영록
  * @version 0.0.1
  */
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface KakaoSocialLoginRepository extends JpaRepository<KakaoSocialLogin, Long> {
+    KakaoSocialLogin findByKakaoNumber(Long kakaoNumber);
+
 }
