@@ -1,5 +1,6 @@
+
 /**
- * BuyList
+ * University
  *
  * 0.0.1
  *
@@ -7,7 +8,7 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.member.entity;
+package majorfolio.backend.root.domain.university.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,19 +17,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * BuyList테이블 정의
+ * University DB테이블 정의
  *
  * @author 김영록
  * @version 0.0.1
  */
 @Builder
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class BuyList {
+@Entity
+public class University {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "buyList_id")
+    @Column(name = "university_id")
     private Long id;
+    private String universityName;
+    private String domain;
+
 }

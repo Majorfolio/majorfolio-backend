@@ -1,5 +1,6 @@
+
 /**
- * Memeber
+ * Member
  *
  * 0.0.1
  *
@@ -7,6 +8,7 @@
  *
  * Majorfolio
  */
+
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
@@ -22,10 +24,16 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 /**
- * memeber테이블 생성
+ * Member테이블 생성
  *
  * @author 김영록
  * @version 0.0.1
+ *
+ * member 테이블 수정(01.24)
+ *
+ * @author 김영록
+ * @version 0.0.1
+ *
  */
 @Builder
 @Entity
@@ -40,9 +48,6 @@ public class Member {
     private Long id;
 
     private String nickName;
-    private String email;
-    @UpdateTimestamp
-    private LocalDateTime updateEmail;
     private String status;
     private String universityName;
     private String major1;
@@ -90,6 +95,5 @@ public class Member {
     @OneToOne
     @JoinColumn(name = "couponBox_id")
     private CouponBox couponBox;
-
 
 }

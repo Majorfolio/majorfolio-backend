@@ -48,8 +48,18 @@ public enum BaseExceptionStatus implements ResponseStatus{
     INVALID_TOKEN(4003, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 토큰입니다."),
     MALFORMED_TOKEN(4004, HttpStatus.UNAUTHORIZED.value(), "토큰이 올바르게 구성되지 않았습니다."),
     EXPIRED_TOKEN(4005, HttpStatus.UNAUTHORIZED.value(), "만료된 토큰입니다."),
-    TOKEN_MISMATCH(4006, HttpStatus.UNAUTHORIZED.value(), "로그인 정보가 토큰 정보와 일치하지 않습니다.");
+    TOKEN_MISMATCH(4006, HttpStatus.UNAUTHORIZED.value(), "로그인 정보가 토큰 정보와 일치하지 않습니다."),
 
+    /**
+     * 5000: Email관련 오류
+     */
+
+    EMAIL_ERROR(5000, HttpStatus.BAD_REQUEST.value(), "올바르지 않은 이메일입니다."),
+    NOT_SCHOOL_EMAIL(5001, HttpStatus.BAD_REQUEST.value(), "학교 이메일이 아닙니다."),
+    OVERLAP_EMAIL(5002, HttpStatus.BAD_REQUEST.value(), "이미 인증한 이메일 입니다."),
+    SEND_ERROR(5003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 서버에 문제가 발생했습니다."),
+    EXPIRED_CODE(5004, HttpStatus.BAD_REQUEST.value(), "인증 시간이 지났습니다."),
+    NOT_EQUAL_CODE(5005, HttpStatus.BAD_REQUEST.value(), "인증 코드가 다릅니다.");
 
 
     private final int code;

@@ -1,28 +1,27 @@
 /**
- * JwtExpiredException
+ * ExpiredCodeException
  *
  * 0.0.1
  *
- * 2024.01.23
+ * 2024.01.28
  *
  * Majorfolio
  */
 package majorfolio.backend.root.global.exception;
 
-import lombok.Getter;
 import majorfolio.backend.root.global.response.status.ResponseStatus;
 
 /**
- * 토큰 만료시 예외클래스 정의
+ * 코드 인증 시간이 지났을때 발생하는 예외 정의
  *
  * @author 김영록
  * @version 0.0.1
  */
-@Getter
-public class JwtExpiredException extends JwtUnauthorizedException{
-
+public class ExpiredCodeException extends EmailException{
     private final ResponseStatus responseStatus;
-    public JwtExpiredException(ResponseStatus responseStatus) {
+
+
+    public ExpiredCodeException(ResponseStatus responseStatus) {
         super(responseStatus);
         this.responseStatus = responseStatus;
     }

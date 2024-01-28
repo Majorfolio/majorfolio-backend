@@ -9,15 +9,15 @@
  */
 package majorfolio.backend.root.global.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.global.exception.JwtExpiredException;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParser;
 
 import java.util.*;
+
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.EXPIRED_TOKEN;
 
 /**
  * Jwt를 다루는 여러 메소드들을 취합해 놓은 클래스임
@@ -89,18 +89,22 @@ public class JwtUtil {
      * @param secretKey 토큰을 디코딩하기 위해 쓰이는 시크릿키
      * @return
      */
-    public static String getUserName(String token, String secretKey){
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("userName", String.class);
+    public static Long getKaKaoId(String token, String secretKey){
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("kakaoId", Long.class);
     }
 
     /**
-     * 토큰이 만료되었는지 여부를 알려주는 메소드이다.
-     * @param token token을 파라미터로 넘겨줌
-     * @param secretKey 토큰을 디코딩하기 위해 쓰이는 시크릿키
-     * @return
+     @@ -100,7 +100,13 @@ public static String getUserName(String token, String secretKey){
+      * @return
      */
     public static boolean isExpired(String token, String secretKey){
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().getExpiration().before(new Date()); // expired 된게 지금보다 전인가? -> 그러면 만료된거임
+        try {
+            return Jwts.parserBuilder().setSigningKey(secretKey)
+                    .build().parseClaimsJws(token).getBody()
+                    .getExpiration().before(new Date()); // expired 된게 지금보다 전인가? -> 그러면 만료된거임
+        }catch (ExpiredJwtException e){
+            throw new JwtExpiredException(EXPIRED_TOKEN);
+        }
     }
 
     /**

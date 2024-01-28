@@ -1,5 +1,5 @@
 /**
- * UserTokenRepository
+ * KakaoSocialLoginRepository
  *
  * 0.0.1
  *
@@ -13,7 +13,7 @@ import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * user_token 테이블의 Repository
+ * KakaoSocialLogin 테이블의 Repository
  * @author 김영록
  * @version 0.0.1
  */
