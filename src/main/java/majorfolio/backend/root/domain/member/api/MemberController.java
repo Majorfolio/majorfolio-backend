@@ -11,12 +11,10 @@ package majorfolio.backend.root.domain.member.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.member.dto.EmailCodeRequest;
-import majorfolio.backend.root.domain.member.dto.EmailRequest;
-import majorfolio.backend.root.domain.member.dto.EmailResponse;
-import majorfolio.backend.root.domain.member.dto.LoginResponse;
+import majorfolio.backend.root.domain.member.dto.*;
 import majorfolio.backend.root.domain.member.service.MemberService;
 import majorfolio.backend.root.global.exception.EmailException;
+import majorfolio.backend.root.global.exception.UserException;
 import majorfolio.backend.root.global.response.BaseErrorResponse;
 import majorfolio.backend.root.global.response.BaseResponse;
 import majorfolio.backend.root.global.util.BindingResultUtil;
@@ -25,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.EMAIL_ERROR;
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.INVALID_USER_VALUE;
 
 /**
  * /member 도메인으로 들어오는 요청 컨트롤러 정의
@@ -64,8 +63,32 @@ public class MemberController {
         return new BaseResponse<>(memberService.emailAuth(emailRequest));
     }
 
+    /**
+     * 이메일 인증 코드 대조 컨트롤러
+     * @param emailCodeRequest
+     * @return
+     */
     @GetMapping("/school-email/code")
     public BaseResponse<String> emailCodeCompare(@RequestBody EmailCodeRequest emailCodeRequest){
         return new BaseResponse<>(memberService.emailCodeCompare(emailCodeRequest));
     }
+
+    /**
+     * 회원가입 API 컨트롤러
+     * @param signupRequest
+     * @return
+     */
+    @PostMapping("/signup")
+    public BaseResponse<SignupResponse> signup(HttpServletRequest request, @Validated @RequestBody SignupRequest signupRequest
+                                                ,BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new UserException(INVALID_USER_VALUE, BindingResultUtil.getErrorMessages(bindingResult));
+        }
+
+        Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+
+        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId));
+    }
+
+
 }
