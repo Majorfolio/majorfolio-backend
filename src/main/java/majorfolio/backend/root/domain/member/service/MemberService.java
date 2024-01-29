@@ -18,6 +18,9 @@ import majorfolio.backend.root.domain.member.entity.EmailDB;
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.repository.EmailDBRepository;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
+import majorfolio.backend.root.domain.member.dto.*;
+import majorfolio.backend.root.domain.member.entity.*;
+import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.domain.university.repository.UniversityRepository;
 import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.util.JwtUtil;
@@ -26,8 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -45,6 +46,12 @@ public class MemberService {
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
     private final UniversityRepository universityRepository;
     private final EmailDBRepository emailDBRepository;
+    private final MemberRepository memberRepository;
+    private final BasketRepository basketRepository;
+    private final BuyListRepository buyListRepository;
+    private final SellListRepository sellListRepository;
+    private final FollwerListRepository follweListRepository;
+    private final CouponBoxRepository couponBoxRepository;
 
 
     @Value("${jwt.secret}")
@@ -56,11 +63,17 @@ public class MemberService {
     public MemberService(JavaMailSender javaMailSender,
                          KakaoSocialLoginRepository kakaoSocialLoginRepository,
                          UniversityRepository universityRepository,
-                         EmailDBRepository emailDBRepository) {
+                         EmailDBRepository emailDBRepository, MemberRepository memberRepository, BasketRepository basketRepository, BuyListRepository buyListRepository, SellListRepository sellListRepository, FollwerListRepository follweListRepository, CouponBoxRepository couponBoxRepository) {
         this.javaMailSender = javaMailSender;
         this.kakaoSocialLoginRepository = kakaoSocialLoginRepository;
         this.universityRepository = universityRepository;
         this.emailDBRepository = emailDBRepository;
+        this.memberRepository = memberRepository;
+        this.basketRepository = basketRepository;
+        this.buyListRepository = buyListRepository;
+        this.sellListRepository = sellListRepository;
+        this.follweListRepository = follweListRepository;
+        this.couponBoxRepository = couponBoxRepository;
     }
 
 
@@ -75,6 +88,7 @@ public class MemberService {
     public LoginResponse memberLogin(Long kakaoId, String nonce, String state){
         Boolean isMember = false;
         Long memberId;
+        Long emailId;
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
         if(kakaoSocialLogin == null){
             // 카카오 소셜 로그인 객체가 없으면 만들어서 DB에 저장한다.
@@ -88,19 +102,19 @@ public class MemberService {
         }
         if(memberId == 0){
             log.info("memberId is null");
+            emailId = 0L;
         }
         else{
             log.info("memberId = {}", memberId);
+            emailId = emailDBRepository.findByMember(memberRepository.findById(memberId).get()).getId();
         }
         if(memberId != 0){
             isMember = true;
         }
 
-        Long expireAccessToken = Duration.ofHours(2).toMillis(); // 만료 시간 2시간
-        String accessToken = JwtUtil.createAccessToken(memberId, kakaoId, secretKey, expireAccessToken);
+        String accessToken = JwtUtil.createAccessToken(memberId, kakaoSocialLogin.getId(), emailId, secretKey);
 
-        Long expireRefreshToken = Duration.ofDays(14).toMillis(); // 만료 시간 2주
-        String refreshToken = JwtUtil.createRefreshToken(secretKey, expireRefreshToken);
+        String refreshToken = JwtUtil.createRefreshToken(secretKey);
 
         //리프레쉬 토큰 db에 저장
         kakaoSocialLogin.setKakaoNumber(kakaoId);
@@ -165,6 +179,55 @@ public class MemberService {
         emailDBRepository.save(emailDB);
 
         return EmailResponse.of(emailDB.getId(), code);
+    }
+
+    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId){
+        EmailDB emailDB;
+        if(!signupRequest.getServiceAgree()
+        || !signupRequest.getPersonalAgree()){
+            // 개인정보나 서비스 이용약관에 비동의 시
+            throw new NotSatisfiedAgreePolicyException(NOT_SATISFIED_AGREE_POLICY);
+        }
+        try {
+            // 이메일 레포지토리 생성
+            emailDB = emailDBRepository.findById(signupRequest.getEmailId()).get();
+        }catch (NoSuchElementException e){
+            throw new UserException(INVALID_USER_VALUE);
+        }
+
+        // 장바구니, 구매리스트, 판매리스트, 쿠폰박스, 팔로워 목록 만들어두기
+        Basket basket = Basket.builder().build();
+        basketRepository.save(basket);
+        BuyList buyList = BuyList.builder().build();
+        buyListRepository.save(buyList);
+        SellList sellList = SellList.builder().build();
+        sellListRepository.save(sellList);
+        CouponBox couponBox = CouponBox.builder().build();
+        couponBoxRepository.save(couponBox);
+        FollwerList follwerList = FollwerList.builder().build();
+        follweListRepository.save(follwerList);
+
+        Member member = Member.of(signupRequest.getNickName(), signupRequest.getUniversityName(),
+                signupRequest.getMajor1(), signupRequest.getMajor2(), signupRequest.getStudentId(),
+                signupRequest.getPersonalAgree(), signupRequest.getServiceAgree(), signupRequest.getMarketingAgree(),
+                basket, buyList, sellList, follwerList, couponBox);
+
+        memberRepository.save(member);
+
+        log.info(String.valueOf(kakaoId));
+        // 카카오 레포에도 memberId값 저장
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
+        kakaoSocialLogin.setMember(member);
+        kakaoSocialLoginRepository.save(kakaoSocialLogin);
+
+        // 이메일 레포에도 memberId값 저장
+        emailDB.setMember(member);
+        emailDBRepository.save(emailDB);
+
+        //액세스 토큰 생성
+        String accessToken = JwtUtil.createAccessToken(member.getId(), kakaoSocialLogin.getId(), emailDB.getId(), secretKey);
+
+        return SignupResponse.of(member.getId(), accessToken);
     }
 
     /**

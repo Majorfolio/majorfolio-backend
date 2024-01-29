@@ -49,6 +49,7 @@ public class Member {
     private Long id;
 
     private String nickName;
+    @Column(columnDefinition = "varchar(255) default 'active'")
     private String status;
     private String universityName;
     private String major1;
@@ -56,19 +57,19 @@ public class Member {
     private int studentId;
     private String profileImage;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean personalAgree;
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean serviceAgree;
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean marketingAgree;
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean noticeEvent;
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean advertisement;
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean postComment;
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "Boolean default false")
     private Boolean emailAlarm;
 
 
@@ -97,8 +98,27 @@ public class Member {
     @JoinColumn(name = "couponBox_id")
     private CouponBox couponBox;
 
-    @OneToMany
-    private List<Material> materialList;
-
+    public static Member of(String nickName, String universityName,
+                            String major1, String major2, int studentId,
+                            Boolean personalAgree, Boolean serviceAgree,
+                            Boolean marketingAgree, Basket basket,
+                            BuyList buyList, SellList sellList,
+                            FollwerList follwerList, CouponBox couponBox){
+        return Member.builder()
+                .nickName(nickName)
+                .universityName(universityName)
+                .major1(major1)
+                .major2(major2)
+                .studentId(studentId)
+                .personalAgree(personalAgree)
+                .serviceAgree(serviceAgree)
+                .marketingAgree(marketingAgree)
+                .basket(basket)
+                .buyList(buyList)
+                .sellList(sellList)
+                .follwerList(follwerList)
+                .couponBox(couponBox)
+                .build();
+    }
 
 }

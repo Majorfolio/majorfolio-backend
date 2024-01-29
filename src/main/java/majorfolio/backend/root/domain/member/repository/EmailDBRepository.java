@@ -10,6 +10,7 @@
 package majorfolio.backend.root.domain.member.repository;
 
 import majorfolio.backend.root.domain.member.entity.EmailDB;
+import majorfolio.backend.root.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -20,4 +21,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EmailDBRepository extends JpaRepository<EmailDB, Long> {
     Boolean existsEmailDBByEmailAndStatus(String email, Boolean status);
     EmailDB findByEmail(String email);
+
+    EmailDB findByMember(Member member);
 }
