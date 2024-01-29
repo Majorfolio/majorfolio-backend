@@ -48,7 +48,9 @@ public class WebSecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-resources/**",
                         "/health-check",
-                        "/v3/api-docs/**")
+                        "/v3/api-docs/**",
+                        "/home/banner",
+                        "home/all/univ")
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }
 }

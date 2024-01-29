@@ -7,7 +7,7 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.member.dto;
+package majorfolio.backend.root.domain.member.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

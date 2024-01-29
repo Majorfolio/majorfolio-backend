@@ -7,7 +7,7 @@
  *
  * Majorfolio
  */
-package majorfolio.backend.root.domain.member.dto;
+package majorfolio.backend.root.domain.member.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
