@@ -34,23 +34,29 @@ public class TokenFilter implements Filter {
         Filter.super.init(filterConfig);
     }
 
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        final String BASIC_TYPE_PREFIX = "Bearer";
-        final HttpServletRequest request = (HttpServletRequest)servletRequest;
+// "/home/banner"는 토큰이 없어도 가능하도록 변경
+@Override
+public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    final String BASIC_TYPE_PREFIX = "Bearer";
+    final HttpServletRequest request = (HttpServletRequest) servletRequest;
+    final String path = request.getRequestURI();
+
+    if (!path.equals("/home/banner") && !request.getMethod().equals("GET")) {
         final String authorization = request.getHeader("Authorization");
         final boolean isBasicAuthentication = authorization != null && authorization.toLowerCase().startsWith(BASIC_TYPE_PREFIX.toLowerCase());
 
         if (!isBasicAuthentication) {
-            //response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             throw new JwtUnsupportedTokenTypeException(UNSUPPORTED_TOKEN_TYPE);
         }
 
         String token = authorization.substring(BASIC_TYPE_PREFIX.length()).trim();
-
         request.setAttribute("token", token);
-        filterChain.doFilter(request, servletResponse);
     }
+
+    filterChain.doFilter(request, servletResponse);
+}
+
+
 
     @Override
     public void destroy() {
