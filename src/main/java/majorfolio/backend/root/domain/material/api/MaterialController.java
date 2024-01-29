@@ -1,6 +1,6 @@
 package majorfolio.backend.root.domain.material.api;
 
-import jakarta.servlet.http.Cookie;
+import com.nimbusds.oauth2.sdk.token.AccessToken;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MaterialListResponse;
@@ -16,10 +16,17 @@ public class MaterialController {
 
 
     @GetMapping("all/univ")
-    public MaterialListResponse getAllList(@CookieValue(name = "recent", required = false) String cookieValue) {
-        System.out.println("cookieValue = " + cookieValue);
-        return materialService.getAllList(cookieValue);
+    public MaterialListResponse getAllMaterialList(@CookieValue(name = "recent", required = false) String cookieValue) {
+         return materialService.getAllList(cookieValue);
     }
 
+    @GetMapping("my/univ")
+    public MaterialListResponse getUnivMaterialList(HttpServletRequest request, @CookieValue(name = "recent", required = false) String cookieValue) {
+        return materialService.getUnivList(request, cookieValue);
+    }
 
+    @GetMapping("my/major")
+    public MaterialListResponse getMajorMaterialList(HttpServletRequest request, @CookieValue(name = "recent", required = false) String cookieValue) {
+        return materialService.getMajorList(request, cookieValue);
+    }
 }
