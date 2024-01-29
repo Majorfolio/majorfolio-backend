@@ -183,6 +183,7 @@ public class MemberService {
 
     public SignupResponse signup(SignupRequest signupRequest, Long kakaoId){
         EmailDB emailDB;
+        KakaoSocialLogin kakaoSocialLogin;
         if(!signupRequest.getServiceAgree()
         || !signupRequest.getPersonalAgree()){
             // 개인정보나 서비스 이용약관에 비동의 시
@@ -191,6 +192,7 @@ public class MemberService {
         try {
             // 이메일 레포지토리 생성
             emailDB = emailDBRepository.findById(signupRequest.getEmailId()).get();
+            kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
         }catch (NoSuchElementException e){
             throw new UserException(INVALID_USER_VALUE);
         }
@@ -216,7 +218,7 @@ public class MemberService {
 
         log.info(String.valueOf(kakaoId));
         // 카카오 레포에도 memberId값 저장
-        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
+        kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
         kakaoSocialLogin.setMember(member);
         kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
