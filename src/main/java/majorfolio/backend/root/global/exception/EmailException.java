@@ -1,7 +1,6 @@
 package majorfolio.backend.root.global.exception;
 
 import lombok.Getter;
-import majorfolio.backend.root.domain.member.dto.EmailRequest;
 import majorfolio.backend.root.global.response.status.ResponseStatus;
 
 @Getter

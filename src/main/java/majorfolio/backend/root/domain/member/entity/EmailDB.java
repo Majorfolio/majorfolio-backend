@@ -39,4 +39,8 @@ public class EmailDB {
     private Boolean status;
     private LocalDateTime emailDate;
 
+    @OneToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
 }

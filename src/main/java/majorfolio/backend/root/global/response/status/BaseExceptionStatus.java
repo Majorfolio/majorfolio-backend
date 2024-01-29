@@ -59,7 +59,14 @@ public enum BaseExceptionStatus implements ResponseStatus{
     OVERLAP_EMAIL(5002, HttpStatus.BAD_REQUEST.value(), "이미 인증한 이메일 입니다."),
     SEND_ERROR(5003, HttpStatus.INTERNAL_SERVER_ERROR.value(), "메일 서버에 문제가 발생했습니다."),
     EXPIRED_CODE(5004, HttpStatus.BAD_REQUEST.value(), "인증 시간이 지났습니다."),
-    NOT_EQUAL_CODE(5005, HttpStatus.BAD_REQUEST.value(), "인증 코드가 다릅니다.");
+    NOT_EQUAL_CODE(5005, HttpStatus.BAD_REQUEST.value(), "인증 코드가 다릅니다."),
+
+    /**
+     * 6000 : 회원관련 오류
+     */
+
+    INVALID_USER_VALUE(6000, HttpStatus.BAD_REQUEST.value(), "회원가입 요청에서 잘못된 값이 존재합니다."),
+    NOT_SATISFIED_AGREE_POLICY(6001, HttpStatus.BAD_REQUEST.value(), "필수 동의항목에 동의해야 합니다.");
 
 
     private final int code;
