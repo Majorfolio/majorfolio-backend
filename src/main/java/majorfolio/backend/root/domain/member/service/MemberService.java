@@ -10,10 +10,10 @@
 package majorfolio.backend.root.domain.member.service;
 
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.domain.member.dto.EmailCodeRequest;
-import majorfolio.backend.root.domain.member.dto.EmailRequest;
-import majorfolio.backend.root.domain.member.dto.EmailResponse;
-import majorfolio.backend.root.domain.member.dto.LoginResponse;
+import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
+import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
+import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
+import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.entity.EmailDB;
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.repository.EmailDBRepository;
@@ -28,7 +28,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
