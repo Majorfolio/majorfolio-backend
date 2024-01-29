@@ -8,6 +8,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * material 테이블 생성
+ * @author 김태혁
+ * @version 0.0.1
+ */
 @Entity
 @Builder
 @Getter
