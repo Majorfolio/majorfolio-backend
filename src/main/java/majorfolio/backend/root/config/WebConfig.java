@@ -2,6 +2,7 @@ package majorfolio.backend.root.config;
 
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.global.interceptor.IdTokenInterceptor;
+import majorfolio.backend.root.global.interceptor.RefreshTokenInterceptor;
 import majorfolio.backend.root.global.interceptor.ServiceServerTokenInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
     private final IdTokenInterceptor idTokenInterceptor;
     private final ServiceServerTokenInterceptor serviceServerTokenInterceptor;
+    private final RefreshTokenInterceptor refreshTokenInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(idTokenInterceptor)
@@ -20,6 +22,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(serviceServerTokenInterceptor)
                 .order(1)
                 .addPathPatterns("/member/**")
-                .excludePathPatterns("/member/login");
+                .excludePathPatterns("/member/login", "/member/remake/token");
+        registry.addInterceptor(refreshTokenInterceptor)
+                .order(1)
+                .addPathPatterns("/member/remake/token");
     }
 }

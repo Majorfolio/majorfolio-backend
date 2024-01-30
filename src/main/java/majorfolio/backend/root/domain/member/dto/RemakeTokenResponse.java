@@ -1,5 +1,5 @@
 /**
- * SignupResponse
+ * RemakeTokenResponse
  *
  * 0.0.1
  *
@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 회원가입 api의 응답형식 정의
+ * 토큰 재발급 api의 응답 형식 정의
  *
  * @author 김영록
  * @version 0.0.1
@@ -24,14 +24,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class SignupResponse {
-    private Long memberId;
+public class RemakeTokenResponse {
     private String accessToken;
+    private String refreshToken;
 
-    public static SignupResponse of(Long memberId, String accessToken){
-        return SignupResponse.builder()
-                .memberId(memberId)
+    public static RemakeTokenResponse of(String accessToken, String refreshToken){
+        return RemakeTokenResponse.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }
