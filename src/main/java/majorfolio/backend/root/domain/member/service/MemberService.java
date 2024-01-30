@@ -9,6 +9,7 @@
  */
 package majorfolio.backend.root.domain.member.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
@@ -114,7 +115,7 @@ public class MemberService {
 
         String accessToken = JwtUtil.createAccessToken(memberId, kakaoSocialLogin.getId(), emailId, secretKey);
 
-        String refreshToken = JwtUtil.createRefreshToken(secretKey);
+        String refreshToken = JwtUtil.createRefreshToken(kakaoSocialLogin.getId(), secretKey);
 
         //리프레쉬 토큰 db에 저장
         kakaoSocialLogin.setKakaoNumber(kakaoId);
@@ -181,6 +182,12 @@ public class MemberService {
         return EmailResponse.of(emailDB.getId(), code);
     }
 
+    /**
+     * 회원가입 API서비스 구현
+     * @param signupRequest
+     * @param kakaoId
+     * @return
+     */
     public SignupResponse signup(SignupRequest signupRequest, Long kakaoId){
         EmailDB emailDB;
         KakaoSocialLogin kakaoSocialLogin;
@@ -230,6 +237,68 @@ public class MemberService {
         String accessToken = JwtUtil.createAccessToken(member.getId(), kakaoSocialLogin.getId(), emailDB.getId(), secretKey);
 
         return SignupResponse.of(member.getId(), accessToken);
+    }
+
+    /**
+     * 토큰 재발급 서비스 구현
+     * @param request
+     * @return
+     */
+    public RemakeTokenResponse remakeToken(HttpServletRequest request){
+        // 헤더에서 가져온 리프레쉬 토큰
+        String oldRefreshToken = request.getAttribute("token").toString();
+        Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+
+        // 액세스 토큰 발급받기 위해 memberId, emailId 구하기
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
+        Member member = kakaoSocialLogin.getMember();
+        Long memberId = member.getId();
+        Long emailId = emailDBRepository.findByMember(member).getId();
+
+        // 데이터 베이스에 존재하는 리프레쉬 토큰
+        String dataRefreshToken = kakaoSocialLoginRepository.findById(kakaoId).get().getRefreshToken();
+
+        if(!oldRefreshToken.equals(dataRefreshToken)){
+            throw new JwtInvalidException(INVALID_TOKEN);
+        }
+
+        //액세스 및 리프레쉬 토큰 새로 발급
+        String accessToken = JwtUtil.createAccessToken(memberId, emailId, kakaoId, secretKey);
+        String refreshToken = JwtUtil.createRefreshToken(kakaoId, secretKey);
+
+        //새로 발급 받은 토큰 DB에 다시 저장
+        kakaoSocialLogin.setRefreshToken(refreshToken);
+        kakaoSocialLoginRepository.save(kakaoSocialLogin);
+
+        return RemakeTokenResponse.of(accessToken, refreshToken);
+    }
+
+    /**
+     * 닉네임 중복 검사 API구현
+     * @param nickname
+     * @return
+     */
+    public String checkNickname(String nickname){
+        if(memberRepository.existsMemberByNickName(nickname)){
+            throw new OverlapNicknameException(OVERLAP_NICKNAME);
+        }
+
+        return "사용가능한 닉네임 입니다.";
+    }
+
+    /**
+     * 로그아웃 API구현
+     * @param request
+     * @return
+     */
+    public String logout(HttpServletRequest request){
+        Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
+        kakaoSocialLogin.setRefreshToken("");
+
+        kakaoSocialLoginRepository.save(kakaoSocialLogin);
+        return "로그아웃 되었습니다.";
     }
 
     /**

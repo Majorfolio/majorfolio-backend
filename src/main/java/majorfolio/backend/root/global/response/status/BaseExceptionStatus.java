@@ -66,7 +66,8 @@ public enum BaseExceptionStatus implements ResponseStatus{
      */
 
     INVALID_USER_VALUE(6000, HttpStatus.BAD_REQUEST.value(), "회원가입 요청에서 잘못된 값이 존재합니다."),
-    NOT_SATISFIED_AGREE_POLICY(6001, HttpStatus.BAD_REQUEST.value(), "필수 동의항목에 동의해야 합니다.");
+    NOT_SATISFIED_AGREE_POLICY(6001, HttpStatus.BAD_REQUEST.value(), "필수 동의항목에 동의해야 합니다."),
+    OVERLAP_NICKNAME(6002, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임 입니다.");
 
 
     private final int code;
