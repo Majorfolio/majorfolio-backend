@@ -1,6 +1,5 @@
 package majorfolio.backend.root.domain.material.api;
 
-import com.nimbusds.oauth2.sdk.token.AccessToken;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MaterialListResponse;
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/home")
 @RequiredArgsConstructor
-public class MaterialController {
+public class HomeController {
 
     private final MaterialService materialService;
     private final MaterialAllListService materialAllListService;
