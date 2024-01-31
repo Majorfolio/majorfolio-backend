@@ -79,6 +79,11 @@ dependencies {
 	//email
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // Email
 
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
+
+	//PDF
+	implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.1'
+
 }
 
 tasks.named('bootBuildImage') {
