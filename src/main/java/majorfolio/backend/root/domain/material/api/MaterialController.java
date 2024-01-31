@@ -47,4 +47,5 @@ public class MaterialController {
     public MaterialListResponse getMajorMaterialList(HttpServletRequest request, @CookieValue(name = "recent", required = false) String cookieValue) {
         return materialService.getMajorList(request, cookieValue);
     }
+
 }
