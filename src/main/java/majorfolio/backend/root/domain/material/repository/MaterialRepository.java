@@ -1,6 +1,8 @@
 package majorfolio.backend.root.domain.material.repository;
 
 import majorfolio.backend.root.domain.material.entity.Material;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -16,37 +18,37 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByOrderByCreatedAtDesc();
+    List<Material> findTop5ByOrderByCreatedAtDescIdAsc();
     /**
      * 모든학교에서 자료 좋아요순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByOrderByTotalRecommendDesc();
+    List<Material> findTop5ByOrderByTotalRecommendDescIdAsc();
     /**
      * 내학교에서 자료 생성순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMemberUniversityNameOrderByCreatedAtDesc(String universityName);
+    List<Material> findTop5ByMemberUniversityNameOrderByCreatedAtDescIdAsc(String universityName);
     /**
      * 내학교에서 자료 좋아요순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMemberUniversityNameOrderByTotalRecommendDesc(String universityName);
+    List<Material> findTop5ByMemberUniversityNameOrderByTotalRecommendDescIdAsc(String universityName);
     /**
-     * 모든학과에서 자료 생성순 5개
+     * 내학과에서 자료 생성순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMajorOrderByCreatedAtDesc(String universityName);
+    List<Material> findTop5ByMajorOrderByCreatedAtDescIdAsc(String major);
     /**
      * 내학과에서 자료 좋아요순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMajorOrderByTotalRecommendDesc(String universityName);
+    List<Material> findTop5ByMajorOrderByTotalRecommendDescIdAsc(String major);
     /**
      * 과제 아이디와 대학 이름에 맞는 과제 반환
      * @author 김태혁
@@ -59,4 +61,14 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @version 0.0.1
      */
     Material findByIdAndMajor(Long id, String major);
+    Page<Material> findByOrderByCreatedAtDescIdAsc(Pageable pageable);
+    Page<Material> findByOrderByTotalRecommendDescIdAsc(Pageable pageable);
+
+    Page<Material> findByMemberUniversityNameOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
+
+    Page<Material> findByMemberUniversityNameOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
+
+    Page<Material> findByMajorOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
+
+    Page<Material> findByMajorOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
 }
