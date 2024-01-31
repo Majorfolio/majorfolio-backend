@@ -29,7 +29,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getNewUploadList() {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDesc();
+        List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDescIdAsc();
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -39,7 +39,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getBestList() {
-        List<Material> bestMaterials = materialRepository.findTop5ByOrderByTotalRecommendDesc();
+        List<Material> bestMaterials = materialRepository.findTop5ByOrderByTotalRecommendDescIdAsc();
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -133,7 +133,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListUniv(String univName) {
-        List<Material> bestMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByTotalRecommendDesc(univName);
+        List<Material> bestMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByTotalRecommendDescIdAsc(univName);
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -143,7 +143,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListUniv(String univName) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByCreatedAtDesc(univName);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByCreatedAtDescIdAsc(univName);
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -202,7 +202,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListMajor(String major) {
-        List<Material> bestMaterials = materialRepository.findTop5ByMajorOrderByTotalRecommendDesc(major);
+        List<Material> bestMaterials = materialRepository.findTop5ByMajorOrderByTotalRecommendDescIdAsc(major);
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -212,7 +212,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListMajor(String major) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByMajorOrderByCreatedAtDesc(major);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByMajorOrderByCreatedAtDescIdAsc(major);
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
