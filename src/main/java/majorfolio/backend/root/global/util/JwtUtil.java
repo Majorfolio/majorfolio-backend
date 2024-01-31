@@ -142,9 +142,10 @@ public class JwtUtil {
      * @param expiredMs 만료시간 설정(2주로 설정함)
      * @return
      */
-    public static String createRefreshToken(String secretKey){
+    public static String createRefreshToken(Long kakaoId, String secretKey){
         Long expiredMs = Duration.ofDays(14).toMillis();
         Claims claims = Jwts.claims();
+        claims.put("kakaoId", kakaoId);
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, "refresh_token")
                 .setClaims(claims)

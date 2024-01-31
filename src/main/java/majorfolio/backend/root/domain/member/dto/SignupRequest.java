@@ -1,3 +1,12 @@
+/**
+ * SignupRequest
+ *
+ * 0.0.1
+ *
+ * 2024.01.30
+ *
+ * Majorfolio
+ */
 package majorfolio.backend.root.domain.member.dto;
 
 import jakarta.validation.constraints.Max;
@@ -10,6 +19,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+/**
+ * 회원가입 api의 요청형식 정의
+ *
+ * @author 김영록
+ * @version 0.0.1
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

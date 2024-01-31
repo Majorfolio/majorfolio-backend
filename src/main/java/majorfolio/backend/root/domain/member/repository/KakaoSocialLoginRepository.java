@@ -20,4 +20,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface KakaoSocialLoginRepository extends JpaRepository<KakaoSocialLogin, Long> {
     KakaoSocialLogin findByKakaoNumber(Long kakaoNumber);
 
+
 }

@@ -20,4 +20,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @version 0.0.1
  */
 public interface MemberRepository extends JpaRepository<Member, Long> {
+    Boolean existsMemberByNickName(String nickname);
 }

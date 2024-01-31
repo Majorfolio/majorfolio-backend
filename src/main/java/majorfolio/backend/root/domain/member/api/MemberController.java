@@ -10,7 +10,9 @@
 package majorfolio.backend.root.domain.member.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import majorfolio.backend.root.domain.member.dto.RemakeTokenResponse;
 import majorfolio.backend.root.domain.member.dto.SignupRequest;
 import majorfolio.backend.root.domain.member.dto.SignupResponse;
 import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
@@ -94,5 +96,34 @@ public class MemberController {
         return new BaseResponse<>(memberService.signup(signupRequest, kakaoId));
     }
 
+    /**
+     * 토큰 재발급 API 컨트롤러
+     * @param request
+     * @return
+     */
+    @PostMapping("/remake/token")
+    public BaseResponse<RemakeTokenResponse> remakeToken(HttpServletRequest request){
+        return new BaseResponse<>(memberService.remakeToken(request));
+    }
+
+    /**
+     * 닉네임 중복 검사 API
+     * @param nickname
+     * @return
+     */
+    @GetMapping("/check-nickname/{nickname}")
+    public BaseResponse<String> checkNickname(@PathVariable(name = "nickname") String nickname){
+        return new BaseResponse<>(memberService.checkNickname(nickname));
+    }
+
+    /**
+     * 로그아웃 API
+     * @param request
+     * @return
+     */
+    @PostMapping("/logout")
+    public BaseResponse<String> logout(HttpServletRequest request){
+        return new BaseResponse<>(memberService.logout(request));
+    }
 
 }
