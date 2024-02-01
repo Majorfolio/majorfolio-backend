@@ -1,6 +1,7 @@
 package majorfolio.backend.root.domain.material.repository;
 
 import majorfolio.backend.root.domain.material.entity.Material;
+import majorfolio.backend.root.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -73,5 +74,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     Page<Material> findByMajorOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
 
     Page<Material> findByClassNameAndProfessorAndMember_UniversityNameAndMajor(String className, String professor, String universityName, String major, Pageable pageable);
+    Page<Material> findByMember(Member member, Pageable pageable);
 
 }
