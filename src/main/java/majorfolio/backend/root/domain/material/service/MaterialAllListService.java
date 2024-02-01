@@ -2,13 +2,12 @@ package majorfolio.backend.root.domain.material.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.material.dto.response.MaterialResponse;
-import majorfolio.backend.root.domain.material.dto.response.NameMaterialListResponse;
-import majorfolio.backend.root.domain.material.dto.response.NameMaterialResponse;
-import majorfolio.backend.root.domain.material.dto.response.SingleMaterialListResponse;
+import majorfolio.backend.root.domain.material.dto.response.*;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
+import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
+import majorfolio.backend.root.domain.member.repository.MemberRepository;
 import majorfolio.backend.root.global.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +22,7 @@ import java.util.stream.Collectors;
 public class MaterialAllListService {
     private final MaterialRepository materialRepository;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
+    private final MemberRepository memberRepository;
 
 
     public SingleMaterialListResponse getAllUnivUploadList(int page, int pageSize) {
@@ -108,6 +108,15 @@ public class MaterialAllListService {
         return NameMaterialListResponse.of(page, nameMaterialResponses);
     }
 
+    public SellerMaterialListResponse getSellerList(int page, int pageSize, String nickName) {
+        Member member = memberRepository.findByNickName(nickName);
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Page<Material> materialPage = materialRepository.findByMember(member, pageable);
+        List<SellerMaterialResponse> nameMaterialResponses = convertToMaterialSellerResponseList(materialPage.getContent());
+
+        return SellerMaterialListResponse.of(page, nameMaterialResponses);
+    }
+
     private List<MaterialResponse> convertToMaterialResponseList(List<Material> materials) {
 
         return materials.stream()
@@ -119,6 +128,13 @@ public class MaterialAllListService {
 
         return materials.stream()
                 .map(NameMaterialResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    private List<SellerMaterialResponse> convertToMaterialSellerResponseList(List<Material> materials) {
+
+        return materials.stream()
+                .map(SellerMaterialResponse::of)
                 .collect(Collectors.toList());
     }
 
