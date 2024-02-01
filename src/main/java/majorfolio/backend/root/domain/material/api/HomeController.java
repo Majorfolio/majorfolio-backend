@@ -3,6 +3,7 @@ package majorfolio.backend.root.domain.material.api;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MaterialListResponse;
+import majorfolio.backend.root.domain.material.dto.response.NameMaterialListResponse;
 import majorfolio.backend.root.domain.material.dto.response.SingleMaterialListResponse;
 import majorfolio.backend.root.domain.material.service.MaterialAllListService;
 import majorfolio.backend.root.domain.material.service.MaterialService;
@@ -40,6 +41,13 @@ public class HomeController {
     public SingleMaterialListResponse getAllUnivLike(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
         return materialAllListService.getAllUnivLike(page, pageSize);
+    }
+
+    @GetMapping("all/subject")
+    public NameMaterialListResponse getAllSubjectNewly(@RequestParam(name = "materialID") Long materialID,
+            @RequestParam(name = "page") int page,
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
+        return materialAllListService.getAllSubjectNew(page, pageSize, materialID);
     }
 
 

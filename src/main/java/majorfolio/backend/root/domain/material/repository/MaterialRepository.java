@@ -71,4 +71,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     Page<Material> findByMajorOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
 
     Page<Material> findByMajorOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
+
+    Page<Material> findByClassNameAndProfessorAndMember_UniversityNameAndMajor(String className, String professor, String universityName, String major, Pageable pageable);
+
 }
