@@ -3,6 +3,8 @@ package majorfolio.backend.root.domain.material.service;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MaterialResponse;
+import majorfolio.backend.root.domain.material.dto.response.NameMaterialListResponse;
+import majorfolio.backend.root.domain.material.dto.response.NameMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.SingleMaterialListResponse;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
@@ -34,7 +36,7 @@ public class MaterialAllListService {
             throw new NotFoundException("더 이상 자료가 없습니다.");
         }
 
-        return SingleMaterialListResponse.of(materialResponses);
+        return SingleMaterialListResponse.of(page, materialResponses);
     }
 
     public SingleMaterialListResponse getAllUnivLike(int page, int pageSize) {
@@ -43,7 +45,7 @@ public class MaterialAllListService {
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
 
-        return SingleMaterialListResponse.of(materialResponses);
+        return SingleMaterialListResponse.of(page, materialResponses);
     }
 
     public SingleMaterialListResponse getMyUnivUploadList(int page, int pageSize, HttpServletRequest request) {
@@ -55,7 +57,7 @@ public class MaterialAllListService {
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
 
-        return SingleMaterialListResponse.of(materialResponses);
+        return SingleMaterialListResponse.of(page, materialResponses);
     }
 
     public SingleMaterialListResponse getMyUnivLike(int page, int pageSize, HttpServletRequest request) {
@@ -67,7 +69,7 @@ public class MaterialAllListService {
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
 
-        return SingleMaterialListResponse.of(materialResponses);
+        return SingleMaterialListResponse.of(page, materialResponses);
     }
 
     public SingleMaterialListResponse getMyMajorUploadList(int page, int pageSize, HttpServletRequest request) {
@@ -79,7 +81,7 @@ public class MaterialAllListService {
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
 
-        return SingleMaterialListResponse.of(materialResponses);
+        return SingleMaterialListResponse.of(page, materialResponses);
     }
 
     public SingleMaterialListResponse getMyMajorLike(int page, int pageSize, HttpServletRequest request) {
@@ -91,13 +93,32 @@ public class MaterialAllListService {
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
 
-        return SingleMaterialListResponse.of(materialResponses);
+        return SingleMaterialListResponse.of(page, materialResponses);
+    }
+
+    public NameMaterialListResponse getAllSubjectNew(int page, int pageSize, Long materialID) {
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Material material = materialRepository.findById(materialID).orElse(null);
+
+        assert material != null;
+        Page<Material> materialPage = materialRepository.findByClassNameAndProfessorAndMember_UniversityNameAndMajor(material.getClassName(), material.getProfessor(), material.getMember().getUniversityName(), material.getMajor(), pageable);
+
+        List<NameMaterialResponse> nameMaterialResponses = convertToMaterialNamedResponseList(materialPage.getContent());
+
+        return NameMaterialListResponse.of(page, nameMaterialResponses);
     }
 
     private List<MaterialResponse> convertToMaterialResponseList(List<Material> materials) {
 
         return materials.stream()
                 .map(MaterialResponse::of)
+                .collect(Collectors.toList());
+    }
+
+    private List<NameMaterialResponse> convertToMaterialNamedResponseList(List<Material> materials) {
+
+        return materials.stream()
+                .map(NameMaterialResponse::of)
                 .collect(Collectors.toList());
     }
 

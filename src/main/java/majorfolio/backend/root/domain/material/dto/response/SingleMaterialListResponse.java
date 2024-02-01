@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Builder
 public class SingleMaterialListResponse {
+    private int page;
     private final List<MaterialResponse> materialResponseList;
 
     /**
@@ -20,8 +21,9 @@ public class SingleMaterialListResponse {
      * @author 김태혁
      * @version 0.0.1
      */
-    public static SingleMaterialListResponse of(List<MaterialResponse> materialResponseList){
+    public static SingleMaterialListResponse of(int page, List<MaterialResponse> materialResponseList){
         return SingleMaterialListResponse.builder()
+                .page(page)
                 .materialResponseList(materialResponseList)
                 .build();
     }

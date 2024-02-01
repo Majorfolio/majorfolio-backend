@@ -14,9 +14,11 @@ import majorfolio.backend.root.domain.material.entity.Material;
 public class MaterialResponse {
     private final Long id;
     private final String nickname;
-    private final String subjectName;
+    private final String className;
     private final String univ;
     private final String major;
+    private final String semester;
+    private final String professor;
     private final int like;
 
     /**
@@ -28,9 +30,11 @@ public class MaterialResponse {
         return MaterialResponse.builder()
                 .id(material.getId())
                 .nickname(material.getMember().getNickName())
-                .subjectName(material.getName())
+                .className(material.getClassName())
                 .univ(material.getMember().getUniversityName())
                 .major(material.getMajor())
+                .semester(material.getSemester())
+                .professor(material.getProfessor())
                 .like(material.getTotalRecommend())
                 .build();
     }
