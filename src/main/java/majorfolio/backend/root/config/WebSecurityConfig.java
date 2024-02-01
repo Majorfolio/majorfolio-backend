@@ -50,7 +50,7 @@ public class WebSecurityConfig {
                         "/health-check",
                         "/v3/api-docs/**",
                         "/home/banner",
-                        "home/all/univ/**")
+                        "home/all/**")
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }
 }
