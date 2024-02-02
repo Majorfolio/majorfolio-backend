@@ -51,7 +51,7 @@ public class MemberService {
     private final BasketRepository basketRepository;
     private final BuyListRepository buyListRepository;
     private final SellListRepository sellListRepository;
-    private final FollwerListRepository follweListRepository;
+    private final FollowerListRepository follweListRepository;
     private final CouponBoxRepository couponBoxRepository;
 
 
@@ -64,7 +64,7 @@ public class MemberService {
     public MemberService(JavaMailSender javaMailSender,
                          KakaoSocialLoginRepository kakaoSocialLoginRepository,
                          UniversityRepository universityRepository,
-                         EmailDBRepository emailDBRepository, MemberRepository memberRepository, BasketRepository basketRepository, BuyListRepository buyListRepository, SellListRepository sellListRepository, FollwerListRepository follweListRepository, CouponBoxRepository couponBoxRepository) {
+                         EmailDBRepository emailDBRepository, MemberRepository memberRepository, BasketRepository basketRepository, BuyListRepository buyListRepository, SellListRepository sellListRepository, FollowerListRepository follweListRepository, CouponBoxRepository couponBoxRepository) {
         this.javaMailSender = javaMailSender;
         this.kakaoSocialLoginRepository = kakaoSocialLoginRepository;
         this.universityRepository = universityRepository;
@@ -213,13 +213,13 @@ public class MemberService {
         sellListRepository.save(sellList);
         CouponBox couponBox = CouponBox.builder().build();
         couponBoxRepository.save(couponBox);
-        FollwerList follwerList = FollwerList.builder().build();
-        follweListRepository.save(follwerList);
+        FollowerList followerList = majorfolio.backend.root.domain.member.entity.FollowerList.builder().build();
+        follweListRepository.save(followerList);
 
         Member member = Member.of(signupRequest.getNickName(), signupRequest.getUniversityName(),
                 signupRequest.getMajor1(), signupRequest.getMajor2(), signupRequest.getStudentId(),
                 signupRequest.getPersonalAgree(), signupRequest.getServiceAgree(), signupRequest.getMarketingAgree(),
-                basket, buyList, sellList, follwerList, couponBox);
+                basket, buyList, sellList, followerList, couponBox);
 
         memberRepository.save(member);
 

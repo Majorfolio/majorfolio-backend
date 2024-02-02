@@ -40,6 +40,7 @@ public class Material {
     private String status;
     private String phoneNumber;
     private int price;
+    private String link;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
@@ -49,4 +50,8 @@ public class Material {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToOne
+    @JoinColumn(name = "preview_id")
+    private Preview preview;
 }
