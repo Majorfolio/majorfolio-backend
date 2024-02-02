@@ -29,7 +29,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getNewUploadList() {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDesc();
+        List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDescIdAsc();
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -39,7 +39,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getBestList() {
-        List<Material> bestMaterials = materialRepository.findTop5ByOrderByTotalRecommendDesc();
+        List<Material> bestMaterials = materialRepository.findTop5ByOrderByTotalRecommendDescIdAsc();
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -61,7 +61,11 @@ public class MaterialService {
      */
     public List<MaterialResponse> getRecentlyViewedMaterials(String cookieValue) {
         List<Long> recentlyViewedMaterialIds = parseRecentlyViewedMaterials(cookieValue);
-        return convertToMaterialResponseList(recentlyViewedMaterialIds);
+        //길이를 5개로 제한
+        List<Long> limitedIds = recentlyViewedMaterialIds.size() > 5
+                ? recentlyViewedMaterialIds.subList(0, 5)
+                : recentlyViewedMaterialIds;
+        return convertToMaterialResponseList(limitedIds);
     }
     /**
      * "1,3,4.." 의 형태로 들어오는 string에서 id를 파싱
@@ -111,8 +115,8 @@ public class MaterialService {
      * @version 0.0.1
      */
     public MaterialListResponse getUnivList(HttpServletRequest request, String cookieValue) {
-        Long kakaoId = Long.parseLong(request.getAttribute("kakao_id").toString());
-        //Long kakaoId = 2L;
+        //Long kakaoId = Long.parseLong(request.getAttribute("kakao_id").toString());
+        Long kakaoId = 2L;
         String univName = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getUniversityName();
 
         List<MaterialResponse> recentList;
@@ -129,7 +133,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListUniv(String univName) {
-        List<Material> bestMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByTotalRecommendDesc(univName);
+        List<Material> bestMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByTotalRecommendDescIdAsc(univName);
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -139,7 +143,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListUniv(String univName) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByCreatedAtDesc(univName);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByCreatedAtDescIdAsc(univName);
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -150,7 +154,11 @@ public class MaterialService {
      */
     private List<MaterialResponse> getRecentlyViewedMaterialsWithUniv(String cookieValue, String univName) {
         List<Long> recentlyViewedMaterialIds = parseRecentlyViewedMaterials(cookieValue);
-        return convertToMaterialResponseListWithUniv(recentlyViewedMaterialIds, univName);
+        //길이를 5개로 제한
+        List<Long> limitedIds = recentlyViewedMaterialIds.size() > 5
+                ? recentlyViewedMaterialIds.subList(0, 5)
+                : recentlyViewedMaterialIds;
+        return convertToMaterialResponseListWithUniv(limitedIds, univName);
     }
 
     /**
@@ -176,8 +184,8 @@ public class MaterialService {
      * @version 0.0.1
      */
     public MaterialListResponse getMajorList(HttpServletRequest request, String cookieValue) {
-        Long kakaoId = Long.parseLong(request.getAttribute("kakao_id").toString());
-        //Long kakaoId = 2L;
+        //Long kakaoId = Long.parseLong(request.getAttribute("kakao_id").toString());
+        Long kakaoId = 2L;
         String major = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getMajor1();
 
         List<MaterialResponse> recentList;
@@ -194,7 +202,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListMajor(String major) {
-        List<Material> bestMaterials = materialRepository.findTop5ByMajorOrderByTotalRecommendDesc(major);
+        List<Material> bestMaterials = materialRepository.findTop5ByMajorOrderByTotalRecommendDescIdAsc(major);
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -204,7 +212,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListMajor(String major) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByMajorOrderByCreatedAtDesc(major);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByMajorOrderByCreatedAtDescIdAsc(major);
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -215,7 +223,11 @@ public class MaterialService {
      */
     private List<MaterialResponse> getRecentlyViewedMaterialsWithMajor(String cookieValue, String major) {
         List<Long> recentlyViewedMaterialIds = parseRecentlyViewedMaterials(cookieValue);
-        return convertToMaterialResponseListWithMajor(recentlyViewedMaterialIds, major);
+        //길이를 5개로 제한
+        List<Long> limitedIds = recentlyViewedMaterialIds.size() > 5
+                ? recentlyViewedMaterialIds.subList(0, 5)
+                : recentlyViewedMaterialIds;
+        return convertToMaterialResponseListWithMajor(limitedIds, major);
     }
 
     /**
