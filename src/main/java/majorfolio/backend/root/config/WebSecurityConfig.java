@@ -52,7 +52,8 @@ public class WebSecurityConfig {
                         "/home/banner",
                         "home/all/univ/**",
                         "/assignment/upload",
-                        "/majorfolio/**")
+                        "/majorfolio/**",
+                        "assignment/{materialId}/detail")
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }
 }

@@ -1,3 +1,12 @@
+/**
+ * SellListItem
+ *
+ * 2024.02.04
+ *
+ * 0.0.1
+ *
+ * Majorfolio
+ */
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
@@ -9,6 +18,12 @@ import majorfolio.backend.root.domain.material.entity.Material;
 
 import java.time.LocalDateTime;
 
+/**
+ * SellListItem Entity 객체
+ *
+ * @author 김영록
+ * @version 0.0.1
+ */
 @Builder
 @Entity
 @AllArgsConstructor
@@ -28,7 +43,9 @@ public class SellListItem {
     @JoinColumn(name = "sellList_id")
     private SellList sellList;
 
-    @OneToOne
-    @JoinColumn(name = "material_id")
-    private Material material;
+    // One To One으로 하니깐 DB에 데이터를 넣을때 중복이 안됨(구매자 여러명이 이 과제를 샀을때를 구현 못함)
+    // 그래서 관계를 떼도 material Id로 해야할듯
+//    @OneToOne
+//    @JoinColumn(name = "material_id")
+    private Long materialId;
 }
