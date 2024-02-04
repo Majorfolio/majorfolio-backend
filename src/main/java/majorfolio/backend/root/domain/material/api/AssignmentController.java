@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +62,19 @@ public class AssignmentController {
                                                                        HttpServletRequest request){
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
         return new BaseResponse<>(assignmentService.showMyDetailMaterial(kakaoId, materialId));
+    }
+
+    /**
+     * 과제 상세페이지 통계 API
+     * @param materialId
+     * @return
+     */
+    @GetMapping("/my/{materialId}/detail/stats")
+    public BaseResponse<MaterialStatsResponse> showMaterialStat(@PathVariable(name = "materialId")
+                                                                Long materialId,
+                                                                HttpServletRequest request){
+        Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+        return new BaseResponse<>(assignmentService.getMaterialStats(kakaoId, materialId));
     }
 
 //    /**
