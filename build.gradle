@@ -84,6 +84,14 @@ dependencies {
 	//PDF
 	implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.1'
 
+	// Commons IO
+	implementation 'commons-io:commons-io:2.11.0'
+	implementation 'software.amazon.awssdk:s3:2.17.22'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
+
 }
 
 tasks.named('bootBuildImage') {

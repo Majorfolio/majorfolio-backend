@@ -16,13 +16,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import majorfolio.backend.root.domain.material.entity.Material;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Member테이블 생성
@@ -92,7 +90,7 @@ public class Member {
 
     @OneToOne
     @JoinColumn(name = "follower_id")
-    private FollwerList follwerList;
+    private FollowerList followerList;
 
     @OneToOne
     @JoinColumn(name = "couponBox_id")
@@ -103,7 +101,7 @@ public class Member {
                             Boolean personalAgree, Boolean serviceAgree,
                             Boolean marketingAgree, Basket basket,
                             BuyList buyList, SellList sellList,
-                            FollwerList follwerList, CouponBox couponBox){
+                            FollowerList followerList, CouponBox couponBox){
         return Member.builder()
                 .nickName(nickName)
                 .universityName(universityName)
@@ -116,7 +114,7 @@ public class Member {
                 .basket(basket)
                 .buyList(buyList)
                 .sellList(sellList)
-                .follwerList(follwerList)
+                .followerList(followerList)
                 .couponBox(couponBox)
                 .build();
     }
