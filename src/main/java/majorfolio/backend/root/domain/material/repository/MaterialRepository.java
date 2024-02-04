@@ -71,4 +71,12 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     Page<Material> findByMajorOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
 
     Page<Material> findByMajorOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
+
+    /**
+     * 이 수업의 다른 자료리스트 반환
+     * @author 김영록
+     * @param className
+     * @return
+     */
+    List<Material> findAllByClassNameAndStatus(String className, String status);
 }

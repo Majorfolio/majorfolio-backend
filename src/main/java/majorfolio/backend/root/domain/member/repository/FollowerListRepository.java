@@ -9,7 +9,7 @@
  */
 package majorfolio.backend.root.domain.member.repository;
 
-import majorfolio.backend.root.domain.member.entity.FollwerList;
+import majorfolio.backend.root.domain.member.entity.FollowerList;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -18,5 +18,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author 김영록
  * @version 0.0.1
  */
-public interface FollwerListRepository extends JpaRepository<FollwerList, Long> {
+public interface FollowerListRepository extends JpaRepository<FollowerList, Long> {
 }
