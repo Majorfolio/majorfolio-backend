@@ -124,7 +124,7 @@ public class MemberService {
         kakaoSocialLogin.setRefreshToken(refreshToken);
         kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
-        return LoginResponse.of(isMember, accessToken, refreshToken);
+        return LoginResponse.of(isMember, memberId, accessToken, refreshToken);
     }
 
     /**
