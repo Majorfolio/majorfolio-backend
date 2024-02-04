@@ -49,6 +49,12 @@ public class AssignmentController {
         return new BaseResponse<>(assignmentService.showDetailMaterial(materialId));
     }
 
+    /**
+     * 과제 상세페이지(판매자 입장) API
+     * @param materialId
+     * @param request
+     * @return
+     */
     @GetMapping("/my/{materialId}/detail/info")
     public BaseResponse<MaterialMyDetailResponse> showMyDetailMaterial(@PathVariable(name = "materialId")
                                                                        Long materialId,

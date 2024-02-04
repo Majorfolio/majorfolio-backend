@@ -146,6 +146,12 @@ public class AssignmentService {
         );
     }
 
+    /**
+     * 과제 상세페이지(판매자 입장) API 서비스 구현
+     * @param kakaoId
+     * @param materialId
+     * @return
+     */
     public MaterialMyDetailResponse showMyDetailMaterial(Long kakaoId, Long materialId){
         // 요청 사용자의 memberId 추출
         Long memberId = kakaoSocialLoginRepository.findById(kakaoId).get().getMember().getId();
