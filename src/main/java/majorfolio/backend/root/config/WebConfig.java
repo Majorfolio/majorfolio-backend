@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/member/login");
         registry.addInterceptor(serviceServerTokenInterceptor)
                 .order(1)
-                .addPathPatterns("/member/**", "/assignment/**")
+                .addPathPatterns("/member/**", "/assignment/**", "/my/**")
                 .excludePathPatterns("/member/login", "/member/remake/token", "/assignment/{materialId}/detail");
         registry.addInterceptor(refreshTokenInterceptor)
                 .order(1)
