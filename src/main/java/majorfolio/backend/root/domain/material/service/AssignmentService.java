@@ -22,6 +22,7 @@ import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.entity.Preview;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
 import majorfolio.backend.root.domain.member.entity.Member;
+import majorfolio.backend.root.domain.member.entity.View;
 import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
@@ -59,6 +60,9 @@ public class AssignmentService {
      * @return
      */
     public MaterialDetailResponse showDetailMaterial(Long materialId){
+        //조회수 올리기
+        doView(materialId);
+
         //id, 닉네임, 좋아요수, 북마크수, 제목, 설명, 대학교, 학과, 학기, 과목, 교수명, 학점, 점수, 만점, 페이지수
         Material material = materialRepository.findById(materialId).get();
         Member member = material.getMember();
@@ -163,6 +167,9 @@ public class AssignmentService {
         //판매자 입장 페이지에 들어갈 수 있는지 자격 증명
         validateMaterialAndMember(kakaoId, materialId);
 
+        //조회수 올리기
+        doView(materialId);
+
         Material material = materialRepository.findById(materialId).get();
         Member member = material.getMember();
 
@@ -217,6 +224,8 @@ public class AssignmentService {
         Material material = materialRepository.findById(materialId).get();
         //판매자 입장 페이지에 들어갈 수 있는지 자격 증명
         validateMaterialAndMember(kakaoId, materialId);
+
+
 
         // 날짜 연산
         LocalDateTime today = LocalDateTime.now();
@@ -281,6 +290,13 @@ public class AssignmentService {
         BookmarkStat bookmarkStat = BookmarkStat.of(totalBookmark, weeklyBookmark, todayBookmark);
 
         return MaterialStatsResponse.of(saleStat, viewStat, bookmarkStat);
+    }
+
+    //조
+    public void doView(Long materialId){
+        Material material = materialRepository.findById(materialId).get();
+        View view = View.of(material);
+        viewRepository.save(view);
     }
 
 

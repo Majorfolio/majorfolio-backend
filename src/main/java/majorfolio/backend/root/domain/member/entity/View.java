@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import majorfolio.backend.root.domain.material.entity.Material;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -35,6 +36,7 @@ public class View {
     @Column(name = "view_id")
     private Long id;
 
+    @CreationTimestamp
     private LocalDateTime date;
 
     @ManyToOne
@@ -44,4 +46,10 @@ public class View {
     @ManyToOne
     @JoinColumn(name = "material_id")
     private Material material;
+
+    public static View of(Material material){
+        return View.builder()
+                .material(material)
+                .build();
+    }
 }
