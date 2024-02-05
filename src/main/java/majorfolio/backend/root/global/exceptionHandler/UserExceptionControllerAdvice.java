@@ -11,6 +11,7 @@ package majorfolio.backend.root.global.exceptionHandler;
 
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.global.exception.NotCertificationUserException;
 import majorfolio.backend.root.global.exception.NotSatisfiedAgreePolicyException;
 import majorfolio.backend.root.global.exception.OverlapNicknameException;
 import majorfolio.backend.root.global.exception.UserException;
@@ -65,5 +66,16 @@ public class UserExceptionControllerAdvice {
     @ExceptionHandler(OverlapNicknameException.class)
     public BaseErrorResponse handle_OverlapNicknameException(OverlapNicknameException e){
         return new BaseErrorResponse(OVERLAP_NICKNAME, e.getMessage());
+    }
+
+    /**
+     * 이메일 인증한 사용자가 아닐때 예외사항 처리
+     * @param e
+     * @return
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotCertificationUserException.class)
+    public BaseErrorResponse handle_NotCertificationUserException(NotCertificationUserException e){
+        return new BaseErrorResponse(NOT_CERTIFICATION_USER, e.getMessage());
     }
 }

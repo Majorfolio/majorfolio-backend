@@ -13,6 +13,8 @@ import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.member.entity.SellListItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -31,4 +33,17 @@ public interface SellListItemRepository extends JpaRepository<SellListItem, Long
      * @return
      */
     Long countByMaterialIdAndStatus(Long materialId, String status);
+
+    /**
+     * 해당 과제물의 기간별 판매수를 알 수 있다.
+     * @author 김영록
+     * @param materialId
+     * @param status
+     * @param start
+     * @param end
+     * @return
+     */
+    Long countByMaterialIdAndStatusAndDateBetween(Long materialId, String status,
+                                                  LocalDateTime start, LocalDateTime end);
+
 }
