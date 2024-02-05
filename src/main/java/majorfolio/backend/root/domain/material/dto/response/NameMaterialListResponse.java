@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * material들의 list 응답 형태 정의
+ * 이 수업의 모든 자료애서의 material들의 list 응답 형태 정의
  * @author 김태혁
  * @version 0.0.1
  */

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * material의 응답 형태 정의
+ * 판매자의 material의 응답 형태 정의
  * @author 김태혁
  * @version 0.0.1
  */
@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @Builder
 public class SellerMaterialResponse {
     private final Long id;
+    private final Long memberId;
+    private final String imageUrl;
     private final String nickname;
     private final String name;
     private final String univ;
@@ -33,6 +35,8 @@ public class SellerMaterialResponse {
     public static SellerMaterialResponse of(Material material) {
         return SellerMaterialResponse.builder()
                 .id(material.getId())
+                .memberId(material.getMember().getId())
+                .imageUrl(material.getMember().getProfileImage())
                 .nickname(material.getMember().getNickName())
                 .name(material.getName())
                 .univ(material.getMember().getUniversityName())

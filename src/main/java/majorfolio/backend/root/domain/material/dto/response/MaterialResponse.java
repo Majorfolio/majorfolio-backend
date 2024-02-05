@@ -5,7 +5,7 @@ import lombok.Getter;
 import majorfolio.backend.root.domain.material.entity.Material;
 
 /**
- * material의 응답 형태 정의
+ * home 에서의 material의 응답 형태 정의
  * @author 김태혁
  * @version 0.0.1
  */
@@ -13,6 +13,8 @@ import majorfolio.backend.root.domain.material.entity.Material;
 @Builder
 public class MaterialResponse {
     private final Long id;
+    private final Long memberId;
+    private final String imageUrl;
     private final String nickname;
     private final String className;
     private final String univ;
@@ -29,6 +31,8 @@ public class MaterialResponse {
     public static MaterialResponse of(Material material) {
         return MaterialResponse.builder()
                 .id(material.getId())
+                .memberId(material.getMember().getId())
+                .imageUrl(material.getMember().getProfileImage())
                 .nickname(material.getMember().getNickName())
                 .className(material.getClassName())
                 .univ(material.getMember().getUniversityName())

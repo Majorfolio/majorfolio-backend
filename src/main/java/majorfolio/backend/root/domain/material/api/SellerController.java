@@ -19,6 +19,11 @@ public class SellerController {
     private final MaterialAllListService materialAllListService;
     private final ProfileService profileService;
 
+    /**
+     * /seller/assignment로 get 요청이 들어왔을 때 판매자의 모든 자료를 전달
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("/assignment")
     public SellerMaterialListResponse getAllSellerList(@RequestParam(name = "nickName") String nickName,
                                                        @RequestParam(name = "page") int page,
@@ -26,6 +31,11 @@ public class SellerController {
         return materialAllListService.getSellerList(page, pageSize, nickName);
     }
 
+    /**
+     * /seller/assignment로 get 요청이 들어왔을 때 판매자 프로필을 전달
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("/profile")
     public SellerProfileResponse getSellerProfile(@RequestParam(name = "nickName") String nickName){
         return profileService.getSellerProfile(nickName);

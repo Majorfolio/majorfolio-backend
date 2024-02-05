@@ -31,18 +31,33 @@ public class HomeController {
          return materialService.getAllList(cookieValue);
     }
 
+    /**
+     * "all/univ/newly-upload" get 요청이 왔을 때 모든학교의 최근 업로드 순 모든 자료 전달
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("all/univ/newly-upload")
     public SingleMaterialListResponse getAllUnivNewlyupload(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
         return materialAllListService.getAllUnivUploadList(page, pageSize);
     }
 
+    /**
+     * "all/univ/likes" get 요청이 왔을 때 모든학교의 좋아요 순 모든 자료 전달
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("all/univ/likes")
     public SingleMaterialListResponse getAllUnivLike(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
         return materialAllListService.getAllUnivLike(page, pageSize);
     }
 
+    /**
+     * "all/subject" get 입력된 과제와 같은 수업의 모든 자료를 전달
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("all/subject")
     public NameMaterialListResponse getAllSubjectNewly(@RequestParam(name = "materialID") Long materialID,
             @RequestParam(name = "page") int page,
@@ -61,6 +76,11 @@ public class HomeController {
         return materialService.getUnivList(request, cookieValue);
     }
 
+    /**
+     * "my/univ/newly-upload" get 요청이 나와 같은 학교의 모든 자료를 최근 업로드 순으로
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("my/univ/newly-upload")
     public SingleMaterialListResponse getMyUnivNewlyupload(@RequestParam(name = "page") int page,
                                                             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
@@ -68,6 +88,11 @@ public class HomeController {
         return materialAllListService.getMyUnivUploadList(page, pageSize, request);
     }
 
+    /**
+     * "my/univ/likes" get 요청이 나와 같은 학교의 모든 자료를 최근 좋아요 많은 순으로
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("my/univ/likes")
     public SingleMaterialListResponse getMyUnivLike(@RequestParam(name = "page") int page,
                                                      @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
@@ -85,6 +110,11 @@ public class HomeController {
         return materialService.getMajorList(request, cookieValue);
     }
 
+    /**
+     * /my/major/newly-upload로 get 요청이 왔을 때  내 학과의 모든 자료를 최근 업로드 순으로
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("my/major/newly-upload")
     public SingleMaterialListResponse getMyMajorNewlyupload(@RequestParam(name = "page") int page,
                                                            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
@@ -92,6 +122,11 @@ public class HomeController {
         return materialAllListService.getMyMajorUploadList(page, pageSize, request);
     }
 
+    /**
+     * /my/major/likes get 요청이 왔을 때  내 학과의 모든 자료를 최근 좋아요순으로
+     * @author 김태혁
+     * @version 0.0.1
+     */
     @GetMapping("my/major/likes")
     public SingleMaterialListResponse getMyMajorLike(@RequestParam(name = "page") int page,
                                                     @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
