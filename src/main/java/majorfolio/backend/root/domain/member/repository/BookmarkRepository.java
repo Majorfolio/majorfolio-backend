@@ -11,6 +11,8 @@ package majorfolio.backend.root.domain.member.repository;
 
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.member.entity.Bookmark;
+import majorfolio.backend.root.domain.member.entity.Likes;
+import majorfolio.backend.root.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -43,4 +45,6 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
      */
     Long countByMaterialAndIsCheckAndDateBetween(Material material, Boolean isCheck,
                                                  LocalDateTime start, LocalDateTime end);
+
+    Bookmark findByMemberAndMaterial(Member member, Material material);
 }

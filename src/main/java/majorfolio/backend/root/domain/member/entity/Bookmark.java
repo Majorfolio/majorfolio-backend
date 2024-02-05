@@ -10,11 +10,9 @@
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import majorfolio.backend.root.domain.material.entity.Material;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -29,13 +27,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class Bookmark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bookmark_id")
     private Long id;
 
+    @UpdateTimestamp
     private LocalDateTime date;
+
     private Boolean isCheck;
 
     @ManyToOne
@@ -46,4 +47,11 @@ public class Bookmark {
     @JoinColumn(name = "material_id")
     private Material material;
 
+    public static Bookmark of(Material material, Member member, boolean isCheck) {
+        return Bookmark.builder()
+                .material(material)
+                .member(member)
+                .isCheck(isCheck)
+                .build();
+    }
 }
