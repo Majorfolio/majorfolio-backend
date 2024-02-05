@@ -7,7 +7,9 @@ import majorfolio.backend.root.domain.material.dto.response.MaterialListResponse
 import majorfolio.backend.root.domain.material.dto.response.MaterialResponse;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
+import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
+import majorfolio.backend.root.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +32,10 @@ public class MaterialService {
      */
     public List<MaterialResponse> getNewUploadList() {
         List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDescIdAsc();
+        if (newUploadMaterials == null || newUploadMaterials.isEmpty()) {
+            // 자료가 1개도 없을 때의 예외 처리 또는 메시지 전달 등의 처리
+            throw new NotFoundException("자료 없습니다.");
+        }
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -115,8 +121,22 @@ public class MaterialService {
      * @version 0.0.1
      */
     public MaterialListResponse getUnivList(HttpServletRequest request, String cookieValue) {
-        //Long kakaoId = Long.parseLong(request.getAttribute("kakao_id").toString());
-        Long kakaoId = 2L;
+        Object kakaoIdAttribute = request.getAttribute("kakao_id");
+
+        if (kakaoIdAttribute == null) {
+            // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
+            throw new NotFoundException("카카오 아이디를 찾을 수 없습니다.");
+        }
+
+        Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
+
+        // 카카오 아이디에 해당하는 값 조회
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
+        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getUniversityName() == null) {
+            // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
+            throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
+        }
+        //Long kakaoId = 2L;
         String univName = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getUniversityName();
 
         List<MaterialResponse> recentList;
@@ -184,8 +204,22 @@ public class MaterialService {
      * @version 0.0.1
      */
     public MaterialListResponse getMajorList(HttpServletRequest request, String cookieValue) {
-        //Long kakaoId = Long.parseLong(request.getAttribute("kakao_id").toString());
-        Long kakaoId = 2L;
+        Object kakaoIdAttribute = request.getAttribute("kakao_id");
+
+        if (kakaoIdAttribute == null) {
+            // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
+            throw new NotFoundException("카카오 아이디를 찾을 수 없습니다.");
+        }
+
+        Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
+
+        // 카카오 아이디에 해당하는 값 조회
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
+        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
+            // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
+            throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
+        }
+        //Long kakaoId = 2L;
         String major = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getMajor1();
 
         List<MaterialResponse> recentList;

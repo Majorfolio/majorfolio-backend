@@ -6,25 +6,25 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * 하나의 타입의 material list 응답 형태 정의
+ * 이 수업의 모든 자료애서의 material들의 list 응답 형태 정의
  * @author 김태혁
  * @version 0.0.1
  */
 @Getter
 @Builder
-public class SingleMaterialListResponse {
+public class NameMaterialListResponse {
     private int page;
-    private final List<MaterialResponse> materialResponseList;
+    private final List<NameMaterialResponse> newUpload;
 
     /**
      * material들의 list 응답 형태 생성
      * @author 김태혁
      * @version 0.0.1
      */
-    public static SingleMaterialListResponse of(int page, List<MaterialResponse> materialResponseList){
-        return SingleMaterialListResponse.builder()
+    public static NameMaterialListResponse of(int page, List<NameMaterialResponse> newUpload){
+        return NameMaterialListResponse.builder()
                 .page(page)
-                .materialResponseList(materialResponseList)
+                .newUpload(newUpload)
                 .build();
     }
 }

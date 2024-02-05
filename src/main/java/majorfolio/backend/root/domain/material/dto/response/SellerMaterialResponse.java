@@ -4,42 +4,47 @@ import lombok.Builder;
 import lombok.Getter;
 import majorfolio.backend.root.domain.material.entity.Material;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
- * home 에서의 material의 응답 형태 정의
+ * 판매자의 material의 응답 형태 정의
  * @author 김태혁
  * @version 0.0.1
  */
 @Getter
 @Builder
-public class MaterialResponse {
+public class SellerMaterialResponse {
     private final Long id;
     private final Long memberId;
     private final String imageUrl;
     private final String nickname;
-    private final String className;
+    private final String name;
     private final String univ;
     private final String major;
     private final String semester;
     private final String professor;
     private final int like;
+    private final LocalDateTime createdAt;
 
     /**
      * material의 응답 형태 생성
      * @author 김태혁
      * @version 0.0.1
      */
-    public static MaterialResponse of(Material material) {
-        return MaterialResponse.builder()
+    public static SellerMaterialResponse of(Material material) {
+        return SellerMaterialResponse.builder()
                 .id(material.getId())
                 .memberId(material.getMember().getId())
                 .imageUrl(material.getMember().getProfileImage())
                 .nickname(material.getMember().getNickName())
-                .className(material.getClassName())
+                .name(material.getName())
                 .univ(material.getMember().getUniversityName())
                 .major(material.getMajor())
                 .semester(material.getSemester())
                 .professor(material.getProfessor())
                 .like(material.getTotalRecommend())
+                .createdAt(material.getCreatedAt())
                 .build();
     }
 }
