@@ -6,25 +6,25 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * 하나의 타입의 material list 응답 형태 정의
+ * 판매자의 material들의 list 응답 형태 정의
  * @author 김태혁
  * @version 0.0.1
  */
 @Getter
 @Builder
-public class SingleMaterialListResponse {
+public class SellerMaterialListResponse {
     private int page;
-    private final List<MaterialResponse> materialResponseList;
+    private final List<SellerMaterialResponse> sellList;
 
     /**
      * material들의 list 응답 형태 생성
      * @author 김태혁
      * @version 0.0.1
      */
-    public static SingleMaterialListResponse of(int page, List<MaterialResponse> materialResponseList){
-        return SingleMaterialListResponse.builder()
+    public static SellerMaterialListResponse of(int page, List<SellerMaterialResponse> sellList){
+        return SellerMaterialListResponse.builder()
                 .page(page)
-                .materialResponseList(materialResponseList)
+                .sellList(sellList)
                 .build();
     }
 }

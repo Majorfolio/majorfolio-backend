@@ -124,7 +124,7 @@ public class MemberService {
         kakaoSocialLogin.setRefreshToken(refreshToken);
         kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
-        return LoginResponse.of(isMember, accessToken, refreshToken);
+        return LoginResponse.of(isMember, memberId, accessToken, refreshToken);
     }
 
     /**
@@ -199,6 +199,9 @@ public class MemberService {
         try {
             // 이메일 레포지토리 생성
             emailDB = emailDBRepository.findById(signupRequest.getEmailId()).get();
+            if(!emailDB.getStatus()){
+                throw new UserException(INVALID_USER_VALUE);
+            }
             kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
         }catch (NoSuchElementException e){
             throw new UserException(INVALID_USER_VALUE);

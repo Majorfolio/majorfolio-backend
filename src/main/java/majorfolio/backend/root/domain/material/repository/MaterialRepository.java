@@ -1,6 +1,7 @@
 package majorfolio.backend.root.domain.material.repository;
 
 import majorfolio.backend.root.domain.material.entity.Material;
+import majorfolio.backend.root.domain.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -61,16 +62,61 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @version 0.0.1
      */
     Material findByIdAndMajor(Long id, String major);
+    /**
+     * 페이지에 따라 모든 과제의 최근 업로드 순
+     * @author 김태혁
+     * @version 0.0.1
+     */
     Page<Material> findByOrderByCreatedAtDescIdAsc(Pageable pageable);
+
+    /**
+     * 페이지에 따라 모든 과제의 좋아요 많은 순
+     * @author 김태혁
+     * @version 0.0.1
+     */
     Page<Material> findByOrderByTotalRecommendDescIdAsc(Pageable pageable);
 
+    /**
+     * 페이지에 따라 내 학교의 최근 업로드 순
+     * @author 김태혁
+     * @version 0.0.1
+     */
     Page<Material> findByMemberUniversityNameOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
 
+    /**
+     * 페이지에 따라 내 학교의 좋아요 많은 순
+     * @author 김태혁
+     * @version 0.0.1
+     */
     Page<Material> findByMemberUniversityNameOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
 
+    /**
+     * 페이지에 따라 내 학과의 최근 업로드 순
+     * @author 김태혁
+     * @version 0.0.1
+     */
     Page<Material> findByMajorOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
 
+    /**
+     * 페이지에 따라 내 학과의 좋아요 많은 순
+     * @author 김태혁
+     * @version 0.0.1
+     */
     Page<Material> findByMajorOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
+
+    /**
+     * 페이지에 따라 이 수업의 모든 자료
+     * @author 김태혁
+     * @version 0.0.1
+     */
+    Page<Material> findByClassNameAndProfessorAndMember_UniversityNameAndMajor(String className, String professor, String universityName, String major, Pageable pageable);
+
+    /**
+     * 페이지에 따라 판매자의 모든 자료
+     * @author 김태혁
+     * @version 0.0.1
+     */
+    Page<Material> findByMember(Member member, Pageable pageable);
 
     /**
      * 이 수업의 다른 자료리스트 반환
@@ -79,4 +125,5 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @return
      */
     List<Material> findAllByClassNameAndStatus(String className, String status);
+
 }

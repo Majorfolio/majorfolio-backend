@@ -50,10 +50,12 @@ public class WebSecurityConfig {
                         "/health-check",
                         "/v3/api-docs/**",
                         "/home/banner",
-                        "home/all/univ/**",
+                        "/home/all/**",
+                        "/seller/**",
                         "/assignment/upload",
                         "/majorfolio/**",
                         "assignment/{materialId}/detail")
+
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }
 }
