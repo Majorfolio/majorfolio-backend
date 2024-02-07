@@ -31,7 +31,7 @@ public class SellerController {
     }
 
     /**
-     * /seller/assignment로 get 요청이 들어왔을 때 판매자 프로필을 전달
+     * /seller/profile get 요청이 들어왔을 때 판매자 프로필을 전달
      * @author 김태혁
      * @version 0.0.1
      */

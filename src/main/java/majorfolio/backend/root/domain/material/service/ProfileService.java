@@ -48,6 +48,12 @@ public class ProfileService {
         return ProfileResponse.of(member, uploadSize, totalSale, totalFollower);
     }
 
+    /**
+     * request로 유저의 accessToken이 들어왔을 때 해당유저의 마이페이지에 정보를 전달하기 위해
+     * 응답 형태를 반환하는 메서드
+     * @param request
+     * @return
+     */
     public ProfileResponse getUserProfile(HttpServletRequest request) {
         Object kakaoIdAttribute = request.getAttribute("kakaoId");
 

@@ -30,6 +30,12 @@ public class MyController {
     private final MyService myService;
     private final ProfileService profileService;
 
+    /**
+     * 마이페이지 정보 요청 API
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/")
     public ProfileResponse getSellerProfile(HttpServletRequest request){
         return profileService.getUserProfile(request);
