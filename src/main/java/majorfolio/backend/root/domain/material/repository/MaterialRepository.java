@@ -126,4 +126,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      */
     List<Material> findAllByClassNameAndStatus(String className, String status);
 
+    List<Material> findAllByMemberAndStatus(Member member, String status);
+
 }

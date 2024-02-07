@@ -2,9 +2,8 @@ package majorfolio.backend.root.domain.material.api;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.material.dto.response.NameMaterialListResponse;
+import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
 import majorfolio.backend.root.domain.material.dto.response.SellerMaterialListResponse;
-import majorfolio.backend.root.domain.material.dto.response.SellerProfileResponse;
 import majorfolio.backend.root.domain.material.service.MaterialAllListService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +36,7 @@ public class SellerController {
      * @version 0.0.1
      */
     @GetMapping("/profile")
-    public SellerProfileResponse getSellerProfile(@RequestParam(name = "nickName") String nickName){
-        return profileService.getSellerProfile(nickName);
+    public ProfileResponse getSellerProfile(@RequestParam(name = "memberId") Long memberId){
+        return profileService.getProfile(memberId);
     }
 }
