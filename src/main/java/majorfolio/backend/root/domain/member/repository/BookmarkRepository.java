@@ -13,6 +13,8 @@ import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.member.entity.Bookmark;
 import majorfolio.backend.root.domain.member.entity.Likes;
 import majorfolio.backend.root.domain.member.entity.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -47,4 +49,14 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
                                                  LocalDateTime start, LocalDateTime end);
 
     Bookmark findByMemberAndMaterial(Member member, Material material);
+
+    /**
+     * 내가 북마크한 리스트 모아보기 jpql(최근 북마크한 순으로)
+     * @author 김영록
+     * @param member
+     * @param isCheck
+     * @param pageable
+     * @return
+     */
+    Page<Bookmark> findByMemberAndIsCheckOrderByDateDescIdAsc(Member member, boolean isCheck, Pageable pageable);
 }

@@ -11,6 +11,7 @@ package majorfolio.backend.root.domain.material.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import majorfolio.backend.root.domain.material.dto.response.BookmarkListResponse;
 import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
 import majorfolio.backend.root.domain.material.service.MyService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
@@ -65,5 +66,20 @@ public class MyController {
                                      HttpServletRequest request){
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
         return new BaseResponse<>(myService.bookmark(materialId, kakaoId));
+    }
+
+    /**
+     * 내가 북마크 한거 모아보기(페이징 처리 포함)
+     * @param page
+     * @param pageSize
+     * @param request
+     * @return
+     */
+    @GetMapping("/bookmark")
+    public BaseResponse<BookmarkListResponse> showBookmarkList(@RequestParam(name = "page") int page,
+                                                               @RequestParam(name = "pageSize", defaultValue = "5") int pageSize,
+                                                               HttpServletRequest request){
+        Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+        return new BaseResponse<>(myService.showBookmarkList(page, pageSize, kakaoId));
     }
 }
