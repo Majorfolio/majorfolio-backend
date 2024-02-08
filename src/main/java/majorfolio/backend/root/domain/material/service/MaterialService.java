@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
+
 /**
  * 과제를 조회하기 위해 필요한 기능을 정의한 서비스
  * @author 김태혁
@@ -37,7 +40,7 @@ public class MaterialService {
         List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDescIdAsc();
         if (newUploadMaterials == null || newUploadMaterials.isEmpty()) {
             // 자료가 1개도 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("자료 없습니다.");
+            throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
@@ -128,7 +131,7 @@ public class MaterialService {
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("카카오 아이디를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_KAKAOID);
         }
 
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
@@ -137,7 +140,7 @@ public class MaterialService {
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
         if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
             // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_INFO_FROM_KAKAOID);
         }
 
 
@@ -212,7 +215,7 @@ public class MaterialService {
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("카카오 아이디를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_KAKAOID);
         }
 
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
@@ -221,7 +224,7 @@ public class MaterialService {
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
         if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
             // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_INFO_FROM_KAKAOID);
         }
         //Long kakaoId = 2L;
         String major = kakaoSocialLogin.getMember().getMajor1();

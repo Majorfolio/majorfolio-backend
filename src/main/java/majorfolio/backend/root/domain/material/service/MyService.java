@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_INFO_FROM_KAKAOID;
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_MATERIAL;
+
 /**
  * /My 요청에 관한 서비스 로직 정의
  *
@@ -137,7 +140,7 @@ public class MyService {
         try {
             member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         } catch (NoSuchElementException e){
-            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_INFO_FROM_KAKAOID);
         }
 
         Page<Bookmark> bookmarkPage = bookmarkRepository.findByMemberAndIsCheckOrderByDateDescIdAsc(member, true, pageable);
@@ -146,7 +149,7 @@ public class MyService {
 
         if (myMaterialList == null || myMaterialList.isEmpty()) {
             // 더 이상 자료가 없습니다. 예외 발생 또는 메시지 전달 등의 처리
-            throw new NotFoundException("더 이상 자료가 없습니다.");
+            throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
         return MyMaterialResponse.of(page, myMaterialList);
@@ -165,7 +168,7 @@ public class MyService {
         try {
             member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         } catch (NoSuchElementException e){
-            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_INFO_FROM_KAKAOID);
         }
 
         Page<Likes> likesPage = likeRepository.findByMemberAndIsCheckOrderByDateDescIdAsc(member, true, pageable);
@@ -174,7 +177,7 @@ public class MyService {
 
         if (myMaterialList == null || myMaterialList.isEmpty()) {
             // 더 이상 자료가 없습니다. 예외 발생 또는 메시지 전달 등의 처리
-            throw new NotFoundException("더 이상 자료가 없습니다.");
+            throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
         return MyMaterialResponse.of(page, myMaterialList);
