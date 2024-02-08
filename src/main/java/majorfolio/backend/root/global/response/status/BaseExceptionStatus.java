@@ -68,13 +68,27 @@ public enum BaseExceptionStatus implements ResponseStatus{
     INVALID_USER_VALUE(6000, HttpStatus.BAD_REQUEST.value(), "회원가입 요청에서 잘못된 값이 존재합니다."),
     NOT_SATISFIED_AGREE_POLICY(6001, HttpStatus.BAD_REQUEST.value(), "필수 동의항목에 동의해야 합니다."),
     OVERLAP_NICKNAME(6002, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임 입니다."),
-    NOT_CERTIFICATION_USER(6003, HttpStatus.BAD_REQUEST.value(), "이메일 인증한 사용하가 아닙니다."),
+    NOT_CERTIFICATION_USER(6003, HttpStatus.BAD_REQUEST.value(), "이메일 인증한 사용자가 아닙니다."),
+    NOT_FOUND_USER(6004, HttpStatus.BAD_REQUEST.value(), "토큰에서 사용자를 찾을 수 없습니다."),
 
     /**
      * 7000 : 과제관련 오류
      */
 
-    NOT_MATCH_MATERIAL_AND_MEMBER(7001, HttpStatus.BAD_REQUEST.value(), "과제 주인과 현재 사용자가 다릅니다.");
+    NOT_MATCH_MATERIAL_AND_MEMBER(7001, HttpStatus.BAD_REQUEST.value(), "과제 주인과 현재 사용자가 다릅니다."),
+
+    /**
+     * 8000 : Found관련 오류
+     */
+
+    NOT_FOUND_MATERIAL(8001, HttpStatus.NOT_FOUND.value(), "자료가 더 이상 없습니다"),
+    NOT_FOUND_KAKAOID(8002, HttpStatus.NOT_FOUND.value(), "카카오 아이디를 찾을 수 없습니다."),
+    NOT_FOUND_INFO_FROM_KAKAOID(8003, HttpStatus.NOT_FOUND.value(), "카카오 아이디에 해당하는 정보를 찾을 수 없습니다."),
+    NOT_FOUND_MEMBER_FROM_NICKNAME(8004, HttpStatus.NOT_FOUND.value(), "해당 닉네임에 대한 멤버를 찾을 수 없습니다."),
+    NOT_FOUND_MATERIAL_FROM_MEMBER_ID(8005, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 자료를 찾을 수 없습니다.");
+
+
+
 
 
 

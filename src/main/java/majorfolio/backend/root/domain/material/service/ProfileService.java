@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
+
 /**
  * 프로필에 대한 기능을 수행하는 Service
  * @author 김태혁
@@ -34,7 +36,7 @@ public class ProfileService {
         Member member = memberRepository.findById(memberId).orElse(null);
         if (member == null) {
             // 해당 닉네임에 대한 멤버를 찾을 수 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("해당 닉네임에 대한 멤버를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_MEMBER_FROM_NICKNAME);
         }
         Long uploadSize = 0L;
         Long totalSale = 0L;
@@ -59,7 +61,7 @@ public class ProfileService {
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-            throw new NotFoundException("카카오 아이디를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_KAKAOID);
         }
 
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
@@ -67,7 +69,7 @@ public class ProfileService {
         // 카카오 아이디에 해당하는 값 조회
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
         if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null ) {
-            throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
+            throw new NotFoundException(NOT_FOUND_INFO_FROM_KAKAOID);
         }
 
         Long memberId = kakaoSocialLogin.getMember().getId();
