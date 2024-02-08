@@ -11,17 +11,17 @@ import majorfolio.backend.root.domain.member.entity.Member;
  */
 @Getter
 @Builder
-public class SellerProfileResponse {
+public class ProfileResponse {
     private String nickName;
     private String univName;
     private String major;
     private String image_url;
-    private int upload;
-    private int sell;
-    private int follower;
+    private Long upload;
+    private Long sell;
+    private Long follower;
 
-    public static SellerProfileResponse of(Member member, int upload, int sell, int follower){
-        return SellerProfileResponse.builder()
+    public static ProfileResponse of(Member member, Long upload, Long sell, Long follower){
+        return ProfileResponse.builder()
                 .nickName(member.getNickName())
                 .univName(member.getUniversityName())
                 .major(member.getMajor1())

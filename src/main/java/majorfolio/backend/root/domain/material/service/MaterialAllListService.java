@@ -75,8 +75,7 @@ public class MaterialAllListService {
      */
     public SingleMaterialListResponse getMyUnivUploadList(int page, int pageSize, HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-
-        Object kakaoIdAttribute = request.getAttribute("kakao_id");
+        Object kakaoIdAttribute = request.getAttribute("kakaoId");
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
@@ -86,14 +85,14 @@ public class MaterialAllListService {
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
 
         // 카카오 아이디에 해당하는 값 조회
-        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
-        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getUniversityName() == null) {
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
+        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
             // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
             throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
         }
 
-        //Long kakaoId = 2L;
-        String univName = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getUniversityName();
+
+        String univName = kakaoSocialLogin.getMember().getUniversityName();
         Page<Material> materialPage = materialRepository.findByMemberUniversityNameOrderByCreatedAtDescIdAsc(univName, pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
@@ -113,7 +112,7 @@ public class MaterialAllListService {
     public SingleMaterialListResponse getMyUnivLike(int page, int pageSize, HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
 
-        Object kakaoIdAttribute = request.getAttribute("kakao_id");
+        Object kakaoIdAttribute = request.getAttribute("kakaoId");
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
@@ -123,14 +122,14 @@ public class MaterialAllListService {
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
 
         // 카카오 아이디에 해당하는 값 조회
-        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
-        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getUniversityName() == null) {
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
+        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
             // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
             throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
         }
 
-        //Long kakaoId = 2L;
-        String univName = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getUniversityName();
+
+        String univName = kakaoSocialLogin.getMember().getUniversityName();
         Page<Material> materialPage = materialRepository.findByMemberUniversityNameOrderByTotalRecommendDescIdAsc(univName, pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
@@ -150,7 +149,7 @@ public class MaterialAllListService {
     public SingleMaterialListResponse getMyMajorUploadList(int page, int pageSize, HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
 
-        Object kakaoIdAttribute = request.getAttribute("kakao_id");
+        Object kakaoIdAttribute = request.getAttribute("kakaoId");
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
@@ -160,14 +159,13 @@ public class MaterialAllListService {
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
 
         // 카카오 아이디에 해당하는 값 조회
-        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
         if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
             // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
             throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
         }
 
-        //Long kakaoId = 2L;
-        String major = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getMajor1();
+        String major = kakaoSocialLogin.getMember().getMajor1();
         Page<Material> materialPage = materialRepository.findByMajorOrderByCreatedAtDescIdAsc(major, pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
@@ -186,7 +184,7 @@ public class MaterialAllListService {
      */
     public SingleMaterialListResponse getMyMajorLike(int page, int pageSize, HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Object kakaoIdAttribute = request.getAttribute("kakao_id");
+        Object kakaoIdAttribute = request.getAttribute("kakaoId");
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
@@ -196,13 +194,13 @@ public class MaterialAllListService {
         Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
 
         // 카카오 아이디에 해당하는 값 조회
-        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
         if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
             // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
             throw new NotFoundException("카카오 아이디에 해당하는 정보를 찾을 수 없습니다.");
         }
-        //Long kakaoId = 2L;
-        String major = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getMajor1();
+
+        String major = kakaoSocialLogin.getMember().getMajor1();
         Page<Material> materialPage = materialRepository.findByMajorOrderByTotalRecommendDescIdAsc(major, pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
