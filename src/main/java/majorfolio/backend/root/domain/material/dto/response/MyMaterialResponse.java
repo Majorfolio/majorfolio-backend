@@ -22,14 +22,14 @@ import java.util.List;
  */
 @Getter
 @Builder
-public class BookmarkListResponse {
+public class MyMaterialResponse {
     private int page;
-    private List<MyBookmark> myBookmarkList;
+    private List<MyMaterial> myMaterialList;
 
-    public static BookmarkListResponse of(int page, List<MyBookmark> myBookmarkList){
-        return BookmarkListResponse.builder()
+    public static MyMaterialResponse of(int page, List<MyMaterial> myMaterialList){
+        return MyMaterialResponse.builder()
                 .page(page)
-                .myBookmarkList(myBookmarkList)
+                .myMaterialList(myMaterialList)
                 .build();
     }
 

@@ -20,7 +20,7 @@ import lombok.Getter;
  */
 @Getter
 @Builder
-public class MyBookmark {
+public class MyMaterial {
     private String nickName;
     private String profileUrl;
     private String className;
@@ -29,7 +29,7 @@ public class MyBookmark {
     private String type;
     private int totalRecommend;
 
-    public static MyBookmark of(
+    public static MyMaterial of(
             String nickName,
             String profileUrl,
             String className,
@@ -38,7 +38,7 @@ public class MyBookmark {
             String type,
             int totalRecommend
     ){
-        return MyBookmark.builder()
+        return MyMaterial.builder()
                 .nickName(nickName)
                 .profileUrl(profileUrl)
                 .className(className)

@@ -9,10 +9,9 @@
  */
 package majorfolio.backend.root.domain.material.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.material.dto.response.BookmarkListResponse;
-import majorfolio.backend.root.domain.material.dto.response.MyBookmark;
+import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
+import majorfolio.backend.root.domain.material.dto.response.MyMaterial;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
 import majorfolio.backend.root.domain.member.entity.Bookmark;
@@ -22,7 +21,6 @@ import majorfolio.backend.root.domain.member.repository.BookmarkRepository;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.domain.member.repository.LikeRepository;
 import majorfolio.backend.root.global.exception.NotFoundException;
-import majorfolio.backend.root.global.exception.UserException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -133,7 +131,7 @@ public class MyService {
      * @param kakaoId
      * @return
      */
-    public BookmarkListResponse showBookmarkList(int page, int pageSize, Long kakaoId){
+    public MyMaterialResponse showBookmarkList(int page, int pageSize, Long kakaoId){
         Pageable pageable = PageRequest.of(page - 1, pageSize);
         Member member;
         try {
@@ -144,9 +142,42 @@ public class MyService {
 
         Page<Bookmark> bookmarkPage = bookmarkRepository.findByMemberAndIsCheckOrderByDateDescIdAsc(member, true, pageable);
 
-        List<MyBookmark> myBookmarkList = convertBookmarkListResponse(bookmarkPage.getContent());
+        List<MyMaterial> myMaterialList = convertBookmarkListResponse(bookmarkPage.getContent());
 
-        return BookmarkListResponse.of(page, myBookmarkList);
+        if (myMaterialList == null || myMaterialList.isEmpty()) {
+            // 더 이상 자료가 없습니다. 예외 발생 또는 메시지 전달 등의 처리
+            throw new NotFoundException("더 이상 자료가 없습니다.");
+        }
+
+        return MyMaterialResponse.of(page, myMaterialList);
+    }
+
+    /**
+     * 마이페이지 좋아요 한거 모아보기 api서비스 구현
+     * @param page
+     * @param pageSize
+     * @param kakaoId
+     * @return
+     */
+    public MyMaterialResponse showLikeList(int page, int pageSize, Long kakaoId){
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        Member member;
+        try {
+            member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
+        } catch (NoSuchElementException e){
+            throw new NotFoundException("해당 유저를 찾을 수 없습니다.");
+        }
+
+        Page<Likes> likesPage = likeRepository.findByMemberAndIsCheckOrderByDateDescIdAsc(member, true, pageable);
+
+        List<MyMaterial> myMaterialList = convertLikeListResponse(likesPage.getContent());
+
+        if (myMaterialList == null || myMaterialList.isEmpty()) {
+            // 더 이상 자료가 없습니다. 예외 발생 또는 메시지 전달 등의 처리
+            throw new NotFoundException("더 이상 자료가 없습니다.");
+        }
+
+        return MyMaterialResponse.of(page, myMaterialList);
     }
 
     /**
@@ -154,29 +185,50 @@ public class MyService {
      * @param bookmarkList
      * @return
      */
-    public List<MyBookmark> convertBookmarkListResponse(List<Bookmark> bookmarkList){
-        List<MyBookmark> bookmarks = new ArrayList<>();
+    public List<MyMaterial> convertBookmarkListResponse(List<Bookmark> bookmarkList){
+        List<MyMaterial> bookmarks = new ArrayList<>();
         for(Bookmark bookmark : bookmarkList){
             Material material = bookmark.getMaterial();
-            Member owner = material.getMember();
+            MyMaterial myMaterial = getMyMaterial(material);
 
-            //과제 오너의 닉네임, 프로필 이미지, 대학명 가져오기
-            String nickName = owner.getNickName();
-            String profileUrl = owner.getProfileImage();
-            String university = owner.getUniversityName();
-
-            //과제 이름, 그 과제의 학과, 좋아요 수, 타입 가져오기
-            String className = material.getClassName();
-            String major = material.getMajor();
-            int totalRecommend = material.getTotalRecommend();
-            String type = material.getType();
-
-            MyBookmark myBookmark = MyBookmark.of(nickName, profileUrl, className,
-                    university, major, type, totalRecommend);
-
-            bookmarks.add(myBookmark);
+            bookmarks.add(myMaterial);
         }
 
         return bookmarks;
+    }
+
+    public List<MyMaterial> convertLikeListResponse(List<Likes> likeList){
+        List<MyMaterial> likes = new ArrayList<>();
+        for(Likes like : likeList){
+            Material material = like.getMaterial();
+            MyMaterial myMaterial = getMyMaterial(material);
+
+            likes.add(myMaterial);
+        }
+
+        return likes;
+    }
+
+    /**
+     * 중복 코드 없애기 위해 getMyMaterial메소드 생성
+     * @param material
+     * @return
+     */
+    public MyMaterial getMyMaterial(Material material){
+        Member owner = material.getMember();
+
+        //과제 오너의 닉네임, 프로필 이미지, 대학명 가져오기
+        String nickName = owner.getNickName();
+        String profileUrl = owner.getProfileImage();
+        String university = owner.getUniversityName();
+
+        //과제 이름, 그 과제의 학과, 좋아요 수, 타입 가져오기
+        String className = material.getClassName();
+        String major = material.getMajor();
+        int totalRecommend = material.getTotalRecommend();
+        String type = material.getType();
+
+        return MyMaterial.of(nickName, profileUrl, className,
+                university, major, type, totalRecommend);
     }
 }
