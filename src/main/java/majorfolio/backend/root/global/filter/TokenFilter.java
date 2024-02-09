@@ -12,6 +12,7 @@ package majorfolio.backend.root.global.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.JwtUnsupportedTokenTypeException;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
  * @author 김영록
  * @version 0.0.1
  */
+@Slf4j
 public class TokenFilter implements Filter {
 
     @Override
@@ -40,6 +42,7 @@ public class TokenFilter implements Filter {
         final String BASIC_TYPE_PREFIX = "Bearer";
         final HttpServletRequest request = (HttpServletRequest) servletRequest;
         final String authorization = request.getHeader("Authorization");
+        log.info("authorization : " + authorization);
         final boolean isBasicAuthentication = authorization != null && authorization.toLowerCase().startsWith(BASIC_TYPE_PREFIX.toLowerCase());
 
         if (!isBasicAuthentication) {
