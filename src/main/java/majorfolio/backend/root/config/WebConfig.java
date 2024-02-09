@@ -9,6 +9,9 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
@@ -33,9 +36,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000") // 허용할 출처
-                .allowedHeaders("*")
                 .allowedMethods("*") // 허용할 HTTP method
-                .exposedHeaders("Authorization")
+                .allowedHeaders(String.valueOf(Arrays.asList("authorization", "content-type", "x-auth-token")))
+                .exposedHeaders(String.valueOf(List.of("x-auth-token")))
                 .allowCredentials(false) // 쿠키 인증 요청 허용
                 .maxAge(3000); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
     }
