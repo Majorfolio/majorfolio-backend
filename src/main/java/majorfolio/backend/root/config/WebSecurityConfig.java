@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @Slf4j
 @Configuration
@@ -28,6 +29,8 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         Filter tokenFilter = new TokenFilter();
         http
+                .authorizeHttpRequests(authorize ->
+                        authorize.requestMatchers(CorsUtils::isPreFlightRequest).permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .formLogin(FormLoginConfigurer::disable)
