@@ -36,6 +36,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000") // 허용할 출처
+                .allowedOrigins("https://majorfolio-server.shop")
                 .allowedMethods("*") // 허용할 HTTP method
                 .allowedHeaders(String.valueOf(Arrays.asList("authorization", "content-type", "x-auth-token")))
                 .exposedHeaders(String.valueOf(List.of("x-auth-token")))
