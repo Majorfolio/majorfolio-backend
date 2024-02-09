@@ -38,9 +38,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000") // 허용할 출처
                 .allowedOrigins("https://majorfolio-server.shop")
                 .allowedMethods("*") // 허용할 HTTP method
-                .allowedHeaders(String.valueOf(Arrays.asList("authorization", "content-type", "x-auth-token")))
-                .exposedHeaders(String.valueOf(List.of("x-auth-token")))
-                .allowCredentials(false) // 쿠키 인증 요청 허용
+                .exposedHeaders("X-AUTH-TOKEN")
+                .allowCredentials(true) // 쿠키 인증 요청 허용
                 .maxAge(3000); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
     }
 }
