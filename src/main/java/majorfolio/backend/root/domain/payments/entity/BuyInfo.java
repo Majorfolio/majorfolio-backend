@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 결제를 통해 생성되는 구매정보에 대한 클래스
+ */
 @Entity
 @Builder
 @NoArgsConstructor
