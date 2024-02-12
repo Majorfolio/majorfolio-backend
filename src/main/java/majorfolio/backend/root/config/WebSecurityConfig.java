@@ -81,7 +81,9 @@ public class WebSecurityConfig {
                 HttpMethod.OPTIONS.name())
         );
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setAllowedHeaders(List.of("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"));
+        corsConfiguration.setExposedHeaders(List.of("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
         corsConfiguration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
