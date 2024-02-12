@@ -48,4 +48,23 @@ public class SellListItem {
 //    @OneToOne
 //    @JoinColumn(name = "material_id")
     private Long materialId;
+
+    /**
+     * SellListItem 생성 메서드
+     * @param date
+     * @param buyer
+     * @param sellList
+     * @param materialId
+     * @return
+     */
+    public static SellListItem of(LocalDateTime date, Long buyer, SellList sellList,
+                                  Long materialId){
+        return SellListItem.builder()
+                .status("pending")
+                .date(date)
+                .buyer(buyer)
+                .sellList(sellList)
+                .materialId(materialId)
+                .build();
+    }
 }
