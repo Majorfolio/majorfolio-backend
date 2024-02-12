@@ -8,6 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * 구매한 아이템들을 정의한 클래스
+ */
 @Builder
 @Entity
 @AllArgsConstructor
