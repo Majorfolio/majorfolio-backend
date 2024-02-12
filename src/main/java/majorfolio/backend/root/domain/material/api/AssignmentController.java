@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/assignment")
+@CrossOrigin(originPatterns = "http://localhost:3000")
 @RequiredArgsConstructor
 @Slf4j
 public class AssignmentController {
