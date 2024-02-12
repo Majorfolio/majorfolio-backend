@@ -20,7 +20,6 @@ public class S3Config {
     @Value("${cloud.aws.s3.endpoint}")
     private String AWS_ENDPOINT;
 
-    //https://d3psx6wpnghwic.cloudfront.net
 
 
     @Bean
