@@ -32,6 +32,11 @@ public class ProfileService {
     private final FollowerRepository followerRepository;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
 
+    /**
+     * 프로필에 대한 정보를 반환
+     * @param memberId
+     * @return
+     */
     public ProfileResponse getProfile(Long memberId) {
         Member member = memberRepository.findById(memberId).orElse(null);
         if (member == null) {

@@ -6,6 +6,9 @@ import majorfolio.backend.root.domain.material.entity.Material;
 
 import java.time.LocalDateTime;
 
+/**
+ * 구매한 자료들의 반환 형태
+ */
 @Getter
 @Builder
 public class LibraryMaterialResponse {
