@@ -86,7 +86,13 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_FOUND_INFO_FROM_KAKAOID(8003, HttpStatus.NOT_FOUND.value(), "카카오 아이디에 해당하는 정보를 찾을 수 없습니다."),
     NOT_FOUND_MEMBER_FROM_NICKNAME(8004, HttpStatus.NOT_FOUND.value(), "해당 닉네임에 대한 멤버를 찾을 수 없습니다."),
     NOT_FOUND_MATERIAL_FROM_MEMBER_ID(8005, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 자료를 찾을 수 없습니다."),
-    NOT_FOUND_BUYINFO_FROM_BUYINFO_ID(8006, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 구매 정보를 찾을 수 없습니다.");
+    NOT_FOUND_BUYINFO_FROM_BUYINFO_ID(8006, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 구매 정보를 찾을 수 없습니다."),
+
+    /**
+     * 9000 : 결제관련 오류
+     */
+
+    INVALID_CANCEL_REQUEST(9001, HttpStatus.BAD_REQUEST.value(), "이미 송금을 한 구매정보입니다.");
 
 
 
