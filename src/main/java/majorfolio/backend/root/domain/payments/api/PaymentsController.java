@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.payments.dto.request.CreateBuyInfoRequest;
+import majorfolio.backend.root.domain.payments.dto.response.BuyCancelResponse;
 import majorfolio.backend.root.domain.payments.dto.response.BuyInfoResponse;
 import majorfolio.backend.root.domain.payments.dto.response.BuyMaterialListResponse;
 import majorfolio.backend.root.domain.payments.dto.response.CreateBuyInfoResponse;
@@ -49,5 +50,16 @@ public class PaymentsController {
     @GetMapping("/info/{buyInfoId}")
     public BuyInfoResponse getBuyInfo(@PathVariable Long buyInfoId){
         return paymentsService.getBuyInfo(buyInfoId);
+    }
+
+
+    /**
+     * 구매 취소애 대한 요청 처리
+     * @param buyInfoId
+     * @return
+     */
+    @PostMapping("/cancel/{buyInfoId}")
+    public BuyCancelResponse doBuyCancel(@PathVariable Long buyInfoId){
+        return paymentsService.doBuyCancel(buyInfoId);
     }
 }
