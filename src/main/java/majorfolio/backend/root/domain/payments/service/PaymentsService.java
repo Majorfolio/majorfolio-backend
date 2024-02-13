@@ -14,12 +14,10 @@ import majorfolio.backend.root.domain.member.service.MemberGlobalService;
 import majorfolio.backend.root.domain.payments.dto.request.CouponIdRequest;
 import majorfolio.backend.root.domain.payments.dto.request.CreateBuyInfoRequest;
 import majorfolio.backend.root.domain.payments.dto.request.MaterialIdRequest;
-import majorfolio.backend.root.domain.payments.dto.response.BuyInfoResponse;
-import majorfolio.backend.root.domain.payments.dto.response.BuyMaterialListResponse;
-import majorfolio.backend.root.domain.payments.dto.response.CreateBuyInfoResponse;
-import majorfolio.backend.root.domain.payments.dto.response.MaterialNameResponse;
+import majorfolio.backend.root.domain.payments.dto.response.*;
 import majorfolio.backend.root.domain.payments.entity.BuyInfo;
 import majorfolio.backend.root.domain.payments.repository.BuyInfoRepository;
+import majorfolio.backend.root.global.exception.CancelAfterPayException;
 import majorfolio.backend.root.global.exception.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.INVALID_CANCEL_REQUEST;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_BUYINFO_FROM_BUYINFO_ID;
 
 /**
@@ -178,5 +177,35 @@ public class PaymentsService {
             materialNameResponseList.add(materialNameResponse);
         }
         return BuyInfoResponse.of(materialNameResponseList, buyInfo);
+    }
+
+    /**
+     * 구매 취소에 해당하는 기능을 수행
+     * 이미 송금을 했다면 취소 못하게 예외처리
+     * 구매인포의 상태를 취소로, 판매자의 판매리스트 상태를 취소로
+     * @param buyInfoId
+     * @return
+     */
+    public BuyCancelResponse doBuyCancel(Long buyInfoId) {
+        BuyInfo buyInfo = buyInfoRepository.findById(buyInfoId).orElse(null);
+        if(buyInfo == null)
+            throw new NotFoundException(NOT_FOUND_BUYINFO_FROM_BUYINFO_ID);
+
+        if(buyInfo.getIsPay())
+            throw new CancelAfterPayException(INVALID_CANCEL_REQUEST);
+
+        //status 를 cancel로
+        buyInfo.setStatus("cancel");
+        buyInfoRepository.save(buyInfo);
+
+        //구매자의 Sellitemlist의 Status를 다 Cancel로 바꿔야 함
+        List<Material> materials = buyInfo.getBuyListItems().stream().map(BuyListItem::getMaterial).toList();
+        for(Material m : materials){
+            //buyer id랑 matera
+            SellListItem sellListItem = sellListItemRepository.findByBuyerAndMaterialId(buyInfo.getBuyerId(), m.getId());
+            sellListItem.setStatus("cancel");
+            sellListItemRepository.save(sellListItem);
+        }
+        return BuyCancelResponse.of("구매가 성공적으로 취소됐습니다");
     }
 }
