@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * 결제에 관련된 컨트롤러 정의
  */
 @RestController
-@RequestMapping("/payments")
+//@RequestMapping("/payments")
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentsController {
