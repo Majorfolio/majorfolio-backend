@@ -14,14 +14,14 @@ import majorfolio.backend.root.domain.coupon.dto.response.CouponListResponse;
 @NoArgsConstructor
 @Getter
 public class BuyMaterialListResponse {
-    private CouponListResponse couponListResponse;
-    private int totalPrice;
+    private int totalCoupon;
+    private int canUseCoupon;
 
-    public static BuyMaterialListResponse of(CouponListResponse couponListResponse,
-                                             int totalPrice){
+    public static BuyMaterialListResponse of(int totalCoupon,
+                                             int canUseCoupon){
         return BuyMaterialListResponse.builder()
-                .couponListResponse(couponListResponse)
-                .totalPrice(totalPrice)
+                .totalCoupon(totalCoupon)
+                .canUseCoupon(canUseCoupon)
                 .build();
     }
 }

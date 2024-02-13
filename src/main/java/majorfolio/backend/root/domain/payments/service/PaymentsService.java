@@ -11,7 +11,6 @@ import majorfolio.backend.root.domain.member.entity.SellListItem;
 import majorfolio.backend.root.domain.member.repository.BuyListItemRepository;
 import majorfolio.backend.root.domain.member.repository.SellListItemRepository;
 import majorfolio.backend.root.domain.member.service.MemberGlobalService;
-import majorfolio.backend.root.domain.payments.dto.request.BuyMaterialListRequest;
 import majorfolio.backend.root.domain.payments.dto.request.CouponIdRequest;
 import majorfolio.backend.root.domain.payments.dto.request.CreateBuyInfoRequest;
 import majorfolio.backend.root.domain.payments.dto.request.MaterialIdRequest;
@@ -49,22 +48,13 @@ public class PaymentsService {
 
     /**
      * 결제화면에 가격 및 쿠폰 정보 전달
-     * @param materialListRequest
      * @return
      */
-    public BuyMaterialListResponse getPaymentsList(BuyMaterialListRequest materialListRequest) {
+    public BuyMaterialListResponse getPaymentsList(HttpServletRequest request) {
         //KakaoSocialLogin kakaoSocialLogin = memberGlobalService.getMemberByToken(request);
-        List<MaterialIdRequest> assignmentIdList = materialListRequest.getAssignmentIdList();
-        int totalPrice = 0;
 
-        for(MaterialIdRequest id : assignmentIdList){
-            Material newMaterial = materialRepository.findById(id.getAssignmentId()).orElse(null);
-            if(newMaterial != null){
-                totalPrice += newMaterial.getPrice();
-            }
-        }
-        //현재는 쿠폰 미구현으로 아직 그냥 Null로 전달할거지만 후에 쿠폰을 구현하게 된다면, 쿠폰함에서 사용가능한 쿠폰 리스트를 반환해야 함
-        return BuyMaterialListResponse.of(null, totalPrice);
+        //현재는 쿠폰 미구현으로 아직 그냥 0, 0으로 전달할거지만 후에 쿠폰을 구현하게 된다면, 쿠폰함에서 사용가능한 쿠폰의 개수로 전달홰야 함
+        return BuyMaterialListResponse.of(0, 0);
     }
 
     /**

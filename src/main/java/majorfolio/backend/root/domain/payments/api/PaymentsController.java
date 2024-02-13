@@ -3,7 +3,6 @@ package majorfolio.backend.root.domain.payments.api;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.domain.payments.dto.request.BuyMaterialListRequest;
 import majorfolio.backend.root.domain.payments.dto.request.CreateBuyInfoRequest;
 import majorfolio.backend.root.domain.payments.dto.response.BuyInfoResponse;
 import majorfolio.backend.root.domain.payments.dto.response.BuyMaterialListResponse;
@@ -23,12 +22,11 @@ public class PaymentsController {
 
     /**
      * 결제 정보 페이지 요청
-     * @param materialListRequest
      * @return
      */
-    @GetMapping("/price")
-    public BuyMaterialListResponse getPaymentsList(@RequestBody BuyMaterialListRequest materialListRequest){
-        return paymentsService.getPaymentsList(materialListRequest);
+    @GetMapping("/coupon")
+    public BuyMaterialListResponse getPaymentsList(HttpServletRequest request){
+        return paymentsService.getPaymentsList(request);
     }
 
     /**
