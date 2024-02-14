@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/seller")
-@CrossOrigin(originPatterns = "http://localhost:3000")
+@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://vercel.com/algoorgoals-projects/majorfolio-frontend"})
 @RequiredArgsConstructor
 public class SellerController {
     private final MaterialAllListService materialAllListService;

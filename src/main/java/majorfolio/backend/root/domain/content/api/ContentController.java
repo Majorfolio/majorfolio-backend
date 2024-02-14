@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/home")
-@CrossOrigin(originPatterns = "http://localhost:3000")
-public class ContentController {
+@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://vercel.com/algoorgoals-projects/majorfolio-frontend"})public class ContentController {
 
     private final ContentService contentService;
 
