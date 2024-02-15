@@ -308,9 +308,7 @@ public class MemberService {
      * 이메일 코드 대조 API 서비스 구현
      * @param emailCodeRequest
      */
-    public String emailCodeCompare(EmailCodeRequest emailCodeRequest){
-        Long emailId = emailCodeRequest.getEmailId();
-        String code = emailCodeRequest.getCode();
+    public String emailCodeCompare(Long emailId, String code){
         if(!checkExpireCode(emailId)){
             //인증코드 만료시
             throw new ExpiredCodeException(EXPIRED_CODE);
