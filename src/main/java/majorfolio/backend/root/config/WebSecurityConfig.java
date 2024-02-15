@@ -60,9 +60,9 @@ public class WebSecurityConfig {
                         "/home/banner",
                         "/home/all/**",
                         "/seller/**",
-                        "/assignment/upload",
                         "/majorfolio/**",
-                        "assignment/{materialId}/detail")
+                        "assignment/{materialId}/detail",
+                        "assignment/s3/get")
 
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }

@@ -38,7 +38,6 @@ public class Material {
     private int fullScore;
     private int page;
     private String status;
-    private String phoneNumber;
     private int price;
     private String link;
 
@@ -54,4 +53,30 @@ public class Material {
     @OneToOne
     @JoinColumn(name = "preview_id")
     private Preview preview;
+
+    public static Material of(String name, String description, String type, String semester,
+                              String professor, String className, String major,
+                              String grade, int score, int fullScore, int page,
+                              String link, Member member, Preview preview){
+        return Material.builder()
+                .name(name)
+                .description(description)
+                .type(type)
+                .semester(semester)
+                .professor(professor)
+                .totalRecommend(0)
+                .totalBookmark(0)
+                .className(className)
+                .major(major)
+                .grade(grade)
+                .score(score)
+                .fullScore(fullScore)
+                .page(page)
+                .status("active")
+                .price(4700)
+                .link(link)
+                .member(member)
+                .preview(preview)
+                .build();
+    }
 }

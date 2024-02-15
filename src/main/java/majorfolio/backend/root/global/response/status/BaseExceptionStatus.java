@@ -85,9 +85,23 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_FOUND_KAKAOID(8002, HttpStatus.NOT_FOUND.value(), "카카오 아이디를 찾을 수 없습니다."),
     NOT_FOUND_INFO_FROM_KAKAOID(8003, HttpStatus.NOT_FOUND.value(), "카카오 아이디에 해당하는 정보를 찾을 수 없습니다."),
     NOT_FOUND_MEMBER_FROM_NICKNAME(8004, HttpStatus.NOT_FOUND.value(), "해당 닉네임에 대한 멤버를 찾을 수 없습니다."),
-    NOT_FOUND_MATERIAL_FROM_MEMBER_ID(8005, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 자료를 찾을 수 없습니다.");
+    NOT_FOUND_MATERIAL_FROM_MEMBER_ID(8005, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 자료를 찾을 수 없습니다."),
 
 
+    /**
+     * 9000 : 과제업로드 관련 오류
+     */
+    NOT_BLANK_MATERIAL_TITLE(9001, HttpStatus.BAD_REQUEST.value(), "과제 제목이 비어있으면 안됩니다."),
+    NOT_BLANK_MATERIAL_MAJOR(9002, HttpStatus.BAD_REQUEST.value(), "전공이 비어있으면 안됩니다."),
+    NOT_BLANK_MATERIAL_SEMESTER(9003, HttpStatus.BAD_REQUEST.value(), "학기정보가 비어있으면 안됩니다."),
+    NOT_BLANK_SUBJECT_NAME(9004, HttpStatus.BAD_REQUEST.value(), "과목명이 비어있으면 안됩니다."),
+    NOT_BLANK_PROFESSOR(9005, HttpStatus.BAD_REQUEST.value(), "교수명이 비어있으면 안됩니다."),
+    GRADE_PATTERN_ERROR(9006, HttpStatus.BAD_REQUEST.value(), "올바른 학점 형식이어야 합니다."),
+    NOT_NULL_FULL_SCORE(9007, HttpStatus.BAD_REQUEST.value(), "총점이 비어있으면 안됩니다."),
+    NOT_NULL_SCORE(9008, HttpStatus.BAD_REQUEST.value(), "점수가 비어있으면 안됩니다."),
+    NOT_BLANK_DESCRIPTION(9009, HttpStatus.BAD_REQUEST.value(), "설명이 쓰여 있어야 합니다."),
+    TOO_MANY_DESCRIPTION(9010, HttpStatus.BAD_REQUEST.value(), "설명은 80자로 제한됩니다."),
+    SEMESTER_PATTERN_ERROR(9011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다.");
 
 
 

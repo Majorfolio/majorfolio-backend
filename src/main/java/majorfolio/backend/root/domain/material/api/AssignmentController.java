@@ -9,13 +9,20 @@
  */
 package majorfolio.backend.root.domain.material.api;
 
+import com.amazonaws.Protocol;
+import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
+import com.amazonaws.services.cloudfront.util.SignerUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.internal.ServiceUtils;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.DateUtils;
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
@@ -23,17 +30,32 @@ import majorfolio.backend.root.domain.material.service.AssignmentService;
 import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +76,18 @@ public class AssignmentController {
     private final AmazonS3Client amazonS3;
 
     private final AssignmentService assignmentService;
+
+    //커밋전 위 변수들 yml파일로 옮겨놓기!
+
+
+    @Value("${cloud.aws.cloudFront.distributionDomain}")
+    private String distributionDomain;
+
+    @Value("${cloud.aws.path}")
+    private String privateKeyFilePath;
+
+    @Value("${cloud.aws.cloudFront.keyPairId}")
+    private String keyPairId;
 
     /**
      * 과제 상세페이지(구매자 입장) API
@@ -94,62 +128,88 @@ public class AssignmentController {
     }
 
     /**
-     * S3 버킷 연동 테스트 용(나중에 서비스랑 분리 예정)
+     * 과제 파일 업로드 API
      * @param pdfFile
+     * @param assignmentUploadRequest
      * @return
-     * @throws IOException
      */
     @PutMapping("/upload")
-    public BaseResponse<String> S3test(@RequestPart("file") MultipartFile pdfFile) throws IOException {
-        List<String> imageUrlList = null;
-
-        PDDocument document = PDDocument.load(pdfFile.getBytes());
-        PDFRenderer pdfRenderer = new PDFRenderer(document);
-        BufferedImage imageObj = pdfRenderer.renderImageWithDPI(0, 100, ImageType.RGB);
-        MultipartFile image = convertBufferedImageToMultipartFile(imageObj);
-        log.info(image.toString());
-        String fileName = generateFileName(image);
-        log.info(fileName);
-        String fileUrl= "https://" + s3Bucket + "/test" +fileName;
-        ObjectMetadata metadata= new ObjectMetadata();
-        metadata.setContentType(image.getContentType());
-        metadata.setContentLength(image.getSize());
-
-
-        try (InputStream imageInputStream = image.getInputStream()) {
-            amazonS3.putObject(
-                    new PutObjectRequest(s3Bucket, fileName, imageInputStream, metadata)
-                            .withCannedAcl(CannedAccessControlList.PublicRead));
-        }
-
-        return new BaseResponse<>(fileUrl);
-    }
-
-    private ObjectMetadata getObjectMetadata(MultipartFile file) {
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(file.getContentType());
-        objectMetadata.setContentLength(file.getSize());
-        return objectMetadata;
-    }
-
-    private String generateFileName(MultipartFile file) {
-        return UUID.randomUUID() + "-" + file.getOriginalFilename();
-    }
-
-    private MultipartFile convertBufferedImageToMultipartFile(BufferedImage image) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(image, "jpeg", out);
-        } catch (IOException e) {
-            log.error("IO Error", e);
-            return null;
-        }
-        byte[] bytes = out.toByteArray();
-        return new CustomMultipartFile(bytes, "image", "image.jpeg", "jpeg", bytes.length);
+    public BaseResponse<String> upload(@RequestPart("file") MultipartFile pdfFile,
+                                       @Validated @RequestPart("assignment") AssignmentUploadRequest assignmentUploadRequest,
+                                       ServletRequest servletRequest) throws IOException {
+        Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
+        return new BaseResponse<>(assignmentService.uploadPdfFile(pdfFile, kakaoId, assignmentUploadRequest));
     }
 
 
-
-
+//    /**
+//     * 파일 조회 테스트 용
+//     * @param file
+//     * @return
+//     */
+//
+//    @GetMapping("/s3/get")
+//    public BaseResponse<String> s3Get() throws InvalidKeySpecException, IOException {
+//        String fileName = "majorfolio/dced1ead-2d0c-46a3-9aa3-8f202df186bf-73828535-67c6-4c95-92c0-68048f7fd1dc-Activity_8_Overall_Architecture_1+(2).pdf-3.jpeg";
+//        String signedUrl = getSignedURLWithCannedPolicy(fileName);
+//        return new BaseResponse<>(signedUrl);
+//    }
+//
+//    private ObjectMetadata getObjectMetadata(MultipartFile file) {
+//        ObjectMetadata objectMetadata = new ObjectMetadata();
+//        objectMetadata.setContentType(file.getContentType());
+//        objectMetadata.setContentLength(file.getSize());
+//        return objectMetadata;
+//    }
+//
+//    private String generateFileName(MultipartFile file) {
+//        return UUID.randomUUID() + "-" + file.getOriginalFilename();
+//    }
+//
+//    private MultipartFile convertBufferedImageToMultipartFile(BufferedImage image) {
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        try {
+//            ImageIO.write(image, "jpeg", out);
+//        } catch (IOException e) {
+//            log.error("IO Error", e);
+//            return null;
+//        }
+//        byte[] bytes = out.toByteArray();
+//        return new CustomMultipartFile(bytes, "image", "image.jpeg", "jpeg", bytes.length);
+//    }
+//
+//
+//    public String getSignedURLWithCannedPolicy( String fileName ) throws InvalidKeySpecException,
+//            IOException {
+//        File privateKeyFile = new File(privateKeyFilePath);
+//        String signedURL = "";
+//
+//       String policyResourcePath = "https://" + distributionDomain + "/" + fileName;
+//
+//       Date dateLessThan = ServiceUtils.parseIso8601Date("2024-02-17T00:00:00.00Z");
+//
+//       String policy = CloudFrontUrlSigner.buildCustomPolicyForSignedUrl(
+//               policyResourcePath,
+//               dateLessThan,
+//               "0.0.0.0/0",
+//               null
+//
+//       );
+//
+//       PrivateKey privateKey = SignerUtils.loadPrivateKey(privateKeyFile);
+//
+//       signedURL = CloudFrontUrlSigner.getSignedURLWithCustomPolicy(
+//                // Resource URL or Path
+//                policyResourcePath,
+//                // Certificate identifier, an active trusted signer for the distribution
+//                keyPairId,
+//                // DER Private key data
+//                privateKey,
+//                // Access control policy
+//                policy
+//        );
+//        log.info(signedURL);
+//        return signedURL;
+//    }
 
 }
