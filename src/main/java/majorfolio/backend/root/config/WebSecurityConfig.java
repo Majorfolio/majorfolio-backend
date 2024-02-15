@@ -73,7 +73,7 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         //Make the below setting as * to allow connection from any hos
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://vercel.com/algoorgoals-projects/majorfolio-frontend"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://majorfolio-frontend.vercel.app"));
         corsConfiguration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
                 HttpMethod.HEAD.name(),

@@ -26,7 +26,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/my")
-@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://vercel.com/algoorgoals-projects/majorfolio-frontend"})@RequiredArgsConstructor
+//@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://majorfolio-frontend.vercel.app"})
+@RequiredArgsConstructor
 public class MyController {
     private final MyService myService;
     private final ProfileService profileService;

@@ -39,7 +39,8 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://vercel.com/algoorgoals-projects/majorfolio-frontend"})public class MemberController {
+//@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://majorfolio-frontend.vercel.app"})
+public class MemberController {
 
     private final MemberService memberService;
 
