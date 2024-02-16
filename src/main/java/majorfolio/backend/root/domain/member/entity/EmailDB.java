@@ -43,4 +43,8 @@ public class EmailDB {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToOne
+    @JoinColumn(name = "kakao_id")
+    private KakaoSocialLogin kakaoSocialLogin;
+
 }

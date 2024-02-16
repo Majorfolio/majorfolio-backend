@@ -55,6 +55,10 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
         //카카오Id 토큰으로부터 받아오기
         Long kakaoId = JwtUtil.getKaKaoId(userToken, secretKey);
         request.setAttribute("kakaoId",kakaoId);
+        Long emailId = JwtUtil.getEmailId(userToken, secretKey);
+        request.setAttribute("emailId", emailId);
+        Long memberId = JwtUtil.getMemberId(userToken, secretKey);
+        request.setAttribute("memberId", memberId);
 
         return true;
     }

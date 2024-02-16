@@ -10,6 +10,7 @@
 package majorfolio.backend.root.domain.member.repository;
 
 import majorfolio.backend.root.domain.member.entity.EmailDB;
+import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -23,4 +24,6 @@ public interface EmailDBRepository extends JpaRepository<EmailDB, Long> {
     EmailDB findByEmail(String email);
 
     EmailDB findByMember(Member member);
+
+    EmailDB findByKakaoSocialLoginAndStatus(KakaoSocialLogin kakaoSocialLogin, Boolean status);
 }
