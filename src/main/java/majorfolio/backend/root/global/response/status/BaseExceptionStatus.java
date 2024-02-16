@@ -70,6 +70,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     OVERLAP_NICKNAME(6002, HttpStatus.BAD_REQUEST.value(), "중복된 닉네임 입니다."),
     NOT_CERTIFICATION_USER(6003, HttpStatus.BAD_REQUEST.value(), "이메일 인증한 사용자가 아닙니다."),
     NOT_FOUND_USER(6004, HttpStatus.BAD_REQUEST.value(), "토큰에서 사용자를 찾을 수 없습니다."),
+    INVALID_USER_PHONE_NUMBER(6005, HttpStatus.BAD_REQUEST.value(), "올바른 전화번호 형식이 아닙니다."),
 
     /**
      * 7000 : 과제관련 오류
@@ -98,7 +99,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
 
 
     /**
-     * 9000 : 과제업로드 관련 오류
+     * 10000 : 과제업로드 관련 오류
      */
     NOT_BLANK_MATERIAL_TITLE(10001, HttpStatus.BAD_REQUEST.value(), "과제 제목이 비어있으면 안됩니다."),
     NOT_BLANK_MATERIAL_MAJOR(10002, HttpStatus.BAD_REQUEST.value(), "전공이 비어있으면 안됩니다."),

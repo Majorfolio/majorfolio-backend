@@ -10,8 +10,10 @@
 package majorfolio.backend.root.global.util;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.JwtExpiredException;
+import majorfolio.backend.root.global.exception.JwtInvalidException;
 import org.springframework.boot.json.BasicJsonParser;
 import org.springframework.boot.json.JsonParser;
 
@@ -19,6 +21,7 @@ import java.time.Duration;
 import java.util.*;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.EXPIRED_TOKEN;
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.INVALID_TOKEN;
 
 /**
  * Jwt를 다루는 여러 메소드들을 취합해 놓은 클래스임
@@ -105,6 +108,8 @@ public class JwtUtil {
                     .getExpiration().before(new Date()); // expired 된게 지금보다 전인가? -> 그러면 만료된거임
         }catch (ExpiredJwtException e){
             throw new JwtExpiredException(EXPIRED_TOKEN);
+        }catch (SignatureException e){
+            throw new JwtInvalidException(INVALID_TOKEN);
         }
     }
 

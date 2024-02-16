@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
+import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.entity.EmailDB;
@@ -327,6 +328,13 @@ public class MemberService {
         emailDBRepository.save(emailDB);
 
         return "";
+    }
+
+    public String createPhoneNumber(Long memberId, PhoneNumberRequest phoneNumberRequest){
+        Member member = memberRepository.findById(memberId).get();
+        member.setPhoneNumber(phoneNumberRequest.getPhoneNumber());
+        memberRepository.save(member);
+        return "성공";
     }
 
 

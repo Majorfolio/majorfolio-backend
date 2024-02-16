@@ -17,9 +17,11 @@ import majorfolio.backend.root.domain.member.dto.SignupRequest;
 import majorfolio.backend.root.domain.member.dto.SignupResponse;
 import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
+import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.service.MemberService;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.exception.EmailException;
 import majorfolio.backend.root.global.exception.UserException;
 import majorfolio.backend.root.global.response.BaseResponse;
@@ -125,6 +127,12 @@ public class MemberController {
     @PostMapping("/logout")
     public BaseResponse<String> logout(HttpServletRequest request){
         return new BaseResponse<>(memberService.logout(request));
+    }
+
+    @PostMapping("/phone-number")
+    public BaseResponse<String> createPhoneNumber(@MemberInfo Long memberId,
+                                                  @Validated @RequestBody PhoneNumberRequest phoneNumberRequest){
+        return new BaseResponse<>(memberService.createPhoneNumber(memberId, phoneNumberRequest));
     }
 
 }
