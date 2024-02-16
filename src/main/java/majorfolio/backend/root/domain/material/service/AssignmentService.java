@@ -34,6 +34,7 @@ import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
+import majorfolio.backend.root.global.util.MakeSignedUrlUtil;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -44,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -197,16 +199,17 @@ public class AssignmentService {
     public void imageSaveToS3(PDFRenderer pdfRenderer, String fileName,
                               int page, Long memberId, Long materialId,
                               Preview preview) throws IOException {
+        log.info(String.valueOf(page));
         int size = 0;
         int lowDpi = 0; // 저화질 처리할 이미지 개수
         if(page <= 2){
             size = 1;
         }
-        if(page <= 4){
+        else if(page <= 4){
             size = 2;
             lowDpi = 1;
         }
-        if(page > 4){
+        else {
             size = 3;
             lowDpi = 2;
         }
@@ -250,6 +253,7 @@ public class AssignmentService {
                 amazonS3.putObject(
                         new PutObjectRequest(fileDirectory, imageNames[i], imageInputStream, objectMetadatas[i])
                                 .withCannedAcl(CannedAccessControlList.PublicRead));
+                imageNames[i] = fileDirectory + "/" + imageNames[i];
             }
         }
         //DB에 미리보기 이미지 저장
@@ -356,7 +360,7 @@ public class AssignmentService {
      * @param materialId
      * @return
      */
-    public MaterialDetailResponse showDetailMaterial(Long materialId, Long binderMemberId){
+    public MaterialDetailResponse showDetailMaterial(Long materialId, Long binderMemberId) throws InvalidKeySpecException, IOException {
         //조회수 올리기
         doView(materialId);
 
@@ -380,15 +384,13 @@ public class AssignmentService {
         int fullscore = material.getFullScore();
         int pages = material.getPage();
 
-        //미리보기 이미지 url 추출
-        Preview preview = material.getPreview();
-        String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
+        Long memberId = member.getId();
+        String image = s3PreviewImageSignedUrl(material, member, materialId);
 
         // 판매수, 팔로워 수 추출
         Long sellCount = sellListItemRepository.countByMaterialIdAndStatus(material.getId(), "complete");
 
         //FollowerList followerList = member.getFollowerList();
-        Long memberId = member.getId();
         Long followerCount = followerRepository.countByMemberAndStatus(memberId, true);
 
         // 이 수업의 다른 과제(판매순 5개) 추출
@@ -506,7 +508,7 @@ public class AssignmentService {
      * @param materialId
      * @return
      */
-    public MaterialMyDetailResponse showMyDetailMaterial(Long kakaoId, Long materialId){
+    public MaterialMyDetailResponse showMyDetailMaterial(Long kakaoId, Long materialId) throws InvalidKeySpecException, IOException {
 
         //판매자 입장 페이지에 들어갈 수 있는지 자격 증명
         validateMaterialAndMember(kakaoId, materialId);
@@ -518,8 +520,8 @@ public class AssignmentService {
         Member member = material.getMember();
 
         //미리보기 이미지 url 추출
-        Preview preview = material.getPreview();
-        String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
+        String image = s3PreviewImageSignedUrl(material, member, materialId);
+
 
         LocalDateTime updateTime = material.getUpdatedAt();
         String nickname = member.getNickName();
@@ -562,6 +564,28 @@ public class AssignmentService {
                 isMemberBookmark,
                 isMemberLike
         );
+    }
+
+    /**
+     * 미리보기 이미지 S3 signedUrl 생성 메소드
+     * @param material
+     * @param member
+     * @param materialId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    public String s3PreviewImageSignedUrl(Material material, Member member, Long materialId) throws InvalidKeySpecException, IOException {
+        //미리보기 이미지 url 추출
+        Preview preview = material.getPreview();
+        //S3객체의 Url에서 파일명 추출하기
+        String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
+        String[] imageS3UrlPacket = amazonS3.getUrl(s3Bucket, image).toString().split("/");
+        String imageS3Name = imageS3UrlPacket[imageS3UrlPacket.length-1];
+        Long memberId = member.getId();
+        log.info(imageS3Name);
+        image = MakeSignedUrlUtil.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
+        return image;
     }
 
     /**

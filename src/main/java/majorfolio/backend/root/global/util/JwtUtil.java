@@ -97,6 +97,14 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("kakaoId", Long.class);
     }
 
+    public static Long getEmailId(String token, String secretKey){
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("emailId", Long.class);
+    }
+
+    public static Long getMemberId(String token, String secretKey){
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody().get("memberId", Long.class);
+    }
+
     /**
      @@ -100,7 +100,13 @@ public static String getUserName(String token, String secretKey){
       * @return

@@ -9,6 +9,7 @@
  */
 package majorfolio.backend.root.domain.member.api;
 
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
+import majorfolio.backend.root.domain.member.dto.response.SignupProgressResponse;
 import majorfolio.backend.root.domain.member.service.MemberService;
 import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.exception.EmailException;
@@ -78,8 +80,10 @@ public class MemberController {
      */
     @GetMapping("/school-email/{emailId}/{code}")
     public BaseResponse<String> emailCodeCompare(@PathVariable(name = "emailId") Long emailId,
-                                                 @PathVariable(name = "code") String code){
-        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code));
+                                                 @PathVariable(name = "code") String code,
+                                                 ServletRequest servletRequest){
+        Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
+        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code, kakaoId));
     }
 
     /**
@@ -133,6 +137,16 @@ public class MemberController {
     public BaseResponse<String> createPhoneNumber(@MemberInfo Long memberId,
                                                   @Validated @RequestBody PhoneNumberRequest phoneNumberRequest){
         return new BaseResponse<>(memberService.createPhoneNumber(memberId, phoneNumberRequest));
+    }
+
+    /**
+     * 회원가입 어디까지 했는지 기억 하는 API(반영은 X)
+     * @param servletRequest
+     * @return
+     */
+    @GetMapping("/signup/progress")
+    public BaseResponse<SignupProgressResponse> checkSignupProgress(ServletRequest servletRequest){
+        return new BaseResponse<>(memberService.checkSignupProcess(servletRequest));
     }
 
 }
