@@ -72,7 +72,7 @@ public class Material {
                 .score(score)
                 .fullScore(fullScore)
                 .page(page)
-                .status("active")
+                .status("reviewing")
                 .price(4700)
                 .link(link)
                 .member(member)

@@ -16,6 +16,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
@@ -62,10 +63,12 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
 public class AssignmentService {
 
     private final MaterialRepository materialRepository;
+    private final MemberRepository memberRepository;
     private final SellListItemRepository sellListItemRepository;
     private final FollowerRepository followerRepository;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final LikeRepository likeRepository;
     private final ViewRepository viewRepository;
     private final PreviewRepository previewRepository;
     private final PreviewImagesRepository previewImagesRepository;
@@ -95,7 +98,7 @@ public class AssignmentService {
      * Copyright [Majorfolio]
      * SPDX-License-Identifier : Apache-2.0
      */
-    public String uploadPdfFile(MultipartFile pdfFile, Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
+    public AssignmentUploadResponse uploadPdfFile(MultipartFile pdfFile, Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
         //업로드 한 사람 조회
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
@@ -116,7 +119,14 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-        return "성공";
+        //전화번호 업로드 여부
+        Boolean isRegisterPhoneNumber = true;
+
+        if(member.getPhoneNumber() == null){
+            isRegisterPhoneNumber = false;
+        }
+
+        return AssignmentUploadResponse.of(isRegisterPhoneNumber);
     }
 
     /**
@@ -346,7 +356,7 @@ public class AssignmentService {
      * @param materialId
      * @return
      */
-    public MaterialDetailResponse showDetailMaterial(Long materialId){
+    public MaterialDetailResponse showDetailMaterial(Long materialId, Long binderMemberId){
         //조회수 올리기
         doView(materialId);
 
@@ -369,7 +379,6 @@ public class AssignmentService {
         int score = material.getScore();
         int fullscore = material.getFullScore();
         int pages = material.getPage();
-
 
         //미리보기 이미지 url 추출
         Preview preview = material.getPreview();
@@ -419,6 +428,24 @@ public class AssignmentService {
 
         }
 
+
+        //멤버가 좋아요, 북마크 체크 했는지 여부
+        Boolean isMemberBookmark = false;
+        Boolean isMemberLike = false;
+        Member binderMember = null;
+        try {
+            binderMember = memberRepository.findById(binderMemberId).get();
+        }catch (NoSuchElementException e){
+            isMemberBookmark = false;
+            isMemberLike = false;
+        }
+
+        if(binderMember != null){
+            isMemberBookmark = isBookmark(material, binderMember);
+            isMemberLike = isLike(material, binderMember);
+        }
+
+
         return MaterialDetailResponse.of(
                 materialId,
                 image,
@@ -439,8 +466,38 @@ public class AssignmentService {
                 score,
                 fullscore,
                 pages,
+                isMemberBookmark,
+                isMemberLike,
                 materialsTop5
         );
+    }
+
+    /**
+     * 유저가 해당 과제에 좋아요 눌렀는지 여부
+     * @param material
+     * @param binderMember
+     * @return
+     */
+    private Boolean isLike(Material material, Member binderMember) {
+        try {
+            return likeRepository.findByMemberAndMaterial(binderMember, material).getIsCheck();
+        }catch (NullPointerException e){
+            return false;
+        }
+    }
+
+    /**
+     * 유저가 해당 과제에 북마크 눌렀는지 여부
+     * @param material
+     * @param binderMember
+     * @return
+     */
+    private Boolean isBookmark(Material material, Member binderMember) {
+        try {
+            return bookmarkRepository.findByMemberAndMaterial(binderMember, material).getIsCheck();
+        }catch (NullPointerException e){
+            return false;
+        }
     }
 
     /**
@@ -480,6 +537,10 @@ public class AssignmentService {
         int pages = material.getPage();
         String status = material.getStatus();
 
+        //유저 좋아요, 북마크 눌렀는지 여부
+        Boolean isMemberBookmark = isBookmark(material, member);
+        Boolean isMemberLike = isLike(material, member);
+
         return MaterialMyDetailResponse.of(
                 materialId,
                 image,
@@ -497,7 +558,9 @@ public class AssignmentService {
                 grade,
                 score,
                 pages,
-                status
+                status,
+                isMemberBookmark,
+                isMemberLike
         );
     }
 
