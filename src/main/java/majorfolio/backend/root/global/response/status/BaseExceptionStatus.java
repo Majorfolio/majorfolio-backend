@@ -86,16 +86,31 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_FOUND_INFO_FROM_KAKAOID(8003, HttpStatus.NOT_FOUND.value(), "카카오 아이디에 해당하는 정보를 찾을 수 없습니다."),
     NOT_FOUND_MEMBER_FROM_NICKNAME(8004, HttpStatus.NOT_FOUND.value(), "해당 닉네임에 대한 멤버를 찾을 수 없습니다."),
     NOT_FOUND_MATERIAL_FROM_MEMBER_ID(8005, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 자료를 찾을 수 없습니다."),
+
     NOT_FOUND_BUYINFO_FROM_BUYINFO_ID(8006, HttpStatus.NOT_FOUND.value(), "해당 ID에 대한 구매 정보를 찾을 수 없습니다."),
 
     /**
      * 9000 : 결제관련 오류
      */
 
-    INVALID_CANCEL_REQUEST(9001, HttpStatus.BAD_REQUEST.value(), "이미 송금을 한 구매정보입니다.");
+    INVALID_CANCEL_REQUEST(9001, HttpStatus.BAD_REQUEST.value(), "이미 송금을 한 구매정보입니다."),
 
 
 
+    /**
+     * 9000 : 과제업로드 관련 오류
+     */
+    NOT_BLANK_MATERIAL_TITLE(10001, HttpStatus.BAD_REQUEST.value(), "과제 제목이 비어있으면 안됩니다."),
+    NOT_BLANK_MATERIAL_MAJOR(10002, HttpStatus.BAD_REQUEST.value(), "전공이 비어있으면 안됩니다."),
+    NOT_BLANK_MATERIAL_SEMESTER(10003, HttpStatus.BAD_REQUEST.value(), "학기정보가 비어있으면 안됩니다."),
+    NOT_BLANK_SUBJECT_NAME(10004, HttpStatus.BAD_REQUEST.value(), "과목명이 비어있으면 안됩니다."),
+    NOT_BLANK_PROFESSOR(10005, HttpStatus.BAD_REQUEST.value(), "교수명이 비어있으면 안됩니다."),
+    GRADE_PATTERN_ERROR(10006, HttpStatus.BAD_REQUEST.value(), "올바른 학점 형식이어야 합니다."),
+    NOT_NULL_FULL_SCORE(10007, HttpStatus.BAD_REQUEST.value(), "총점이 비어있으면 안됩니다."),
+    NOT_NULL_SCORE(10008, HttpStatus.BAD_REQUEST.value(), "점수가 비어있으면 안됩니다."),
+    NOT_BLANK_DESCRIPTION(10009, HttpStatus.BAD_REQUEST.value(), "설명이 쓰여 있어야 합니다."),
+    TOO_MANY_DESCRIPTION(10010, HttpStatus.BAD_REQUEST.value(), "설명은 80자로 제한됩니다."),
+    SEMESTER_PATTERN_ERROR(10011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다.");
 
 
 

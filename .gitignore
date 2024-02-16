@@ -28,6 +28,7 @@ out/
 
 application.yml
 application.properties
+private_key.pem
 
 ### NetBeans ###
 /nbproject/private/

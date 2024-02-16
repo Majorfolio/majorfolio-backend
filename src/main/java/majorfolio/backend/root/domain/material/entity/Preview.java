@@ -29,8 +29,4 @@ public class Preview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "preview_id")
     private Long id;
-
-    private String image1;
-    private String image2;
-    private String image3;
 }

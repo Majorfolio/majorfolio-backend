@@ -9,8 +9,13 @@
  */
 package majorfolio.backend.root.domain.material.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
@@ -20,15 +25,24 @@ import majorfolio.backend.root.domain.material.dto.response.assignment.stat.Sale
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.ViewStat;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.entity.Preview;
+import majorfolio.backend.root.domain.material.entity.PreviewImages;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
 import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.entity.View;
 import majorfolio.backend.root.domain.member.repository.*;
+import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -46,12 +60,285 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
 @Slf4j
 @RequiredArgsConstructor
 public class AssignmentService {
+
     private final MaterialRepository materialRepository;
     private final SellListItemRepository sellListItemRepository;
     private final FollowerRepository followerRepository;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ViewRepository viewRepository;
+    private final PreviewRepository previewRepository;
+    private final PreviewImagesRepository previewImagesRepository;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String s3Bucket;
+
+    @Value("${cloud.aws.cloudFront.distributionDomain}")
+    private String distributionDomain;
+
+    @Value("${cloud.aws.path}")
+    private String privateKeyFilePath;
+
+    @Value("${cloud.aws.cloudFront.keyPairId}")
+    private String keyPairId;
+
+    private final AmazonS3Client amazonS3;
+
+    /**
+     * 업로드 API 서비스 구현
+     * @param pdfFile
+     * @param kakaoId
+     * @param assignmentUploadRequest
+     * @return
+     * @throws IOException
+     *
+     * Copyright [Majorfolio]
+     * SPDX-License-Identifier : Apache-2.0
+     */
+    public String uploadPdfFile(MultipartFile pdfFile, Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
+        //업로드 한 사람 조회
+        Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
+        Long memberId = member.getId();
+        //pdf파일 전처리 과정
+        PDDocument document = PDDocument.load(pdfFile.getBytes());
+        String fileName = generateFileName(pdfFile);
+        //파일 부가 정보 저장
+        int page = document.getNumberOfPages();
+        Preview preview = Preview.builder().build();
+        previewRepository.save(preview);
+        Material material = getMaterial(assignmentUploadRequest, page, fileName, member, preview);
+        materialRepository.save(material);
+        Long materialId = material.getId();
+        //원본 파일 S3에올리기
+        fileSaveToS3(document, fileName, memberId, materialId);
+        PDFRenderer pdfRenderer = new PDFRenderer(document);
+        //과제 파일의 페이지 정보
+        //미리보기 이미지 S3올리기
+        imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
+
+        return "성공";
+    }
+
+    /**
+     * 업로드 api 요청으로 부터 material 테이블 채우기
+     * @param assignmentUploadRequest
+     * @param page
+     * @param fileName
+     * @param member
+     * @param preview
+     * @return
+     */
+    public Material getMaterial(AssignmentUploadRequest assignmentUploadRequest, int page,
+                                String fileName, Member member, Preview preview) {
+        return Material.of(
+                assignmentUploadRequest.getTitle(),
+                assignmentUploadRequest.getDescription(),
+                "pdf",
+                assignmentUploadRequest.getSemester(),
+                assignmentUploadRequest.getProfessor(),
+                assignmentUploadRequest.getSubjectName(),
+                assignmentUploadRequest.getMajor(),
+                assignmentUploadRequest.getGrade(),
+                assignmentUploadRequest.getScore(),
+                assignmentUploadRequest.getFullScore(),
+                page,
+                fileName,
+                member,
+                preview
+        );
+    }
+
+    /**
+     * pdf 파일 S3에 저장
+     * @param document
+     * @param fileName
+     * @param memberId
+     * @param materialId
+     * @throws IOException
+     */
+    public void fileSaveToS3(PDDocument document, String fileName, Long memberId, Long materialId) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        document.save(outputStream);
+        byte[] pdfBytes = outputStream.toByteArray();
+        MultipartFile multipartFile = convertToMultipartFile(pdfBytes);
+
+        ObjectMetadata metadata= new ObjectMetadata();
+        metadata.setContentType(multipartFile.getContentType());
+        metadata.setContentLength(multipartFile.getSize());
+
+        String fileDirectory = s3Bucket + "/" + memberId + "/" + materialId + "/originalFile";
+        try (InputStream fileInputStream = multipartFile.getInputStream()){
+            amazonS3.putObject(
+                    new PutObjectRequest(fileDirectory, fileName, fileInputStream, metadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead));
+        }
+    }
+
+    /**
+     * 미리보기 이미지 S3저장소에 저장
+     * @param pdfRenderer
+     * @param fileName
+     * @param page
+     * @param memberId
+     * @param materialId
+     * @param preview
+     * @throws IOException
+     */
+    public void imageSaveToS3(PDFRenderer pdfRenderer, String fileName,
+                              int page, Long memberId, Long materialId,
+                              Preview preview) throws IOException {
+        int size = 0;
+        int lowDpi = 0; // 저화질 처리할 이미지 개수
+        if(page <= 2){
+            size = 1;
+        }
+        if(page <= 4){
+            size = 2;
+            lowDpi = 1;
+        }
+        if(page > 4){
+            size = 3;
+            lowDpi = 2;
+        }
+        BufferedImage[] imgObjs = new BufferedImage[size];
+        ObjectMetadata[] objectMetadatas = new ObjectMetadata[size];
+        String[] imageNames = new String[size];
+        MultipartFile[] images = new MultipartFile[size];
+        if(size == 1){
+            imgObjs[0] = pdfRenderer.renderImageWithDPI(0, 100, ImageType.RGB);
+        }
+        int mosaicIndex = 0; // 모자이크 처리할 이미지 객체의 시작점
+        //저화질 처리
+        for(int i=0; i<lowDpi; i++){
+            imgObjs[i] = pdfRenderer.renderImageWithDPI(i, 30, ImageType.RGB);
+            mosaicIndex++;
+        }
+        //모자이크 처리
+        if(size > 1){
+            for(int i=mosaicIndex; i<imgObjs.length; i++){
+                imgObjs[i] = pdfRenderer.renderImageWithDPI(i, 10, ImageType.RGB);
+            }
+        }
+        //multipartFile형식으로 변환
+        for(int i=0; i<size; i++){
+            images[i] = convertBufferedImageToMultipartFile(imgObjs[i], fileName, i+1);
+        }
+        //이미지 이름 생성
+        for(int i=0; i<size; i++){
+            imageNames[i] = generateFileName(images[i]);
+        }
+        //메타데이터 생성
+        for(int i=0; i<size; i++){
+            objectMetadatas[i] = new ObjectMetadata();
+            objectMetadatas[i].setContentType(images[i].getContentType());
+            objectMetadatas[i].setContentLength(images[i].getSize());
+        }
+        //s3로 전송
+        for(int i=0; i<size; i++){
+            try (InputStream imageInputStream = images[i].getInputStream()) {
+                String fileDirectory = s3Bucket + "/" + memberId + "/" + materialId + "/Previews";
+                amazonS3.putObject(
+                        new PutObjectRequest(fileDirectory, imageNames[i], imageInputStream, objectMetadatas[i])
+                                .withCannedAcl(CannedAccessControlList.PublicRead));
+            }
+        }
+        //DB에 미리보기 이미지 저장
+        for(int i=0; i<size; i++){
+            PreviewImages previewImages = PreviewImages.of(imageNames[i], i+1, preview);
+            previewImagesRepository.save(previewImages);
+        }
+    }
+
+    /**
+     * 이미지 multipartFile형식으로 형변환
+     * @param bufferedImage
+     * @param fileName
+     * @param index
+     * @return
+     */
+    public MultipartFile convertBufferedImageToMultipartFile(BufferedImage bufferedImage, String fileName, int index) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(bufferedImage, "jpeg", out);
+        } catch (IOException e) {
+            log.error("IO Error", e);
+            return null;
+        }
+        byte[] bytes = out.toByteArray();
+        String imageName = fileName + "-" +index;
+        return new CustomMultipartFile(bytes, imageName, imageName+".jpeg", "jpeg", bytes.length);
+    }
+
+    /**
+     * pdfFile MultipartFile형식으로 형변환
+     * @param pdfBytes
+     * @return
+     */
+    public MultipartFile convertToMultipartFile(byte[] pdfBytes) {
+        return new InMemoryMultipartFile("watermarked.pdf", pdfBytes);
+    }
+
+    /**
+     * 스프링의 MultipartFile 인터페이스를 구현하는 InMemoryMultipartFile 클래스 정의
+     */
+    private static class InMemoryMultipartFile implements MultipartFile {
+        private final String name;
+        private final byte[] bytes;
+
+        public InMemoryMultipartFile(String name, byte[] bytes) {
+            this.name = name;
+            this.bytes = bytes;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getOriginalFilename() {
+            return name;
+        }
+
+        @Override
+        public String getContentType() {
+            return null;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        public long getSize() {
+            return bytes.length;
+        }
+
+        @Override
+        public byte[] getBytes() throws IOException {
+            return bytes;
+        }
+
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return new ByteArrayInputStream(bytes);
+        }
+
+        @Override
+        public void transferTo(File dest) throws IOException, IllegalStateException {
+        }
+    }
+
+    /**
+     * S3에 들어갈 파일 이름 정의해주는 메소드
+     * @param file
+     * @return
+     */
+    private String generateFileName(MultipartFile file) {
+        return UUID.randomUUID() + "-" + file.getOriginalFilename();
+    }
+
 
     /**
      * 과제 상세페이지(구매자 입장)의 서비스 메소드
@@ -86,7 +373,7 @@ public class AssignmentService {
 
         //미리보기 이미지 url 추출
         Preview preview = material.getPreview();
-        String image = preview.getImage1();
+        String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
 
         // 판매수, 팔로워 수 추출
         Long sellCount = sellListItemRepository.countByMaterialIdAndStatus(material.getId(), "complete");
@@ -175,7 +462,7 @@ public class AssignmentService {
 
         //미리보기 이미지 url 추출
         Preview preview = material.getPreview();
-        String image = preview.getImage1();
+        String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
 
         LocalDateTime updateTime = material.getUpdatedAt();
         String nickname = member.getNickName();

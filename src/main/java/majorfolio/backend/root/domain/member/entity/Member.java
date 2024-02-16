@@ -54,6 +54,7 @@ public class Member {
     private String major2;
     private int studentId;
     private String profileImage;
+    private String phoneNumber;
 
     @Column(columnDefinition = "Boolean default false")
     private Boolean personalAgree;
