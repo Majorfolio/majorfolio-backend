@@ -115,6 +115,9 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("semester")){
                     return makeResponse(SEMESTER_PATTERN_ERROR);
                 }
+                if(errorVariable.equals("phoneNumber")){
+                    return makeResponse(INVALID_USER_PHONE_NUMBER);
+                }
             }
 
             if(bindAnnotation.equals("Size")){

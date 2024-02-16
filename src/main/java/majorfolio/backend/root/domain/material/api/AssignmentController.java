@@ -100,7 +100,7 @@ public class AssignmentController {
     @GetMapping("/{materialId}/detail")
     public BaseResponse<MaterialDetailResponse> showDetailMaterial(@PathVariable(name = "materialId")
                                                              Long materialId,
-                                                                   @MemberInfo Long binderMemberId){
+                                                                   @MemberInfo Long binderMemberId) throws InvalidKeySpecException, IOException {
         return new BaseResponse<>(assignmentService.showDetailMaterial(materialId, binderMemberId));
     }
 
@@ -113,7 +113,7 @@ public class AssignmentController {
     @GetMapping("/my/{materialId}/detail/info")
     public BaseResponse<MaterialMyDetailResponse> showMyDetailMaterial(@PathVariable(name = "materialId")
                                                                        Long materialId,
-                                                                       HttpServletRequest request){
+                                                                       HttpServletRequest request) throws InvalidKeySpecException, IOException {
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
         return new BaseResponse<>(assignmentService.showMyDetailMaterial(kakaoId, materialId));
     }

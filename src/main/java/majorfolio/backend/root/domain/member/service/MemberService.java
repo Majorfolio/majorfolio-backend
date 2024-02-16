@@ -9,12 +9,15 @@
  */
 package majorfolio.backend.root.domain.member.service;
 
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
+import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
+import majorfolio.backend.root.domain.member.dto.response.SignupProgressResponse;
 import majorfolio.backend.root.domain.member.entity.EmailDB;
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.repository.EmailDBRepository;
@@ -97,21 +100,27 @@ public class MemberService {
             kakaoSocialLoginRepository.save(kakaoSocialLogin);
         }
         try {
+            emailId = emailDBRepository.findByKakaoSocialLoginAndStatus(kakaoSocialLogin, true).getId();
+        }catch (NoSuchElementException | NullPointerException e){
+            emailId = 0L;
+        }
+        try {
             memberId = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getId();
+            isMember = true;
         }catch (NoSuchElementException | NullPointerException e){
             memberId = 0L;
         }
-        if(memberId == 0){
-            log.info("memberId is null");
-            emailId = 0L;
-        }
-        else{
-            log.info("memberId = {}", memberId);
-            emailId = emailDBRepository.findByMember(memberRepository.findById(memberId).get()).getId();
-        }
-        if(memberId != 0){
-            isMember = true;
-        }
+//        if(memberId == 0){
+//            log.info("memberId is null");
+//            emailId = 0L;
+//        }
+//        else{
+//            log.info("memberId = {}", memberId);
+//            emailId = emailDBRepository.findByMember(memberRepository.findById(memberId).get()).getId();
+//        }
+//        if(memberId != 0){
+//            isMember = true;
+//        }
 
         String accessToken = JwtUtil.createAccessToken(memberId, kakaoSocialLogin.getId(), emailId, secretKey);
 
@@ -124,7 +133,7 @@ public class MemberService {
         kakaoSocialLogin.setRefreshToken(refreshToken);
         kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
-        return LoginResponse.of(isMember, memberId, accessToken, refreshToken);
+        return LoginResponse.of(isMember, memberId, emailId, accessToken, refreshToken);
     }
 
     /**
@@ -308,7 +317,7 @@ public class MemberService {
      * 이메일 코드 대조 API 서비스 구현
      * @param emailCodeRequest
      */
-    public String emailCodeCompare(Long emailId, String code){
+    public String emailCodeCompare(Long emailId, String code, Long kakaoId){
         if(!checkExpireCode(emailId)){
             //인증코드 만료시
             throw new ExpiredCodeException(EXPIRED_CODE);
@@ -323,10 +332,18 @@ public class MemberService {
 
         emailDB.setStatus(true);
         emailDB.setEmailDate(LocalDateTime.now());
+        emailDB.setKakaoSocialLogin(kakaoSocialLoginRepository.findById(kakaoId).get());
 
         emailDBRepository.save(emailDB);
 
         return "";
+    }
+
+    public String createPhoneNumber(Long memberId, PhoneNumberRequest phoneNumberRequest){
+        Member member = memberRepository.findById(memberId).get();
+        member.setPhoneNumber(phoneNumberRequest.getPhoneNumber());
+        memberRepository.save(member);
+        return "성공";
     }
 
 
@@ -368,5 +385,13 @@ public class MemberService {
             return false;
         }
         return true;
+    }
+
+    public SignupProgressResponse checkSignupProcess(ServletRequest servletRequest) {
+        Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
+        Long emailId = Long.parseLong(servletRequest.getAttribute("emailId").toString());
+        Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
+
+        return SignupProgressResponse.of(kakaoId, emailId, memberId);
     }
 }
