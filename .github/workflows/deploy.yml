@@ -33,16 +33,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: create application.yml
+      - name: create application.yml and privateKey.pem
         run: |
           mkdir ./src/main/resources
           cd ./src/main/resources
           touch ./application.yml
           echo "${{ secrets.PROPERTIES_PROD }}" > ./application.yml
-        shell: bash
-
-      - name: create privateKey.pem
-        run: |
           touch ./private_key.pem
           echo "${{ secrets.PRIVATE_KEY_PEM }}" > ./private_key.pem
         shell: bash
