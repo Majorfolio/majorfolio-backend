@@ -16,6 +16,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
@@ -95,7 +96,7 @@ public class AssignmentService {
      * Copyright [Majorfolio]
      * SPDX-License-Identifier : Apache-2.0
      */
-    public String uploadPdfFile(MultipartFile pdfFile, Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
+    public AssignmentUploadResponse uploadPdfFile(MultipartFile pdfFile, Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
         //업로드 한 사람 조회
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
@@ -116,7 +117,14 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-        return "성공";
+        //전화번호 업로드 여부
+        Boolean isRegisterPhoneNumber = true;
+
+        if(member.getPhoneNumber() == null){
+            isRegisterPhoneNumber = false;
+        }
+
+        return AssignmentUploadResponse.of(isRegisterPhoneNumber);
     }
 
     /**
