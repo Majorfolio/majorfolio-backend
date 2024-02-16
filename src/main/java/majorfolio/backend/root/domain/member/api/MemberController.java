@@ -72,12 +72,12 @@ public class MemberController {
 
     /**
      * 이메일 인증 코드 대조 컨트롤러
-     * @param emailCodeRequest
      * @return
      */
-    @GetMapping("/school-email/code")
-    public BaseResponse<String> emailCodeCompare(@RequestBody EmailCodeRequest emailCodeRequest){
-        return new BaseResponse<>(memberService.emailCodeCompare(emailCodeRequest));
+    @GetMapping("/school-email/{emailId}/{code}")
+    public BaseResponse<String> emailCodeCompare(@PathVariable(name = "emailId") Long emailId,
+                                                 @PathVariable(name = "code") String code){
+        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code));
     }
 
     /**
