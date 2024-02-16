@@ -126,6 +126,20 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      */
     List<Material> findAllByClassNameAndStatus(String className, String status);
 
+    /**
+     * 해당 유저의 과제가 판매중인 리스트를 반환
+     * @param member
+     * @param status
+     * @return
+     */
     List<Material> findAllByMemberAndStatus(Member member, String status);
+
+    /**
+     * page에 따라 멤버의 모든 과제를 반환 ( 업데이트 순)
+     * @param member
+     * @param pageable
+     * @return
+     */
+    Page<Material> findAllByMemberOrderByUpdatedAtDesc(Member member, Pageable pageable);
 
 }
