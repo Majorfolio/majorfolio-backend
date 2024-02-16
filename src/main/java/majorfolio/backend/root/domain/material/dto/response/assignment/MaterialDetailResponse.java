@@ -47,6 +47,8 @@ public class MaterialDetailResponse {
     private int score;
     private int fullScore;
     private int pages;
+    private Boolean isMemberBookmark; // 북마크 체크 여부
+    private Boolean isMemberLike; // 좋아요 체크 여부
     private List<OtherAssignment> otherAssignmentList;
 
     public static MaterialDetailResponse of(
@@ -69,6 +71,8 @@ public class MaterialDetailResponse {
             int score,
             int fullScore,
             int pages,
+            Boolean isMemberBookmark,
+            Boolean isMemberLike,
             List<OtherAssignment> otherAssignmentList
     ){
         return MaterialDetailResponse.builder()
@@ -91,6 +95,8 @@ public class MaterialDetailResponse {
                 .score(score)
                 .fullScore(fullScore)
                 .pages(pages)
+                .isMemberBookmark(isMemberBookmark)
+                .isMemberLike(isMemberLike)
                 .otherAssignmentList(otherAssignmentList)
                 .build();
     }

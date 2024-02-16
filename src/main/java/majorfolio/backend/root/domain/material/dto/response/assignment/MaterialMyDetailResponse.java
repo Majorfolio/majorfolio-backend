@@ -29,6 +29,8 @@ public class MaterialMyDetailResponse {
     private int score;
     private int pages;
     private String status;
+    private Boolean isMemberBookmark;
+    private Boolean isMemberLike;
 
     public static MaterialMyDetailResponse of(
             Long id,
@@ -47,7 +49,9 @@ public class MaterialMyDetailResponse {
             String grade,
             int score,
             int pages,
-            String status
+            String status,
+            Boolean isMemberBookmark,
+            Boolean isMemberLike
     ){
         return MaterialMyDetailResponse.builder()
                 .id(id)
@@ -67,6 +71,8 @@ public class MaterialMyDetailResponse {
                 .score(score)
                 .pages(pages)
                 .status(status)
+                .isMemberBookmark(isMemberBookmark)
+                .isMemberLike(isMemberLike)
                 .build();
     }
 }

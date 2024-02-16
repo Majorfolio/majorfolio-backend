@@ -142,4 +142,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      */
     Page<Material> findAllByMemberOrderByUpdatedAtDesc(Member member, Pageable pageable);
 
+    Material findByMember(Member member);
+
 }
