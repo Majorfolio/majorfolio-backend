@@ -23,11 +23,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
 import majorfolio.backend.root.global.CustomMultipartFile;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -97,8 +99,9 @@ public class AssignmentController {
      */
     @GetMapping("/{materialId}/detail")
     public BaseResponse<MaterialDetailResponse> showDetailMaterial(@PathVariable(name = "materialId")
-                                                             Long materialId){
-        return new BaseResponse<>(assignmentService.showDetailMaterial(materialId));
+                                                             Long materialId,
+                                                                   @MemberInfo Long binderMemberId){
+        return new BaseResponse<>(assignmentService.showDetailMaterial(materialId, binderMemberId));
     }
 
     /**
@@ -135,9 +138,9 @@ public class AssignmentController {
      * @return
      */
     @PutMapping("/upload")
-    public BaseResponse<String> upload(@RequestPart("file") MultipartFile pdfFile,
-                                       @Validated @RequestPart("assignment") AssignmentUploadRequest assignmentUploadRequest,
-                                       ServletRequest servletRequest) throws IOException {
+    public BaseResponse<AssignmentUploadResponse> upload(@RequestPart("file") MultipartFile pdfFile,
+                                                         @Validated @RequestPart("assignment") AssignmentUploadRequest assignmentUploadRequest,
+                                                         ServletRequest servletRequest) throws IOException {
         Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
         return new BaseResponse<>(assignmentService.uploadPdfFile(pdfFile, kakaoId, assignmentUploadRequest));
     }
