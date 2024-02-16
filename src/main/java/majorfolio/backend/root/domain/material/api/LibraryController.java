@@ -3,7 +3,7 @@ package majorfolio.backend.root.domain.material.api;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.domain.material.dto.response.LibraryMaterialListResponse;
+import majorfolio.backend.root.domain.material.dto.response.BuyMaterialListResponse;
 import majorfolio.backend.root.domain.material.dto.response.UploadMaterialListResponse;
 import majorfolio.backend.root.domain.material.service.LibraryService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +29,9 @@ public class LibraryController {
      * @return
      */
     @GetMapping("/buy")
-    public LibraryMaterialListResponse getBuyMaterialList(@RequestParam(name = "page") int page,
-                                                          @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
-                                                          HttpServletRequest request){
+    public BuyMaterialListResponse getBuyMaterialList(@RequestParam(name = "page") int page,
+                                                      @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
+                                                      HttpServletRequest request){
         return libraryService.getBuyMaterialList(page, pageSize, request);
     }
 

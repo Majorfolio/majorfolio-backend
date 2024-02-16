@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Builder
-public class LibraryMaterialResponse {
+public class BuyMaterialResponse {
     private final Long id;
     private final Long memberId;
     private final String imageUrl;
@@ -25,8 +25,8 @@ public class LibraryMaterialResponse {
     private final LocalDateTime updateDate;
     private final Long buyInfoId;
 
-    public static LibraryMaterialResponse of(Material material, LocalDateTime updateDate, Long buyInfoId) {
-        return LibraryMaterialResponse.builder()
+    public static BuyMaterialResponse of(Material material, LocalDateTime updateDate, Long buyInfoId) {
+        return BuyMaterialResponse.builder()
                 .id(material.getId())
                 .memberId(material.getMember().getId())
                 .imageUrl(material.getMember().getProfileImage())

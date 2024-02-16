@@ -11,7 +11,6 @@ import majorfolio.backend.root.domain.member.entity.BuyListItem;
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.repository.BuyListItemRepository;
-import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.domain.member.service.MemberGlobalService;
 import majorfolio.backend.root.global.exception.NotFoundException;
 import org.springframework.data.domain.Page;
@@ -43,7 +42,7 @@ public class LibraryService {
      * @param request
      * @return
      */
-    public LibraryMaterialListResponse getBuyMaterialList(int page, int pageSize, HttpServletRequest request) {
+    public BuyMaterialListResponse getBuyMaterialList(int page, int pageSize, HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
 //        Object kakaoIdAttribute = request.getAttribute("kakaoId");
 //
@@ -86,11 +85,11 @@ public class LibraryService {
             }
         }
 
-        List<LibraryMaterialResponse> beforeList = convertToLibraryMaterialResponseListByBuyListItem(beforeBuyListItem);
-        List<LibraryMaterialResponse> afterList = convertToLibraryMaterialResponseListByBuyListItem(afterBuyListItem);
-        List<LibraryMaterialResponse> downList = convertToDownLibraryMaterialResponseListByBuyListItem(downBuyListItem);
+        List<BuyMaterialResponse> beforeList = convertToLibraryMaterialResponseListByBuyListItem(beforeBuyListItem);
+        List<BuyMaterialResponse> afterList = convertToLibraryMaterialResponseListByBuyListItem(afterBuyListItem);
+        List<BuyMaterialResponse> downList = convertToDownLibraryMaterialResponseListByBuyListItem(downBuyListItem);
 
-        return LibraryMaterialListResponse.of(beforeList, afterList, downList);
+        return BuyMaterialListResponse.of(beforeList, afterList, downList);
     }
 
     /**
@@ -98,10 +97,10 @@ public class LibraryService {
      * @param buyListItems
      * @return
      */
-    private List<LibraryMaterialResponse> convertToLibraryMaterialResponseListByBuyListItem(List<BuyListItem> buyListItems) {
-        List<LibraryMaterialResponse> lists = new ArrayList<>();
+    private List<BuyMaterialResponse> convertToLibraryMaterialResponseListByBuyListItem(List<BuyListItem> buyListItems) {
+        List<BuyMaterialResponse> lists = new ArrayList<>();
         for(BuyListItem buyListItem : buyListItems)
-            lists.add(LibraryMaterialResponse.of(buyListItem.getMaterial(), buyListItem.getBuyInfo().getUpdatedAt(),buyListItem.getBuyInfo().getId()));
+            lists.add(BuyMaterialResponse.of(buyListItem.getMaterial(), buyListItem.getBuyInfo().getUpdatedAt(),buyListItem.getBuyInfo().getId()));
         return lists;
     }
 
@@ -110,10 +109,10 @@ public class LibraryService {
      * @param buyListItems
      * @return
      */
-    private List<LibraryMaterialResponse> convertToDownLibraryMaterialResponseListByBuyListItem(List<BuyListItem> buyListItems) {
-        List<LibraryMaterialResponse> lists = new ArrayList<>();
+    private List<BuyMaterialResponse> convertToDownLibraryMaterialResponseListByBuyListItem(List<BuyListItem> buyListItems) {
+        List<BuyMaterialResponse> lists = new ArrayList<>();
         for(BuyListItem buyListItem : buyListItems)
-            lists.add(LibraryMaterialResponse.of(buyListItem.getMaterial(), buyListItem.getUpdatedAt(),buyListItem.getBuyInfo().getId()));
+            lists.add(BuyMaterialResponse.of(buyListItem.getMaterial(), buyListItem.getUpdatedAt(),buyListItem.getBuyInfo().getId()));
         return lists;
     }
 
