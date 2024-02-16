@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configurers.HttpBasicC
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -44,6 +45,7 @@ public class WebSecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.headers(header -> header.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "*")));
         return http.build();
     }
 
@@ -62,7 +64,7 @@ public class WebSecurityConfig {
                         "/seller/**",
                         "/assignment/upload",
                         "/majorfolio/**",
-                        "assignment/{materialId}/detail")
+                        "/assignment/{materialId}/detail")
 
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }
@@ -71,16 +73,18 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         //Make the below setting as * to allow connection from any hos
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "https://majorfolio-server.shop"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://majorfolio-frontend.vercel.app"));
         corsConfiguration.setAllowedMethods(List.of(
                 HttpMethod.GET.name(),
                 HttpMethod.HEAD.name(),
                 HttpMethod.POST.name(),
                 HttpMethod.PUT.name(),
-                HttpMethod.DELETE.name())
+                HttpMethod.DELETE.name(),
+                HttpMethod.OPTIONS.name())
         );
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
+        corsConfiguration.setExposedHeaders(List.of("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
         corsConfiguration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);

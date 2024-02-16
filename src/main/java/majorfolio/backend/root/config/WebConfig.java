@@ -25,10 +25,18 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/member/login");
         registry.addInterceptor(serviceServerTokenInterceptor)
                 .order(1)
-                .addPathPatterns("/member/**", "/assignment/**", "/my/**", "/home/my/**")
-                .excludePathPatterns("/member/login", "/member/remake/token", "/assignment/{materialId}/detail");
+                .addPathPatterns("/member/**", "/assignment/**", "/my/**", "/home/my/**", "/library/**", "/payments/**")
+                .excludePathPatterns("/member/login", "/member/remake/token", "/assignment/{materialId}/detail", "/payments/info/{buyInfoId}", "payments/cancel/{buyInfoId}");
         registry.addInterceptor(refreshTokenInterceptor)
                 .order(1)
                 .addPathPatterns("/member/remake/token");
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://majorfolio-frontend.vercel.app")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowCredentials(true);
     }
 }

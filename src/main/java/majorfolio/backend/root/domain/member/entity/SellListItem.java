@@ -10,10 +10,7 @@
 package majorfolio.backend.root.domain.member.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import majorfolio.backend.root.domain.material.entity.Material;
 
 import java.time.LocalDateTime;
@@ -28,7 +25,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Getter @Setter
 public class SellListItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +45,23 @@ public class SellListItem {
 //    @OneToOne
 //    @JoinColumn(name = "material_id")
     private Long materialId;
+
+    /**
+     * SellListItem 생성 메서드
+     * @param date
+     * @param buyer
+     * @param sellList
+     * @param materialId
+     * @return
+     */
+    public static SellListItem of(LocalDateTime date, Long buyer, SellList sellList,
+                                  Long materialId){
+        return SellListItem.builder()
+                .status("pending")
+                .date(date)
+                .buyer(buyer)
+                .sellList(sellList)
+                .materialId(materialId)
+                .build();
+    }
 }

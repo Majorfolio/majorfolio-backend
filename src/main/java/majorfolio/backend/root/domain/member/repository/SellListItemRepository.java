@@ -46,4 +46,12 @@ public interface SellListItemRepository extends JpaRepository<SellListItem, Long
     Long countByMaterialIdAndStatusAndDateBetween(Long materialId, String status,
                                                   LocalDateTime start, LocalDateTime end);
 
+    /**
+     * 구매자 id, 과제 id로 판매자의 판매과제를 가져옴
+     * @param buyer
+     * @param MaterialId
+     * @return
+     */
+    SellListItem findByBuyerAndMaterialId(Long buyer, Long MaterialId);
+
 }

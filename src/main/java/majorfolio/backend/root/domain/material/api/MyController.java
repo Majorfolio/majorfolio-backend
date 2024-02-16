@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/my")
+//@CrossOrigin(originPatterns = "http://localhost:3000")
 @RequiredArgsConstructor
 public class MyController {
     private final MyService myService;

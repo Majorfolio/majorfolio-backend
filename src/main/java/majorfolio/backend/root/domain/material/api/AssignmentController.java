@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/assignment")
+//@CrossOrigin(originPatterns = {"http://localhost:3000", "https://majorfolio.github.io/majorfolio-frontend", "https://majorfolio-frontend.vercel.app"})
 @RequiredArgsConstructor
 @Slf4j
 public class AssignmentController {

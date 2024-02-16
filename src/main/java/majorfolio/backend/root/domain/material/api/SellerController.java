@@ -6,13 +6,11 @@ import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
 import majorfolio.backend.root.domain.material.dto.response.SellerMaterialListResponse;
 import majorfolio.backend.root.domain.material.service.MaterialAllListService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/seller")
+//@CrossOrigin(originPatterns = "http://localhost:3000")
 @RequiredArgsConstructor
 public class SellerController {
     private final MaterialAllListService materialAllListService;
