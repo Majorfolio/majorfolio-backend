@@ -365,20 +365,6 @@ public class AssignmentService {
      * @return
      */
     public MaterialDetailResponse showDetailMaterial(Long materialId, Long binderMemberId) throws InvalidKeySpecException, IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource("private_key.pem");
-        if (resource != null) {
-            try {
-                // URL을 파일 시스템 경로로 변환
-                Path filePath = Paths.get(resource.toURI());
-                String absolutePath = filePath.toAbsolutePath().toString();
-                log.info("Private key file path: " + absolutePath);
-            } catch (URISyntaxException e) {
-                log.info("Error converting URL to file path: " + e.getMessage());
-            }
-        } else {
-            log.info("Private key file not found!");
-        }
         //조회수 올리기
         doView(materialId);
 
