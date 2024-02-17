@@ -4,9 +4,13 @@ import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils;
 import com.amazonaws.services.s3.internal.ServiceUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
@@ -20,7 +24,17 @@ public class MakeSignedUrlUtil {
 
     public static String makeSignedUrl(String s3FileName, String bucketName,  Long memberId, Long materialId, String type, String privateKeyFilePath,
                                        String distributionDomain, String keyPairId) throws InvalidKeySpecException, IOException {
-        File privateKeyFile = new File(privateKeyFilePath);
+        InputStream inputStream = new ClassPathResource(privateKeyFilePath).getInputStream();
+        String[] privateKeyFileNameArray = privateKeyFilePath.split("/");
+        String privateKeyFileFullName = privateKeyFileNameArray[privateKeyFileNameArray.length-1];
+        String privateKeyFileName = privateKeyFileFullName.split("\\.")[0];
+        String privateKeyFileType = privateKeyFileFullName.split("\\.")[1];
+        File privateKeyFile = File.createTempFile(privateKeyFileName, "." + privateKeyFileType);
+        try {
+            FileUtils.copyInputStreamToFile(inputStream, privateKeyFile);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
         String signedURL = "";
 
         log.info(s3FileName);
