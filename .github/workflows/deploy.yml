@@ -70,7 +70,7 @@ jobs:
         uses: appleboy/ssh-action@master
         id: deploy-prod
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           envs: GITHUB_SHA
