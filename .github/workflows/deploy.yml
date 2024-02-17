@@ -51,7 +51,7 @@ jobs:
         with:
           username: ubuntu
           host: ${{ secrets.EC2_HOST }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "./scripts/deploy.sh"
           target: "/home/ubuntu/"
           rm: true
