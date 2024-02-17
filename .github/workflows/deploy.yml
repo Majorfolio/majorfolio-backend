@@ -46,15 +46,15 @@ jobs:
       - name: Build With Gradle
         run: ./gradlew build -x test
 
-      - name: deploy.sh ec2에 전달
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          username: ubuntu
-          host: ${{ secrets.SSH_HOST }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          source: "./scripts/deploy.sh"
-          target: "/home/ubuntu/"
+    #  - name: deploy.sh ec2에 전달
+     #   uses: appleboy/scp-action@master
+      #  with:
+       #   username: ubuntu
+        #  host: ${{ secrets.SSH_HOST }}
+        #  key: ${{ secrets.SSH_PRIVATE_KEY }}
+        #  port: ${{ secrets.SSH_PORT }}
+        #  source: "./scripts/deploy.sh"
+        #  target: "/home/ubuntu/"
 
       ## docker build & push to production
       - name: Docker build & push to prod
@@ -66,12 +66,12 @@ jobs:
 
       ## deploy to production
       - name: Deploy
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@master
         id: deploy-prod
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
