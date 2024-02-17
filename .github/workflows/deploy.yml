@@ -52,7 +52,6 @@ jobs:
           username: ubuntu
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: ${{ secrets.EC2_PORT }}
           source: "./scripts/deploy.sh"
           target: "/home/ubuntu/"
           overwrite: true
