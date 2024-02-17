@@ -53,7 +53,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           port: ${{ secrets.EC2_PORT }}
-          envs: GITHUB_SHA
           source: "./scripts/deploy.sh"
           target: "/home/ubuntu/"
           overwrite: true
