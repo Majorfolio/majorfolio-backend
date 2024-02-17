@@ -50,12 +50,11 @@ jobs:
         uses: appleboy/scp-action@v0.1.4
         with:
           username: ubuntu
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           source: "./scripts/deploy.sh"
           target: "/home/ubuntu/"
-          rm: true
 
       ## docker build & push to production
       - name: Docker build & push to prod
@@ -67,7 +66,7 @@ jobs:
 
       ## deploy to production
       - name: Deploy
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@0.1.4
         id: deploy-prod
         with:
           host: ${{ secrets.SSH_HOST }}
