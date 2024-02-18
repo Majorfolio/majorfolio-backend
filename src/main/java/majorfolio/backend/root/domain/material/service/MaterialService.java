@@ -37,7 +37,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getNewUploadList() {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByOrderByCreatedAtDescIdAsc();
+        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusOrderByCreatedAtDescIdAsc("active");
         if (newUploadMaterials == null || newUploadMaterials.isEmpty()) {
             // 자료가 1개도 없을 때의 예외 처리 또는 메시지 전달 등의 처리
             throw new NotFoundException(NOT_FOUND_MATERIAL);
@@ -51,7 +51,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getBestList() {
-        List<Material> bestMaterials = materialRepository.findTop5ByOrderByTotalRecommendDescIdAsc();
+        List<Material> bestMaterials = materialRepository.findTop5ByStatusOrderByTotalRecommendDescIdAsc("active");
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -160,7 +160,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListUniv(String univName) {
-        List<Material> bestMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByTotalRecommendDescIdAsc(univName);
+        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMemberUniversityNameOrderByTotalRecommendDescIdAsc("active",univName);
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -170,7 +170,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListUniv(String univName) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByMemberUniversityNameOrderByCreatedAtDescIdAsc(univName);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMemberUniversityNameOrderByCreatedAtDescIdAsc("active",univName);
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -196,7 +196,7 @@ public class MaterialService {
     private List<MaterialResponse> convertToMaterialResponseListWithUniv(List<Long> materialIds, String univName) {
         List<MaterialResponse> materialResponses = new ArrayList<>();
         for (Long materialId : materialIds) {
-            Material material = materialRepository.findByIdAndMemberUniversityName(materialId, univName);
+            Material material = materialRepository.findByStatusAndIdAndMemberUniversityName("active",materialId, univName);
             if (material != null) {
                 materialResponses.add(MaterialResponse.of(material));
             }
@@ -243,7 +243,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListMajor(String major) {
-        List<Material> bestMaterials = materialRepository.findTop5ByMajorOrderByTotalRecommendDescIdAsc(major);
+        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMajorOrderByTotalRecommendDescIdAsc("active",major);
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -253,7 +253,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListMajor(String major) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByMajorOrderByCreatedAtDescIdAsc(major);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMajorOrderByCreatedAtDescIdAsc("active",major);
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -279,7 +279,7 @@ public class MaterialService {
     private List<MaterialResponse> convertToMaterialResponseListWithMajor(List<Long> materialIds, String major) {
         List<MaterialResponse> materialResponses = new ArrayList<>();
         for (Long materialId : materialIds) {
-            Material material = materialRepository.findByIdAndMajor(materialId, major);
+            Material material = materialRepository.findByStatusAndIdAndMajor("active",materialId, major);
             if (material != null) {
                 materialResponses.add(MaterialResponse.of(material));
             }
