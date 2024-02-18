@@ -19,104 +19,104 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByOrderByCreatedAtDescIdAsc();
+    List<Material> findTop5ByStatusOrderByCreatedAtDescIdAsc(String status);
     /**
      * 모든학교에서 자료 좋아요순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByOrderByTotalRecommendDescIdAsc();
+    List<Material> findTop5ByStatusOrderByTotalRecommendDescIdAsc(String status);
     /**
      * 내학교에서 자료 생성순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMemberUniversityNameOrderByCreatedAtDescIdAsc(String universityName);
+    List<Material> findTop5ByStatusAndMemberUniversityNameOrderByCreatedAtDescIdAsc(String status, String universityName);
     /**
      * 내학교에서 자료 좋아요순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMemberUniversityNameOrderByTotalRecommendDescIdAsc(String universityName);
+    List<Material> findTop5ByStatusAndMemberUniversityNameOrderByTotalRecommendDescIdAsc(String status, String universityName);
     /**
      * 내학과에서 자료 생성순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMajorOrderByCreatedAtDescIdAsc(String major);
+    List<Material> findTop5ByStatusAndMajorOrderByCreatedAtDescIdAsc(String status, String major);
     /**
      * 내학과에서 자료 좋아요순 5개
      * @author 김태혁
      * @version 0.0.1
      */
-    List<Material> findTop5ByMajorOrderByTotalRecommendDescIdAsc(String major);
+    List<Material> findTop5ByStatusAndMajorOrderByTotalRecommendDescIdAsc(String status, String major);
     /**
      * 과제 아이디와 대학 이름에 맞는 과제 반환
      * @author 김태혁
      * @version 0.0.1
      */
-    Material findByIdAndMemberUniversityName(Long id, String universityName);
+    Material findByStatusAndIdAndMemberUniversityName(String status, Long id, String universityName);
     /**
      * 과제 아이디와 학과에 맞는 과제 반환
      * @author 김태혁
      * @version 0.0.1
      */
-    Material findByIdAndMajor(Long id, String major);
+    Material findByStatusAndIdAndMajor(String status, Long id, String major);
     /**
      * 페이지에 따라 모든 과제의 최근 업로드 순
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByOrderByCreatedAtDescIdAsc(Pageable pageable);
+    Page<Material> findByStatusOrderByCreatedAtDescIdAsc(String status, Pageable pageable);
 
     /**
      * 페이지에 따라 모든 과제의 좋아요 많은 순
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByOrderByTotalRecommendDescIdAsc(Pageable pageable);
+    Page<Material> findByStatusOrderByTotalRecommendDescIdAsc(String status, Pageable pageable);
 
     /**
      * 페이지에 따라 내 학교의 최근 업로드 순
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByMemberUniversityNameOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
+    Page<Material> findByStatusAndMemberUniversityNameOrderByCreatedAtDescIdAsc(String status, String universityName, Pageable pageable);
 
     /**
      * 페이지에 따라 내 학교의 좋아요 많은 순
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByMemberUniversityNameOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
+    Page<Material> findByStatusAndMemberUniversityNameOrderByTotalRecommendDescIdAsc(String status, String universityName, Pageable pageable);
 
     /**
      * 페이지에 따라 내 학과의 최근 업로드 순
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByMajorOrderByCreatedAtDescIdAsc(String universityName, Pageable pageable);
+    Page<Material> findByStatusAndMajorOrderByCreatedAtDescIdAsc(String status, String universityName, Pageable pageable);
 
     /**
      * 페이지에 따라 내 학과의 좋아요 많은 순
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByMajorOrderByTotalRecommendDescIdAsc(String universityName, Pageable pageable);
+    Page<Material> findByStatusAndMajorOrderByTotalRecommendDescIdAsc(String status, String universityName, Pageable pageable);
 
     /**
      * 페이지에 따라 이 수업의 모든 자료
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByClassNameAndProfessorAndMember_UniversityNameAndMajor(String className, String professor, String universityName, String major, Pageable pageable);
+    Page<Material> findByStatusAndClassNameAndProfessorAndMember_UniversityNameAndMajor(String status, String className, String professor, String universityName, String major, Pageable pageable);
 
     /**
      * 페이지에 따라 판매자의 모든 자료
      * @author 김태혁
      * @version 0.0.1
      */
-    Page<Material> findByMember(Member member, Pageable pageable);
+    Page<Material> findByStatusAndMember(String status, Member member, Pageable pageable);
 
     /**
      * 이 수업의 다른 자료리스트 반환
