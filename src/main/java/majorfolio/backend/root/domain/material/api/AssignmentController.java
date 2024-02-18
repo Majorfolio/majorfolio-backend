@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentDownloadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
@@ -143,6 +144,13 @@ public class AssignmentController {
                                                          ServletRequest servletRequest) throws IOException {
         Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
         return new BaseResponse<>(assignmentService.uploadPdfFile(pdfFile, kakaoId, assignmentUploadRequest));
+    }
+
+    @GetMapping("/download/{id}")
+    public BaseResponse<AssignmentDownloadResponse> download(@PathVariable(name = "id") Long materialId,
+                                                             ServletRequest servletRequest) throws InvalidKeySpecException, IOException {
+        Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
+        return new BaseResponse<>(assignmentService.downloadPdfFile(materialId, memberId));
     }
 
 

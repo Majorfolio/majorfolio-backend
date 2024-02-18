@@ -10,34 +10,39 @@
 package majorfolio.backend.root.domain.material.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
-import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
-import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
-import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.*;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
-import majorfolio.backend.root.domain.material.dto.response.assignment.OtherAssignment;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.SaleStat;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.ViewStat;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.entity.Preview;
 import majorfolio.backend.root.domain.material.entity.PreviewImages;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
+import majorfolio.backend.root.domain.member.entity.BuyList;
+import majorfolio.backend.root.domain.member.entity.BuyListItem;
 import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.entity.View;
 import majorfolio.backend.root.domain.member.repository.*;
+import majorfolio.backend.root.domain.payments.entity.BuyInfo;
+import majorfolio.backend.root.domain.payments.repository.BuyInfoRepository;
 import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
+import majorfolio.backend.root.global.exception.NotDownloadAuthorizationException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
 import majorfolio.backend.root.global.util.MakeSignedUrlUtil;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.util.Matrix;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,17 +50,21 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
-import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.INVALID_TOKEN;
-import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_MATCH_MATERIAL_AND_MEMBER;
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 
 /**
  * assignment/** 요청의 서비스 구현
@@ -78,6 +87,8 @@ public class AssignmentService {
     private final ViewRepository viewRepository;
     private final PreviewRepository previewRepository;
     private final PreviewImagesRepository previewImagesRepository;
+    private final BuyListItemRepository buyListItemRepository;
+    private final BuyInfoRepository buyInfoRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String s3Bucket;
@@ -119,7 +130,7 @@ public class AssignmentService {
         materialRepository.save(material);
         Long materialId = material.getId();
         //원본 파일 S3에올리기
-        fileSaveToS3(document, fileName, memberId, materialId);
+        fileSaveToS3(document, fileName, memberId, materialId, "originalFile");
         PDFRenderer pdfRenderer = new PDFRenderer(document);
         //과제 파일의 페이지 정보
         //미리보기 이미지 S3올리기
@@ -172,7 +183,7 @@ public class AssignmentService {
      * @param materialId
      * @throws IOException
      */
-    public void fileSaveToS3(PDDocument document, String fileName, Long memberId, Long materialId) throws IOException {
+    public void fileSaveToS3(PDDocument document, String fileName, Long memberId, Long materialId, String mode) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         document.save(outputStream);
         byte[] pdfBytes = outputStream.toByteArray();
@@ -182,7 +193,14 @@ public class AssignmentService {
         metadata.setContentType(multipartFile.getContentType());
         metadata.setContentLength(multipartFile.getSize());
 
-        String fileDirectory = s3Bucket + "/" + memberId + "/" + materialId + "/originalFile";
+        String fileDirectory = "";
+        if(mode.equals("originalFile")){
+            fileDirectory = s3Bucket + "/" + memberId + "/" + materialId + "/originalFile";
+        }
+        else if(mode.equals("Downloads")){
+            fileDirectory = s3Bucket + "/" + memberId + "/" + "Downloads" + "/" + materialId;
+        }
+
         try (InputStream fileInputStream = multipartFile.getInputStream()){
             amazonS3.putObject(
                     new PutObjectRequest(fileDirectory, fileName, fileInputStream, metadata)
@@ -294,6 +312,133 @@ public class AssignmentService {
      */
     public MultipartFile convertToMultipartFile(byte[] pdfBytes) {
         return new InMemoryMultipartFile("watermarked.pdf", pdfBytes);
+    }
+
+    /**
+     * 자료 다운로드 api구현
+     * @param materialId
+     * @param memberId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    public AssignmentDownloadResponse downloadPdfFile(Long materialId, Long memberId) throws InvalidKeySpecException, IOException {
+        // 구매자가 구매한 적이 있는지 없는지 검토
+        Member member = memberRepository.findById(memberId).get();
+        BuyList buyList = member.getBuyList();
+        Material material = materialRepository.findById(materialId).get();
+        BuyListItem buyListItem = buyListItemRepository.findByBuyListAndMaterial(buyList, material);
+        BuyInfo buyInfo = buyListItem.getBuyInfo();
+        Member uploader = material.getMember();
+        Long uploaderId = uploader.getId();
+
+        if (!buyInfo.getIsPay()) {
+            // 예외처리 해주기
+            throw new NotDownloadAuthorizationException(NOT_DOWNLOAD_AUTHORIZATION);
+        }
+
+
+        // s3에 다운로드 파일이 있는지 검토 -> 없으면 워터마크 표기해서 pdf파일 만든뒤에 signed url던져주기
+        //(구매 파일 s3경로 : majorfolio/{memberId}/{downloads}/{materialId})
+        String fileLink = material.getLink();
+        fileLink = fileLink.replace(" ", "+");
+        String signedUrl = "";
+        //여기도 예외처리 해주기
+
+        if(buyListItem.getIsDown()){
+            fileLink = "downloadMode" + fileLink;
+            signedUrl = MakeSignedUrlUtil.makeSignedUrl(fileLink, s3Bucket, memberId, materialId, "Downloads",
+                    privateKeyFilePath, distributionDomain, keyPairId);
+            return AssignmentDownloadResponse.of(signedUrl);
+        }
+
+        log.info(signedUrl);
+
+
+        //파일 가져와서 워터마크 표기하기
+        log.info(fileLink);
+        signedUrl = MakeSignedUrlUtil.makeSignedUrl(fileLink, s3Bucket, uploaderId, materialId, "originalFile",
+                privateKeyFilePath, distributionDomain, keyPairId);
+        log.info(signedUrl);
+
+        PDDocument document = null;
+        try {
+            // Open an HTTP connection to the signed URL
+            URL url = new URL(signedUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            try (InputStream inputStream = new BufferedInputStream(connection.getInputStream())) {
+                // Load the PDF document
+                document = PDDocument.load(inputStream);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        //파일가져오기
+//        byte[] content = s3Object.getObjectContent().readAllBytes();
+//        MultipartFile pdfFile = new InMemoryMultipartFile(s3Object.getObjectMetadata().getContentDisposition(), content);
+
+//        //pdf파일 전처리 과정
+//        PDDocument document = PDDocument.load(pdfFile.getBytes());
+
+        //워터마크 표기
+
+        //현재 날짜 가져오기(다운로드 날짜)
+        LocalDate currentDate = LocalDate.now();
+        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String watermarkText = "Majorfolio" + "/" + member.getNickName() + "/" + memberId + "/" + member.getUniversityName() + "/" + member.getMajor1() + "/" + formattedDate;
+        String outputFile = "downloadMode"+fileLink;
+        for (PDPage page : document.getPages()) {
+            float pageWidth = page.getMediaBox().getWidth();
+            float pageHeight = page.getMediaBox().getHeight();
+
+            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
+            contentStream.beginText();
+            // 사용자 지정 TTF 폰트 로드
+            PDType0Font font = PDType0Font.load(document, new File("src\\main\\java\\majorfolio\\backend\\root\\global\\font\\NanumBarunGothic.ttf"));
+            contentStream.setFont(font, 20);
+            contentStream.setNonStrokingColor(234, 234, 234); // 워터마크의 색상 설정
+
+            // 중앙 위치 계산
+            float centerX = (pageWidth / 12);
+            float centerY = (pageHeight / 28);
+
+            // 텍스트 위치 및 회전 설정
+            Matrix matrix = new Matrix();
+            matrix.translate(centerX, centerY); // 중앙으로 이동
+            matrix.rotate(Math.toRadians(50)); // 25도 회전
+
+            contentStream.setTextMatrix(matrix);
+            // 텍스트 위치 설정
+            contentStream.newLineAtOffset(centerX, centerY); // 중앙으로 이동
+
+            contentStream.showText(watermarkText);
+            contentStream.endText();
+            contentStream.close();
+        }
+
+        document.save(outputFile);
+
+        outputFile = outputFile.replace(" ", "+");
+        // 워터마크 추가된 파일 S3에 올리기
+        fileSaveToS3(document, outputFile, memberId, materialId, "Downloads");
+
+        document.close();
+        //다시 signedUrl 가져오기
+        signedUrl = MakeSignedUrlUtil.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
+                privateKeyFilePath, distributionDomain, keyPairId);
+
+        //구매완료로 바꾸고 download상태 바꾸기
+        buyInfo.setStatus("buy");
+        buyListItem.setIsDown(true);
+
+
+        buyInfoRepository.save(buyInfo);
+        buyListItemRepository.save(buyListItem);
+
+        return AssignmentDownloadResponse.of(signedUrl);
+
     }
 
     /**

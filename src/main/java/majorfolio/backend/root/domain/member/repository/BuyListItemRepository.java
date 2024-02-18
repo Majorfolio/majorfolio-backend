@@ -1,5 +1,6 @@
 package majorfolio.backend.root.domain.member.repository;
 
+import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.member.entity.BuyList;
 import majorfolio.backend.root.domain.member.entity.BuyListItem;
 import org.springframework.data.domain.Page;
@@ -17,4 +18,6 @@ public interface BuyListItemRepository extends JpaRepository<BuyListItem, Long> 
      */
     Page<BuyListItem> findAllByBuyListOrderByBuyInfoCreatedAtDesc(BuyList buyList, Pageable pageable);
     Page<BuyListItem> findAllByBuyListOrderByBuyInfoUpdatedAtDesc(BuyList buyList, Pageable pageable);
+
+    BuyListItem findByBuyListAndMaterial(BuyList buyList, Material material);
 }
