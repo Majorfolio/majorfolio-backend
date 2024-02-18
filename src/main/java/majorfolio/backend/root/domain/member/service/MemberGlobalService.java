@@ -21,6 +21,7 @@ public class MemberGlobalService {
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
     public KakaoSocialLogin getMemberByToken(HttpServletRequest request){
         Object kakaoIdAttribute = request.getAttribute("kakaoId");
+        System.out.println("kakaoIdAttribute = " + kakaoIdAttribute);
 
         if (kakaoIdAttribute == null) {
             // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리

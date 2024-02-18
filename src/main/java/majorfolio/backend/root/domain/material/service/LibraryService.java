@@ -75,7 +75,7 @@ public class LibraryService {
         List<BuyListItem> downBuyListItem= new ArrayList<>();
 
         for(BuyListItem buyListItem : pagedBuyListItems){
-            if(!buyListItem.getBuyInfo().getIsPay())
+            if(buyListItem.getBuyInfo().getStatus().equals("beforePay"))
                 beforeBuyListItem.add(buyListItem);
             else{
                 if(!buyListItem.getIsDown())
