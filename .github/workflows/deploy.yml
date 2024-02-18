@@ -33,23 +33,19 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: create application.yml
+      - name: create application.yml and privateKey.pem
         run: |
           mkdir ./src/main/resources
           cd ./src/main/resources
           touch ./application.yml
           echo "${{ secrets.PROPERTIES_PROD }}" > ./application.yml
-        shell: bash
-
-      - name: create privateKey.pem
-        run: |
-          cd ./src/main/resources
           touch ./private_key.pem
-          echo "${{secrets.PRIVATE_KEY_PEM}}" > ./private_key.pem
+          echo "${{ secrets.PRIVATE_KEY_PEM }}" > ./private_key.pem
         shell: bash
 
       - name: Build With Gradle
         run: ./gradlew build -x test
+
 
       ## docker build & push to production
       - name: Docker build & push to prod
@@ -64,12 +60,12 @@ jobs:
         uses: appleboy/ssh-action@master
         id: deploy-prod
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_IMAGE }}
-            docker-compose up -d
+            chmod 777 ./scripts/deploy.sh
+            cp ./scripts/deploy.sh ./deploy.sh
+            ./deploy.sh
             docker image prune -f

@@ -12,6 +12,8 @@ package majorfolio.backend.root.domain.member.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import majorfolio.backend.root.domain.material.entity.Material;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -34,6 +36,10 @@ public class SellListItem {
 
     private String status;
     private LocalDateTime date;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
     private Long buyer;
 
     @ManyToOne
