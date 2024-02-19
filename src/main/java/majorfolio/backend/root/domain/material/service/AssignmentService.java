@@ -342,7 +342,7 @@ public class AssignmentService {
         // s3에 다운로드 파일이 있는지 검토 -> 없으면 워터마크 표기해서 pdf파일 만든뒤에 signed url던져주기
         //(구매 파일 s3경로 : majorfolio/{memberId}/{downloads}/{materialId})
         String fileLink = material.getLink();
-        fileLink = fileLink.replace(" ", "+");
+        //fileLink = fileLink.replace(" ", "+");
         String signedUrl = "";
         //여기도 예외처리 해주기
 
@@ -421,7 +421,7 @@ public class AssignmentService {
 
         document.save(outputFile);
 
-        outputFile = outputFile.replace(" ", "+");
+        //outputFile = outputFile.replace(" ", "+");
         // 워터마크 추가된 파일 S3에 올리기
         fileSaveToS3(document, outputFile, memberId, materialId, "Downloads");
 
@@ -500,7 +500,9 @@ public class AssignmentService {
      * @return
      */
     private String generateFileName(MultipartFile file) {
-        return UUID.randomUUID() + "-" + file.getOriginalFilename();
+        String originName = file.getOriginalFilename();
+        originName = originName.replace(" ", "");
+        return UUID.randomUUID() + "-" + originName;
     }
 
 
