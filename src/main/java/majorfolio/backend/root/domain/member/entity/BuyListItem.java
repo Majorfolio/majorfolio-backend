@@ -28,7 +28,7 @@ public class BuyListItem {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "material_id")
     private Material material;
 
