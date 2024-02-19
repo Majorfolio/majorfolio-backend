@@ -44,21 +44,6 @@ public class LibraryService {
      */
     public BuyMaterialListResponse getBuyMaterialList(int page, int pageSize, HttpServletRequest request) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-//        Object kakaoIdAttribute = request.getAttribute("kakaoId");
-//
-//        if (kakaoIdAttribute == null) {
-//            // 카카오 아이디가 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-//            throw new NotFoundException(NOT_FOUND_KAKAOID);
-//        }
-//
-//        Long kakaoId = Long.parseLong(kakaoIdAttribute.toString());
-//
-//        // 카카오 아이디에 해당하는 값 조회
-//        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).orElse(null);
-//        if (kakaoSocialLogin == null || kakaoSocialLogin.getMember() == null || kakaoSocialLogin.getMember().getMajor1() == null) {
-//            // 카카오 아이디에 해당하는 값이 없을 때의 예외 처리 또는 메시지 전달 등의 처리
-//            throw new NotFoundException(NOT_FOUND_INFO_FROM_KAKAOID);
-//        }
         KakaoSocialLogin kakaoSocialLogin = memberGlobalService.getMemberByToken(request);
 
         BuyList buyList = kakaoSocialLogin.getMember().getBuyList();
@@ -77,7 +62,9 @@ public class LibraryService {
         for(BuyListItem buyListItem : pagedBuyListItems){
             if(buyListItem.getBuyInfo().getStatus().equals("beforePay"))
                 beforeBuyListItem.add(buyListItem);
-            else{
+            else if(buyListItem.getBuyInfo().getStatus().equals("buyComplete"))
+                downBuyListItem.add(buyListItem);
+            else if(buyListItem.getBuyInfo().getStatus().equals("afterPay")){
                 if(!buyListItem.getIsDown())
                     afterBuyListItem.add(buyListItem);
                 else
