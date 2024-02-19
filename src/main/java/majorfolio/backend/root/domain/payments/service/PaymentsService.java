@@ -191,8 +191,9 @@ public class PaymentsService {
         if(buyInfo == null)
             throw new NotFoundException(NOT_FOUND_BUYINFO_FROM_BUYINFO_ID);
 
-        if(buyInfo.getIsPay())
+        if(buyInfo.getStatus().equals("afterPay"))
             throw new CancelAfterPayException(INVALID_CANCEL_REQUEST);
+
 
         //status 를 cancel로
         buyInfo.setStatus("cancel");
