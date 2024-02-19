@@ -115,11 +115,12 @@ public class AssignmentService {
      * Copyright [Majorfolio]
      * SPDX-License-Identifier : Apache-2.0
      */
-    public AssignmentUploadResponse uploadPdfFile(MultipartFile pdfFile, Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
+    public AssignmentUploadResponse uploadPdfFile(Long kakaoId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
         //업로드 한 사람 조회
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
         //pdf파일 전처리 과정
+        MultipartFile pdfFile = assignmentUploadRequest.getFile();
         PDDocument document = PDDocument.load(pdfFile.getBytes());
         String fileName = generateFileName(pdfFile);
         //파일 부가 정보 저장
