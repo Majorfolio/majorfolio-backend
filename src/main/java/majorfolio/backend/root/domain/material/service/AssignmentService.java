@@ -430,7 +430,7 @@ public class AssignmentService {
                 privateKeyFilePath, distributionDomain, keyPairId);
 
         //구매완료로 바꾸고 download상태 바꾸기
-        buyInfo.setStatus("buy");
+        buyInfo.setStatus("buyComplete");
         buyListItem.setIsDown(true);
 
 
