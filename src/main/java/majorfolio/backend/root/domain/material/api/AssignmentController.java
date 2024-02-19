@@ -139,11 +139,10 @@ public class AssignmentController {
      * @return
      */
     @PutMapping("/upload")
-    public BaseResponse<AssignmentUploadResponse> upload(@RequestPart("file") MultipartFile pdfFile,
-                                                         @Validated @RequestPart("assignment") AssignmentUploadRequest assignmentUploadRequest,
+    public BaseResponse<AssignmentUploadResponse> upload(@Validated @ModelAttribute AssignmentUploadRequest assignmentUploadRequest,
                                                          ServletRequest servletRequest) throws IOException {
         Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
-        return new BaseResponse<>(assignmentService.uploadPdfFile(pdfFile, kakaoId, assignmentUploadRequest));
+        return new BaseResponse<>(assignmentService.uploadPdfFile(kakaoId, assignmentUploadRequest));
     }
 
     @GetMapping("/download/{id}")

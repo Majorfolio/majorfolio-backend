@@ -14,10 +14,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 자료 업로드 api시 요청 클래스 정의
@@ -29,7 +27,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class AssignmentUploadRequest {
+    private MultipartFile file;
     @NotBlank(message = "title : 과제 제목이 비어있으면 안됩니다.")
     private String title;
     @NotBlank(message = "major : 전공이 비어있으면 안됩니다.")
