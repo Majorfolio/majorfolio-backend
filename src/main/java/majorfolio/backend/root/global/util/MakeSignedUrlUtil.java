@@ -21,7 +21,6 @@ import java.util.TimeZone;
 @Slf4j
 public class MakeSignedUrlUtil {
 
-
     public static String makeSignedUrl(String s3FileName, String bucketName,  Long memberId, Long materialId, String type, String privateKeyFilePath,
                                        String distributionDomain, String keyPairId) throws InvalidKeySpecException, IOException {
         InputStream inputStream = new ClassPathResource(privateKeyFilePath).getInputStream();
@@ -37,9 +36,18 @@ public class MakeSignedUrlUtil {
         }
         String signedURL = "";
 
+        String policyResourcePath = "";
         log.info(s3FileName);
-        String policyResourcePath = "https://" + distributionDomain + "/" + bucketName + "/" + memberId + "/"
-                + materialId + "/" + type + "/" + s3FileName;
+
+        if(type.equals("Previews") || type.equals("originalFile")){
+            policyResourcePath = "https://" + distributionDomain + "/" + bucketName + "/" + memberId + "/"
+                    + materialId + "/" + type + "/" + s3FileName;
+        }
+        else if(type.equals("Downloads")){
+            policyResourcePath = "https://" + distributionDomain + "/" + bucketName + "/" + memberId + "/"
+                    + type + "/" + materialId + "/" + s3FileName;
+        }
+
 
         // 현재 시각을 가져옵니다.
         Date now = new Date();
@@ -80,7 +88,6 @@ public class MakeSignedUrlUtil {
         log.info(signedURL);
         return signedURL;
     }
-
 
 
 }

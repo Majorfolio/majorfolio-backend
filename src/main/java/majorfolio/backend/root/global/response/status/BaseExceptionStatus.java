@@ -111,7 +111,12 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_NULL_SCORE(10008, HttpStatus.BAD_REQUEST.value(), "점수가 비어있으면 안됩니다."),
     NOT_BLANK_DESCRIPTION(10009, HttpStatus.BAD_REQUEST.value(), "설명이 쓰여 있어야 합니다."),
     TOO_MANY_DESCRIPTION(10010, HttpStatus.BAD_REQUEST.value(), "설명은 80자로 제한됩니다."),
-    SEMESTER_PATTERN_ERROR(10011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다.");
+    SEMESTER_PATTERN_ERROR(10011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다."),
+
+    /**
+     * 11000 : 자료 다운 관련 오류
+     */
+    NOT_DOWNLOAD_AUTHORIZATION(11001, HttpStatus.BAD_REQUEST.value(), "위 자료를 다운로드 할 권한이 없습니다.");
 
 
 
