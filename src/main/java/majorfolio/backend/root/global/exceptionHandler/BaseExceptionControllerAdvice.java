@@ -2,6 +2,7 @@ package majorfolio.backend.root.global.exceptionHandler;
 
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.global.exception.CancelAfterPayException;
 import majorfolio.backend.root.global.exception.InternalServerErrorException;
 import majorfolio.backend.root.global.response.BaseErrorResponse;
 import majorfolio.backend.root.global.response.BaseResponse;
@@ -9,6 +10,7 @@ import majorfolio.backend.root.global.response.status.BaseExceptionStatus;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -62,6 +64,13 @@ public class BaseExceptionControllerAdvice {
             MethodArgumentNotValidException e
     ){
         return makeErrorResponse(e.getBindingResult());
+    }
+
+    @ExceptionHandler(CancelAfterPayException.class)
+    public ResponseEntity<BaseErrorResponse> handleCancelAfterPayException(CancelAfterPayException ex) {
+        //ㅣlog.error("[handle_CancelAfterPayException]", ex);
+        BaseErrorResponse errorResponse =  new BaseErrorResponse(ex.getResponseStatus());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getExceptionStatus().getStatus()));
     }
 
     /**
