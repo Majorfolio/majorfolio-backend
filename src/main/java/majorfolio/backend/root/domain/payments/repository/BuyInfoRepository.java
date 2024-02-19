@@ -15,4 +15,7 @@ public interface BuyInfoRepository extends JpaRepository<BuyInfo, Long> {
      * @return
      */
     List<BuyInfo> findByCreatedAtBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+
+    List<BuyInfo> findByStatusAndIsPay(String status, Boolean isPay);
 }
