@@ -35,6 +35,8 @@ import majorfolio.backend.root.global.exception.JwtInvalidException;
 import majorfolio.backend.root.global.exception.NotDownloadAuthorizationException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
 import majorfolio.backend.root.global.util.MakeSignedUrlUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -44,6 +46,7 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -397,7 +400,19 @@ public class AssignmentService {
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
             // 사용자 지정 TTF 폰트 로드
-            PDType0Font font = PDType0Font.load(document, new File("src\\main\\java\\majorfolio\\backend\\root\\global\\font\\NanumBarunGothic.ttf"));
+            String fontPath = "NanumBarunGothic.ttf";
+            InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
+            String[] fontFileNameArray = fontPath.split("/");
+            String fontFileFullName = fontFileNameArray[fontFileNameArray.length-1];
+            String fontFileName = fontFileFullName.split("\\.")[0];
+            String fontFileType = fontFileFullName.split("\\.")[1];
+            File fontFile = File.createTempFile(fontFileName, "." + fontFileType);
+            try {
+                FileUtils.copyInputStreamToFile(inputStream, fontFile);
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+            }
+            PDType0Font font = PDType0Font.load(document, fontFile);
             contentStream.setFont(font, 20);
             contentStream.setNonStrokingColor(234, 234, 234); // 워터마크의 색상 설정
 
