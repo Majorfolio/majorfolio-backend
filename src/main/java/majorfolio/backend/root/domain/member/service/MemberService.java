@@ -408,7 +408,7 @@ public class MemberService {
         //거래 한 적이 없다면 정보들 삭제
         if(isMemberDeal(member)){
             makeMemberDelete(member, kakaoSocialLogin);
-            emailDB.setEmail(emailDB.getEmail() + "(탈퇴)");
+            emailDB.setEmail(emailDB.getEmail() + " (탈퇴)");
             emailDB.setStatus(false);
             emailDBRepository.save(emailDB);
 
