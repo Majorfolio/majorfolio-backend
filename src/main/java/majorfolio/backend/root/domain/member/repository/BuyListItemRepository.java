@@ -20,4 +20,6 @@ public interface BuyListItemRepository extends JpaRepository<BuyListItem, Long> 
     Page<BuyListItem> findAllByBuyListOrderByBuyInfoUpdatedAtDesc(BuyList buyList, Pageable pageable);
 
     BuyListItem findByBuyListAndMaterial(BuyList buyList, Material material);
+
+    Boolean existsBuyListItemByBuyList(BuyList buyList);
 }

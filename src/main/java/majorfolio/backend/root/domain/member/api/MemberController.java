@@ -149,4 +149,9 @@ public class MemberController {
         return new BaseResponse<>(memberService.checkSignupProcess(servletRequest));
     }
 
+    @PostMapping("/delete")
+    public BaseResponse<String> deleteMember(@MemberInfo Long memberId){
+        return new BaseResponse<>(memberService.deleteMember(memberId));
+    }
+
 }
