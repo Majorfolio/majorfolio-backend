@@ -43,7 +43,7 @@ public class UserExceptionControllerAdvice {
     @ExceptionHandler(UserException.class)
     public BaseErrorResponse handle_UserException(UserException e) {
         log.error("[handle_UserException]", e);
-        return new BaseErrorResponse(INVALID_USER_VALUE, e.getMessage());
+        return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
 
     /**

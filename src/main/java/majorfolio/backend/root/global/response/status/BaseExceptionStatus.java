@@ -71,6 +71,8 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_CERTIFICATION_USER(6003, HttpStatus.BAD_REQUEST.value(), "이메일 인증한 사용자가 아닙니다."),
     NOT_FOUND_USER(6004, HttpStatus.BAD_REQUEST.value(), "토큰에서 사용자를 찾을 수 없습니다."),
     INVALID_USER_PHONE_NUMBER(6005, HttpStatus.BAD_REQUEST.value(), "올바른 전화번호 형식이 아닙니다."),
+    OVERLAP_MEMBER(6006, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
+    NOT_ACTIVE_MEMBER(6007, HttpStatus.BAD_REQUEST.value(), "현재 회원 상태가 활성상태가 아닙니다!"),
 
     /**
      * 7000 : 과제관련 오류

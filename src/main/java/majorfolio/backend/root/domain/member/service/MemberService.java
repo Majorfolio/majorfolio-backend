@@ -11,8 +11,8 @@ package majorfolio.backend.root.domain.member.service;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
+import static majorfolio.backend.root.global.status.StatusEnum.DELETE;
 
 /**
  * MemeberController에서 수행되는 서비스 동작을 정의한 클래스
@@ -45,6 +46,7 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MemberService {
     private final JavaMailSender javaMailSender;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
@@ -54,8 +56,10 @@ public class MemberService {
     private final BasketRepository basketRepository;
     private final BuyListRepository buyListRepository;
     private final SellListRepository sellListRepository;
-    private final FollowerListRepository follweListRepository;
+    private final FollowerListRepository followerListRepository;
     private final CouponBoxRepository couponBoxRepository;
+    private final SellListItemRepository sellListItemRepository;
+    private final BuyListItemRepository buyListItemRepository;
 
 
     @Value("${jwt.secret}")
@@ -63,22 +67,6 @@ public class MemberService {
 
     @Value("${spring.mail.username}")
     private String majorfolioMail;
-
-    public MemberService(JavaMailSender javaMailSender,
-                         KakaoSocialLoginRepository kakaoSocialLoginRepository,
-                         UniversityRepository universityRepository,
-                         EmailDBRepository emailDBRepository, MemberRepository memberRepository, BasketRepository basketRepository, BuyListRepository buyListRepository, SellListRepository sellListRepository, FollowerListRepository follweListRepository, CouponBoxRepository couponBoxRepository) {
-        this.javaMailSender = javaMailSender;
-        this.kakaoSocialLoginRepository = kakaoSocialLoginRepository;
-        this.universityRepository = universityRepository;
-        this.emailDBRepository = emailDBRepository;
-        this.memberRepository = memberRepository;
-        this.basketRepository = basketRepository;
-        this.buyListRepository = buyListRepository;
-        this.sellListRepository = sellListRepository;
-        this.follweListRepository = follweListRepository;
-        this.couponBoxRepository = couponBoxRepository;
-    }
 
 
     /**
@@ -220,6 +208,11 @@ public class MemberService {
             throw new UserException(INVALID_USER_VALUE);
         }
 
+        //이미 존재하는 멤버일 때
+        if(kakaoSocialLogin.getMember() != null){
+            throw new UserException(OVERLAP_MEMBER);
+        }
+
         // 장바구니, 구매리스트, 판매리스트, 쿠폰박스, 팔로워 목록 만들어두기
         Basket basket = Basket.builder().build();
         basketRepository.save(basket);
@@ -230,7 +223,7 @@ public class MemberService {
         CouponBox couponBox = CouponBox.builder().build();
         couponBoxRepository.save(couponBox);
         FollowerList followerList = majorfolio.backend.root.domain.member.entity.FollowerList.builder().build();
-        follweListRepository.save(followerList);
+        followerListRepository.save(followerList);
 
         Member member = Member.of(signupRequest.getNickName(), signupRequest.getUniversityName(),
                 signupRequest.getMajor1(), signupRequest.getMajor2(), signupRequest.getStudentId(),
@@ -397,5 +390,78 @@ public class MemberService {
         Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
 
         return SignupProgressResponse.of(kakaoId, emailId, memberId);
+    }
+
+    /**
+     * 회원탈퇴 서비스 구현
+     * @param memberId
+     * @return
+     */
+    public String deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).get();
+        KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByMember(member);
+        EmailDB emailDB = emailDBRepository.findByMember(member);
+
+
+        //거래 내역이 있는지 여부 판단
+        //거래 한 적이 있다면 정보들은 남겨두기(status만 탈퇴상태로)
+        //거래 한 적이 없다면 정보들 삭제
+        if(isMemberDeal(member)){
+            makeMemberDelete(member, kakaoSocialLogin);
+            emailDB.setEmail(emailDB.getEmail() + "(탈퇴)");
+            emailDB.setStatus(false);
+            emailDBRepository.save(emailDB);
+
+            return "탈퇴가 성공적으로 진행되었습니다!";
+        }
+
+        makeMemberDelete(member, kakaoSocialLogin);
+
+        emailDB.setEmail("탈퇴한 회원의 Email");
+        emailDB.setStatus(false);
+        emailDBRepository.save(emailDB);
+
+        member.setPhoneNumber("");
+        memberRepository.save(member);
+
+        return "탈퇴가 성공적으로 진행되었습니다!";
+    }
+
+    /**
+     * 탈퇴한 회원처리
+     * @param member
+     */
+
+    public void makeMemberDelete(Member member,
+                                 KakaoSocialLogin kakaoSocialLogin) {
+        member.setNickName("탈퇴한 회원");
+        member.setStatus(DELETE.getStatus());
+        memberRepository.save(member);
+        kakaoSocialLogin.setRefreshToken("");
+        kakaoSocialLogin.setKakaoNumber(0L);
+        kakaoSocialLoginRepository.save(kakaoSocialLogin);
+    }
+
+    /**
+     * 탈퇴할 회원이 거래정보를 가지고 있는지 여부 판단
+     * @param member
+     * @return
+     */
+    public boolean isMemberDeal(Member member) {
+
+        BuyList buyList = member.getBuyList();
+        SellList sellList = member.getSellList();
+
+        //구매 이력이 있는 경우
+        if(buyListItemRepository.existsBuyListItemByBuyList(buyList)){
+            return true;
+        }
+
+        //판매 이력이 있는 경우
+        if(sellListItemRepository.existsSellListItemBySellList(sellList)){
+            return true;
+        }
+
+        return false;
     }
 }

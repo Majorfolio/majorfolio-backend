@@ -10,6 +10,7 @@
 package majorfolio.backend.root.domain.member.repository;
 
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
+import majorfolio.backend.root.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -20,5 +21,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface KakaoSocialLoginRepository extends JpaRepository<KakaoSocialLogin, Long> {
     KakaoSocialLogin findByKakaoNumber(Long kakaoNumber);
 
+    KakaoSocialLogin findByMember(Member member);
 
 }
