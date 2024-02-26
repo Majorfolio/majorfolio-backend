@@ -9,17 +9,22 @@
  */
 package majorfolio.backend.root.domain.material.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterial;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
+import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
 import majorfolio.backend.root.domain.member.entity.Bookmark;
+import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
 import majorfolio.backend.root.domain.member.entity.Likes;
 import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.repository.BookmarkRepository;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.domain.member.repository.LikeRepository;
+import majorfolio.backend.root.domain.member.repository.MemberRepository;
+import majorfolio.backend.root.domain.member.service.MemberGlobalService;
 import majorfolio.backend.root.global.exception.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +51,8 @@ public class MyService {
     private final MaterialRepository materialRepository;
     private final LikeRepository likeRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final MemberGlobalService memberGlobalService;
+    private final MemberRepository memberRepository;
 
     /**
      * 좋아요 기능 구현
@@ -233,5 +240,16 @@ public class MyService {
 
         return MyMaterial.of(nickName, profileUrl, className,
                 university, major, type, totalRecommend);
+    }
+
+    public String changeProfileImage(ProfileImageRequest profileImageRequest, HttpServletRequest request) {
+        KakaoSocialLogin kakaoSocialLogin = memberGlobalService.getMemberByToken(request);
+        int profileImageId = profileImageRequest.getProfileImage();
+        System.out.println("profileImageId = " + profileImageId);
+
+        Member member = kakaoSocialLogin.getMember();
+        member.setProfileImage(Integer.toString(profileImageId));
+        memberRepository.save(member);
+        return "이미지가 변경되었습니다.";
     }
 }

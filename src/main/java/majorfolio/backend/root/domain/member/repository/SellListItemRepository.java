@@ -59,4 +59,5 @@ public interface SellListItemRepository extends JpaRepository<SellListItem, Long
 
     Page<SellListItem> findAllBySellListOrderByUpdatedAtDesc(SellList sellList, Pageable pageable);
 
+    Boolean existsSellListItemBySellList(SellList sellList);
 }

@@ -13,15 +13,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.domain.member.repository.MemberRepository;
 import majorfolio.backend.root.global.exception.JwtExpiredException;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
+import majorfolio.backend.root.global.exception.UserException;
 import majorfolio.backend.root.global.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.EXPIRED_TOKEN;
-import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.INVALID_TOKEN;
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
+import static majorfolio.backend.root.global.status.StatusEnum.ACTIVE;
 
 /**
  * 서비스에서 발행한 JWT가 유효한지 사전에 체크하는 interceptor 구현
@@ -35,6 +37,8 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
 public class ServiceServerTokenInterceptor implements HandlerInterceptor {
     @Value("${jwt.secret}")
     private String secretKey;
+
+    private MemberRepository memberRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -59,6 +63,7 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
         request.setAttribute("emailId", emailId);
         Long memberId = JwtUtil.getMemberId(userToken, secretKey);
         request.setAttribute("memberId", memberId);
+
 
         return true;
     }

@@ -32,6 +32,7 @@ import majorfolio.backend.root.domain.payments.entity.BuyInfo;
 import majorfolio.backend.root.domain.payments.repository.BuyInfoRepository;
 import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
+import majorfolio.backend.root.global.exception.MaterialException;
 import majorfolio.backend.root.global.exception.NotDownloadAuthorizationException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
 import majorfolio.backend.root.global.util.MakeSignedUrlUtil;
@@ -455,6 +456,37 @@ public class AssignmentService {
 
         return AssignmentDownloadResponse.of(signedUrl);
 
+    }
+
+    /**
+     * 미리보기 이미지 서비스 구현
+     * @param materialId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    public PreviewResponse showPreview(Long materialId) throws InvalidKeySpecException, IOException {
+        Material material;
+        try{
+            material = materialRepository.findById(materialId).get();
+        }catch (NoSuchElementException e){
+            throw new MaterialException(NOT_PRESENT_MATERIAL);
+        }
+
+        Preview preview = material.getPreview();
+        Long previewImageCount = previewImagesRepository.countByPreview(preview);
+        Long memberId = material.getMember().getId();
+
+        List<String> previewImages = new ArrayList<>();
+        for(int i=1; i<=previewImageCount; i++){
+            String link = previewImagesRepository.findByPreviewAndPosition(preview, i).getImageUrl();
+            String[] linkList = link.split("/");
+            link = linkList[linkList.length-1];
+            link = MakeSignedUrlUtil.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
+            previewImages.add(link);
+        }
+
+        return PreviewResponse.of(previewImages);
     }
 
     /**
