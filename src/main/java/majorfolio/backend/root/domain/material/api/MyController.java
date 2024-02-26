@@ -15,6 +15,7 @@ import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
 import majorfolio.backend.root.domain.material.service.MyService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
+import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -90,5 +91,10 @@ public class MyController {
                                                          HttpServletRequest request){
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
         return new BaseResponse<>(myService.showLikeList(page, pageSize, kakaoId));
+    }
+
+    @PatchMapping("/image")
+    public BaseResponse<String> changeProfileImage(@RequestBody ProfileImageRequest profileImageRequest, HttpServletRequest request){
+        return new BaseResponse<>(myService.changeProfileImage(profileImageRequest,request));
     }
 }
