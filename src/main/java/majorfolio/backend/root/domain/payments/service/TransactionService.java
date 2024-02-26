@@ -105,7 +105,7 @@ public class TransactionService {
             Material material = materialRepository.findById(sellListItem.getMaterialId()).orElse(null);
             if(sellListItem.getStatus().equals("pending"))
                 pendingMaterials.add(material);
-            else if(sellListItem.getStatus().equals("complete"))
+            else if(sellListItem.getStatus().equals("buyComplete"))
                 completeMaterials.add(material);
         }
 
