@@ -23,10 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
-import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentDownloadResponse;
-import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
-import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
-import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.*;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
 import majorfolio.backend.root.global.CustomMultipartFile;
@@ -150,6 +147,11 @@ public class AssignmentController {
                                                              ServletRequest servletRequest) throws InvalidKeySpecException, IOException {
         Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
         return new BaseResponse<>(assignmentService.downloadPdfFile(materialId, memberId));
+    }
+
+    @GetMapping("/{materialId}/previews")
+    public BaseResponse<PreviewResponse> showPreview(@PathVariable(name = "materialId") Long materialId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(assignmentService.showPreview(materialId));
     }
 
 

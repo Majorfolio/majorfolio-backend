@@ -77,6 +77,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
      */
 
     NOT_MATCH_MATERIAL_AND_MEMBER(7001, HttpStatus.BAD_REQUEST.value(), "과제 주인과 현재 사용자가 다릅니다."),
+    NOT_PRESENT_MATERIAL(7002, HttpStatus.BAD_REQUEST.value(), "해당 자료가 존재하지 않습니다."),
 
     /**
      * 8000 : Found관련 오류
