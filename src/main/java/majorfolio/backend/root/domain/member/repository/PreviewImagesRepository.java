@@ -28,4 +28,6 @@ public interface PreviewImagesRepository extends JpaRepository<PreviewImages, Lo
 
     PreviewImages findByPreviewAndPosition(Preview preview, int position);
 
+    Long countByPreview(Preview preview);
+
 }
