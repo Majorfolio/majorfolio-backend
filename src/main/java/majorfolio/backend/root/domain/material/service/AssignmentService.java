@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.*;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
@@ -23,10 +24,7 @@ import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.entity.Preview;
 import majorfolio.backend.root.domain.material.entity.PreviewImages;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
-import majorfolio.backend.root.domain.member.entity.BuyList;
-import majorfolio.backend.root.domain.member.entity.BuyListItem;
-import majorfolio.backend.root.domain.member.entity.Member;
-import majorfolio.backend.root.domain.member.entity.View;
+import majorfolio.backend.root.domain.member.entity.*;
 import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.domain.payments.entity.BuyInfo;
 import majorfolio.backend.root.domain.payments.repository.BuyInfoRepository;
@@ -454,6 +452,36 @@ public class AssignmentService {
         buyListItemRepository.save(buyListItem);
 
         return AssignmentDownloadResponse.of(signedUrl);
+
+    }
+
+    /**
+     * 임시저장 서비스 구현
+     * @param memberId
+     * @return
+     */
+    public String saveTemporarily(Long memberId,
+                                  TempAssignmentSaveRequest tempAssignmentSaveRequest) throws IOException {
+        Member member = memberRepository.findById(memberId).get();
+
+        TempStorage tempStorage = member.getTempStorage();
+
+        Material material = Material.builder().build();
+        Long materialId = material.getId();
+        //pdf파일 전처리 과정
+        MultipartFile pdfFile;
+        PDDocument document;
+        String fileName;
+        try {
+            pdfFile = tempAssignmentSaveRequest.getFile();
+            document = PDDocument.load(pdfFile.getBytes());
+            fileName = generateFileName(pdfFile);
+            fileSaveToS3(document, fileName, memberId, materialId, "originalFile");
+        }catch (NullPointerException e){
+            fileName = "";
+        }
+
+
 
     }
 

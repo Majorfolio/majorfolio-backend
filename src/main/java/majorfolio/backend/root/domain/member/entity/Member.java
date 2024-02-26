@@ -95,12 +95,17 @@ public class Member {
     @JoinColumn(name = "couponBox_id")
     private CouponBox couponBox;
 
+    @OneToOne
+    @JoinColumn(name = "tempStorage_id")
+    private TempStorage tempStorage;
+
     public static Member of(String nickName, String universityName,
                             String major1, String major2, int studentId,
                             Boolean personalAgree, Boolean serviceAgree,
                             Boolean marketingAgree, Basket basket,
                             BuyList buyList, SellList sellList,
-                            FollowerList followerList, CouponBox couponBox){
+                            FollowerList followerList, CouponBox couponBox,
+                            TempStorage tempStorage){
         return Member.builder()
                 .nickName(nickName)
                 .universityName(universityName)
@@ -115,6 +120,7 @@ public class Member {
                 .sellList(sellList)
                 .followerList(followerList)
                 .couponBox(couponBox)
+                .tempStorage(tempStorage)
                 .build();
     }
 
