@@ -11,8 +11,8 @@ package majorfolio.backend.root.domain.member.service;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
@@ -45,6 +45,7 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MemberService {
     private final JavaMailSender javaMailSender;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
@@ -54,8 +55,9 @@ public class MemberService {
     private final BasketRepository basketRepository;
     private final BuyListRepository buyListRepository;
     private final SellListRepository sellListRepository;
-    private final FollowerListRepository follweListRepository;
+    private final FollowerListRepository followerListRepository;
     private final CouponBoxRepository couponBoxRepository;
+    private final TempStorageRepository tempStorageRepository;
 
 
     @Value("${jwt.secret}")
@@ -64,21 +66,6 @@ public class MemberService {
     @Value("${spring.mail.username}")
     private String majorfolioMail;
 
-    public MemberService(JavaMailSender javaMailSender,
-                         KakaoSocialLoginRepository kakaoSocialLoginRepository,
-                         UniversityRepository universityRepository,
-                         EmailDBRepository emailDBRepository, MemberRepository memberRepository, BasketRepository basketRepository, BuyListRepository buyListRepository, SellListRepository sellListRepository, FollowerListRepository follweListRepository, CouponBoxRepository couponBoxRepository) {
-        this.javaMailSender = javaMailSender;
-        this.kakaoSocialLoginRepository = kakaoSocialLoginRepository;
-        this.universityRepository = universityRepository;
-        this.emailDBRepository = emailDBRepository;
-        this.memberRepository = memberRepository;
-        this.basketRepository = basketRepository;
-        this.buyListRepository = buyListRepository;
-        this.sellListRepository = sellListRepository;
-        this.follweListRepository = follweListRepository;
-        this.couponBoxRepository = couponBoxRepository;
-    }
 
 
     /**
@@ -230,12 +217,15 @@ public class MemberService {
         CouponBox couponBox = CouponBox.builder().build();
         couponBoxRepository.save(couponBox);
         FollowerList followerList = majorfolio.backend.root.domain.member.entity.FollowerList.builder().build();
-        follweListRepository.save(followerList);
+        followerListRepository.save(followerList);
+        TempStorage tempStorage = TempStorage.builder().build();
+        tempStorageRepository.save(tempStorage);
+        ;
 
         Member member = Member.of(signupRequest.getNickName(), signupRequest.getUniversityName(),
                 signupRequest.getMajor1(), signupRequest.getMajor2(), signupRequest.getStudentId(),
                 signupRequest.getPersonalAgree(), signupRequest.getServiceAgree(), signupRequest.getMarketingAgree(),
-                basket, buyList, sellList, followerList, couponBox);
+                basket, buyList, sellList, followerList, couponBox, tempStorage);
 
         memberRepository.save(member);
 

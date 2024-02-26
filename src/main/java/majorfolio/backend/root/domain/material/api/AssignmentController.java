@@ -153,9 +153,16 @@ public class AssignmentController {
         return new BaseResponse<>(assignmentService.downloadPdfFile(materialId, memberId));
     }
 
+    /**
+     * 임시보관함 저장
+     * @param tempAssignmentSaveRequest
+     * @param memberId
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/temp/save")
     public BaseResponse<String> saveTemporarily(@Validated @ModelAttribute TempAssignmentSaveRequest tempAssignmentSaveRequest,
-                                                @MemberInfo Long memberId){
+                                                @MemberInfo Long memberId) throws IOException {
         return new BaseResponse<>(assignmentService.saveTemporarily(memberId, tempAssignmentSaveRequest));
     }
 }

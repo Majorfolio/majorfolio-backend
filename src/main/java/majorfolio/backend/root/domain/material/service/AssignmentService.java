@@ -90,6 +90,7 @@ public class AssignmentService {
     private final PreviewImagesRepository previewImagesRepository;
     private final BuyListItemRepository buyListItemRepository;
     private final BuyInfoRepository buyInfoRepository;
+    private final TempMaterialRepository tempMaterialRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String s3Bucket;
@@ -201,6 +202,9 @@ public class AssignmentService {
         }
         else if(mode.equals("Downloads")){
             fileDirectory = s3Bucket + "/" + memberId + "/" + "Downloads" + "/" + materialId;
+        }
+        else if(mode.equals("TempStorage")){
+            fileDirectory = s3Bucket + "/" + memberId + "/" + "TempStorage" + "/" + materialId;
         }
 
         try (InputStream fileInputStream = multipartFile.getInputStream()){
@@ -465,9 +469,9 @@ public class AssignmentService {
         Member member = memberRepository.findById(memberId).get();
 
         TempStorage tempStorage = member.getTempStorage();
-
-        Material material = Material.builder().build();
-        Long materialId = material.getId();
+        TempMaterial tempMaterial = TempMaterial.builder().build();
+        tempMaterialRepository.save(tempMaterial);
+        Long tempMaterialId = tempMaterial.getId();
         //pdf파일 전처리 과정
         MultipartFile pdfFile;
         PDDocument document;
@@ -476,13 +480,38 @@ public class AssignmentService {
             pdfFile = tempAssignmentSaveRequest.getFile();
             document = PDDocument.load(pdfFile.getBytes());
             fileName = generateFileName(pdfFile);
-            fileSaveToS3(document, fileName, memberId, materialId, "originalFile");
-        }catch (NullPointerException e){
+            fileSaveToS3(document, fileName, memberId, tempMaterialId, "TempStorage");
+        }catch (NullPointerException | IOException e){
             fileName = "";
         }
 
+        //요청 데이터 tempMaterial DB에 저장
+        saveToTempMaterial(tempStorage, tempMaterial, tempAssignmentSaveRequest, fileName);
 
+        return "임시저장 완료!";
+    }
 
+    /**
+     * 응답데이터 TempMaterial DB에 저장
+     * @param tempStorage
+     * @param tempMaterial
+     * @param tempAssignmentSaveRequest
+     * @param fileName
+     */
+    public void saveToTempMaterial(TempStorage tempStorage, TempMaterial tempMaterial, TempAssignmentSaveRequest tempAssignmentSaveRequest, String fileName) {
+        tempMaterial.setLink(fileName);
+        tempMaterial.setName(tempAssignmentSaveRequest.getTitle());
+        tempMaterial.setMajor(tempAssignmentSaveRequest.getMajor());
+        tempMaterial.setSemester(tempAssignmentSaveRequest.getSemester());
+        tempMaterial.setClassName(tempAssignmentSaveRequest.getClassName());
+        tempMaterial.setProfessor(tempAssignmentSaveRequest.getProfessor());
+        tempMaterial.setGrade(tempAssignmentSaveRequest.getGrade());
+        tempMaterial.setScore(tempAssignmentSaveRequest.getScore());
+        tempMaterial.setFullScore(tempAssignmentSaveRequest.getFullScore());
+        tempMaterial.setDescription(tempAssignmentSaveRequest.getDescription());
+        tempMaterial.setTempStorage(tempStorage);
+
+        tempMaterialRepository.save(tempMaterial);
     }
 
     /**
