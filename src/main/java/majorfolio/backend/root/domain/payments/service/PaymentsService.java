@@ -14,11 +14,15 @@ import majorfolio.backend.root.domain.member.service.MemberGlobalService;
 import majorfolio.backend.root.domain.payments.dto.request.CouponIdRequest;
 import majorfolio.backend.root.domain.payments.dto.request.CreateBuyInfoRequest;
 import majorfolio.backend.root.domain.payments.dto.request.MaterialIdRequest;
+import majorfolio.backend.root.domain.payments.dto.request.RefundRequest;
 import majorfolio.backend.root.domain.payments.dto.response.*;
 import majorfolio.backend.root.domain.payments.entity.BuyInfo;
+import majorfolio.backend.root.domain.payments.entity.RefundInfo;
 import majorfolio.backend.root.domain.payments.repository.BuyInfoRepository;
+import majorfolio.backend.root.domain.payments.repository.RefundRepository;
 import majorfolio.backend.root.global.exception.CancelAfterPayException;
 import majorfolio.backend.root.global.exception.NotFoundException;
+import majorfolio.backend.root.global.exception.PaymentsException;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -28,8 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.INVALID_CANCEL_REQUEST;
-import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_BUYINFO_FROM_BUYINFO_ID;
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 
 /**
  * 결제와 관련된 기능을 처리하는 service
@@ -42,6 +45,7 @@ public class PaymentsService {
     private final BuyInfoRepository buyInfoRepository;
     private final BuyListItemRepository buyListItemRepository;
     private final SellListItemRepository sellListItemRepository;
+    private final RefundRepository refundRepository;
 
     private final SecureRandom random = new SecureRandom();
 
@@ -208,5 +212,39 @@ public class PaymentsService {
             sellListItemRepository.save(sellListItem);
         }
         return BuyCancelResponse.of("구매가 성공적으로 취소됐습니다");
+    }
+
+    public String checkRefundInfo(Long buyInfoId) {
+        BuyInfo buyInfo = buyInfoRepository.findById(buyInfoId).orElse(null);
+        if(buyInfo == null)
+            throw new NotFoundException(NOT_FOUND_BUYINFO_FROM_BUYINFO_ID);
+
+        if(buyInfo.getStatus().equals("buyComplete"))
+            throw new PaymentsException(INVALID_REFUND_REQUEST);
+
+        List<BuyListItem> buyListItems = buyInfo.getBuyListItems();
+        for(BuyListItem buyListItem : buyListItems){
+            if(buyListItem.getIsDown())
+                throw new PaymentsException(INVALID_REFUND_REQUEST);
+        }
+
+        return "환불 요청이 가능합니다";
+    }
+
+    public String createRefundInfo(Long buyInfoId, RefundRequest refundRequest) {
+
+        RefundInfo refundInfo = refundRepository.findByBuyInfoId(buyInfoId);
+
+        if(refundInfo != null){
+            throw new PaymentsException(OVERLAP_REFUND_REQUEST);
+        }
+
+        BuyInfo buyInfo = buyInfoRepository.findById(buyInfoId).orElse(null);
+        if(buyInfo == null)
+            throw new NotFoundException(NOT_FOUND_BUYINFO_FROM_BUYINFO_ID);
+
+        RefundInfo newRefundInfo = RefundInfo.of(buyInfo, refundRequest.getAccount());
+        refundRepository.save(newRefundInfo);
+        return "정상적으로 환불요청이 접수되었습니다.";
     }
 }
