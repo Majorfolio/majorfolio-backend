@@ -51,19 +51,17 @@ public class TransactionService {
         List<BuyListItem> cancelListItem= new ArrayList<>();
 
         for(BuyListItem buyListItem : pagedBuyListItems){
-            if(buyListItem.getBuyInfo().getStatus().equals("beforePay"))
-                beforeBuyListItem.add(buyListItem);
-            else if(buyListItem.getBuyInfo().getStatus().equals("cancel"))
-                cancelListItem.add(buyListItem);
-            else if(buyListItem.getBuyInfo().getStatus().equals("beforeRefund"))
-                beforeRefundListItem.add(buyListItem);
-            else if(buyListItem.getBuyInfo().getStatus().equals("afterRefund"))
-                afterRefundListItem.add(buyListItem);
-            else{
-                if(!buyListItem.getIsDown())
-                    afterBuyListItem.add(buyListItem);
-                else
-                    downBuyListItem.add(buyListItem);
+            switch (buyListItem.getBuyInfo().getStatus()) {
+                case "beforePay" -> beforeBuyListItem.add(buyListItem);
+                case "cancel" -> cancelListItem.add(buyListItem);
+                case "beforeRefund" -> beforeRefundListItem.add(buyListItem);
+                case "afterRefund" -> afterRefundListItem.add(buyListItem);
+                default -> {
+                    if (!buyListItem.getIsDown())
+                        afterBuyListItem.add(buyListItem);
+                    else
+                        downBuyListItem.add(buyListItem);
+                }
             }
         }
 

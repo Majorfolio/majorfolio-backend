@@ -37,7 +37,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getNewUploadList() {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusOrderByCreatedAtDescIdAsc("active");
+        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMemberStatusOrderByCreatedAtDescIdAsc("active", "active");
         if (newUploadMaterials == null || newUploadMaterials.isEmpty()) {
             // 자료가 1개도 없을 때의 예외 처리 또는 메시지 전달 등의 처리
             throw new NotFoundException(NOT_FOUND_MATERIAL);
@@ -51,7 +51,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     public List<MaterialResponse> getBestList() {
-        List<Material> bestMaterials = materialRepository.findTop5ByStatusOrderByTotalRecommendDescIdAsc("active");
+        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMemberStatusOrderByTotalRecommendDescIdAsc("active", "active");
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -160,7 +160,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListUniv(String univName) {
-        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMemberUniversityNameOrderByTotalRecommendDescIdAsc("active",univName);
+        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMemberUniversityNameAndMemberStatusOrderByTotalRecommendDescIdAsc("active",univName, "active");
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -170,7 +170,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListUniv(String univName) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMemberUniversityNameOrderByCreatedAtDescIdAsc("active",univName);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMemberUniversityNameAndMemberStatusOrderByCreatedAtDescIdAsc("active",univName, "active");
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
@@ -196,7 +196,7 @@ public class MaterialService {
     private List<MaterialResponse> convertToMaterialResponseListWithUniv(List<Long> materialIds, String univName) {
         List<MaterialResponse> materialResponses = new ArrayList<>();
         for (Long materialId : materialIds) {
-            Material material = materialRepository.findByStatusAndIdAndMemberUniversityName("active",materialId, univName);
+            Material material = materialRepository.findByStatusAndIdAndMemberUniversityNameAndMemberStatus("active",materialId, univName, "active");
             if (material != null) {
                 materialResponses.add(MaterialResponse.of(material));
             }
@@ -243,7 +243,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getBestListMajor(String major) {
-        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMajorOrderByTotalRecommendDescIdAsc("active",major);
+        List<Material> bestMaterials = materialRepository.findTop5ByStatusAndMajorAndMemberStatusOrderByTotalRecommendDescIdAsc("active",major,"active");
         return convertToMaterialResponseListByMaterial(bestMaterials);
     }
 
@@ -253,7 +253,7 @@ public class MaterialService {
      * @version 0.0.1
      */
     private List<MaterialResponse> getNewUploadListMajor(String major) {
-        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMajorOrderByCreatedAtDescIdAsc("active",major);
+        List<Material> newUploadMaterials = materialRepository.findTop5ByStatusAndMajorAndMemberStatusOrderByCreatedAtDescIdAsc("active",major, "active");
         return convertToMaterialResponseListByMaterial(newUploadMaterials);
     }
 
