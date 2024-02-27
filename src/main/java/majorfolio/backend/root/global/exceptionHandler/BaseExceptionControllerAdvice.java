@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.CancelAfterPayException;
 import majorfolio.backend.root.global.exception.InternalServerErrorException;
+import majorfolio.backend.root.global.exception.PaymentsException;
 import majorfolio.backend.root.global.response.BaseErrorResponse;
 import majorfolio.backend.root.global.response.BaseResponse;
 import majorfolio.backend.root.global.response.status.BaseExceptionStatus;
@@ -70,6 +71,15 @@ public class BaseExceptionControllerAdvice {
     public ResponseEntity<BaseErrorResponse> handleCancelAfterPayException(CancelAfterPayException ex) {
         //ㅣlog.error("[handle_CancelAfterPayException]", ex);
         BaseErrorResponse errorResponse =  new BaseErrorResponse(ex.getResponseStatus());
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getExceptionStatus().getStatus()));
+    }
+
+
+
+    @ExceptionHandler(PaymentsException.class)
+    public ResponseEntity<BaseErrorResponse> handlePaymentsException(PaymentsException ex) {
+        //ㅣlog.error("[handle_CancelAfterPayException]", ex);
+        BaseErrorResponse errorResponse =  new BaseErrorResponse(ex.getExceptionStatus());
         return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ex.getExceptionStatus().getStatus()));
     }
 

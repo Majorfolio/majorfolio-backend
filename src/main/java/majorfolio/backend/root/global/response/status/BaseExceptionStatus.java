@@ -97,6 +97,8 @@ public enum BaseExceptionStatus implements ResponseStatus{
      */
 
     INVALID_CANCEL_REQUEST(9001, HttpStatus.BAD_REQUEST.value(), "이미 송금을 한 구매정보입니다."),
+    INVALID_REFUND_REQUEST(9002, HttpStatus.BAD_REQUEST.value(), "이미 구매확정된 거래내역입니다."),
+    OVERLAP_REFUND_REQUEST(9002, HttpStatus.BAD_REQUEST.value(), "이전에 환불요청을 한 내역이 있습니다."),
 
 
 
