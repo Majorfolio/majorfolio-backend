@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
+import majorfolio.backend.root.domain.material.dto.response.TempAssignmentShowResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.*;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
@@ -38,12 +39,14 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.util.Matrix;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -51,20 +54,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 
@@ -595,6 +591,48 @@ public class AssignmentService {
         TempStorage originTempStorage = tempMaterial.getTempStorage();
 
         return memberTempStorage.equals(originTempStorage);
+    }
+
+    /**
+     * 임시저장 조회 api 서비스 구현
+     * @param memberId
+     * @return
+     */
+    public List<TempAssignmentShowResponse> showTempStorage(Long memberId, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+
+        Member member = memberRepository.findById(memberId).get();
+        TempStorage tempStorage = member.getTempStorage();
+        Page<TempMaterial> tempMaterialPage = tempMaterialRepository.findAllByTempStorage(tempStorage, pageable);
+        List<TempAssignmentShowResponse> tempAssignmentShowResponse = convertToTempAssignmentShowList(tempMaterialPage.getContent(), member);
+        if (tempAssignmentShowResponse == null || tempAssignmentShowResponse.isEmpty()) {
+            // 더 이상 자료가 없습니다. 예외 발생 또는 메시지 전달 등의 처리
+            throw new NotFoundException(NOT_FOUND_MATERIAL);
+        }
+        return tempAssignmentShowResponse;
+    }
+
+    /**
+     * 페이징 처리 된거 응답객체로 변환해주기
+     * @param content
+     * @return
+     */
+    public List<TempAssignmentShowResponse> convertToTempAssignmentShowList(List<TempMaterial> content, Member member) {
+        List<TempAssignmentShowResponse> tempAssignmentShowResponseList = new ArrayList<>();
+        for(TempMaterial tempMaterial : content){
+            TempAssignmentShowResponse tempAssignmentShowResponse =
+                    TempAssignmentShowResponse.of(
+                            tempMaterial.getId(),
+                            tempMaterial.getClassName(),
+                            tempMaterial.getType(),
+                            member.getUniversityName(),
+                            tempMaterial.getMajor(),
+                            tempMaterial.getSemester(),
+                            tempMaterial.getProfessor()
+                    );
+            tempAssignmentShowResponseList.add(tempAssignmentShowResponse);
+        }
+        return tempAssignmentShowResponseList;
     }
 
     /**

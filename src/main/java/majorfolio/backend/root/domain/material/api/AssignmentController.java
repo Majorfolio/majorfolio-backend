@@ -9,15 +9,7 @@
  */
 package majorfolio.backend.root.domain.material.api;
 
-import com.amazonaws.Protocol;
-import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
-import com.amazonaws.services.cloudfront.util.SignerUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.internal.ServiceUtils;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.DateUtils;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,44 +17,22 @@ import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
+import majorfolio.backend.root.domain.material.dto.response.TempAssignmentShowResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentDownloadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
-import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.response.BaseResponse;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.rendering.ImageType;
-import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * assignment/* 로 오는 url요청 컨트롤러
@@ -180,4 +150,19 @@ public class AssignmentController {
                                                   @MemberInfo Long memberId, @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws IOException {
         return new BaseResponse<>(assignmentService.modifyTempMaterial(memberId, tempMaterialId, tempAssignmentModifyRequest));
     }
+
+    /**
+     * 임시보관함 조회 API
+     * @param memberId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/temp")
+    public BaseResponse<List<TempAssignmentShowResponse>> showTempStorage(@MemberInfo Long memberId,
+                                                                          @RequestParam(name = "page") int page,
+                                                                          @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
+        return new BaseResponse<>(assignmentService.showTempStorage(memberId, page, pageSize));
+    }
+
 }
