@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
+import majorfolio.backend.root.domain.material.dto.response.TempAssignmentDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.TempAssignmentShowResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.*;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
@@ -527,7 +528,7 @@ public class AssignmentService {
         String fileName = tempMaterial.getLink();
 
         //만약 다른 사용자의 임시저장함을 보려고 할 때
-        if(!isTempMaterialYours(member, tempMaterial)){
+        if(isTempMaterialYours(member, tempMaterial)){
             //예외처리
             throw new UserException(NOT_MATCH_USER);
         }
@@ -590,7 +591,7 @@ public class AssignmentService {
         TempStorage memberTempStorage = member.getTempStorage();
         TempStorage originTempStorage = tempMaterial.getTempStorage();
 
-        return memberTempStorage.equals(originTempStorage);
+        return !memberTempStorage.equals(originTempStorage);
     }
 
     /**
@@ -633,6 +634,53 @@ public class AssignmentService {
             tempAssignmentShowResponseList.add(tempAssignmentShowResponse);
         }
         return tempAssignmentShowResponseList;
+    }
+
+    /**
+     * 임시저장함 상세보기 서비스 구현
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     */
+    public TempAssignmentDetailResponse showTempMaterialDetail(Long memberId, Long tempMaterialId) throws InvalidKeySpecException, IOException {
+        Member member = memberRepository.findById(memberId).get();
+        TempMaterial tempMaterial = tempMaterialRepository.findById(tempMaterialId).get();
+        String fileName = tempMaterial.getLink();
+
+        //만약 다른 사용자의 임시저장함을 보려고 할 때
+        if(isTempMaterialYours(member, tempMaterial)){
+            //예외처리
+            throw new UserException(NOT_MATCH_USER);
+        }
+
+        String link = null;
+        if(fileName != null){
+            link = MakeSignedUrlUtil.makeSignedUrl(fileName, s3Bucket, memberId, tempMaterialId, "TempStorage",
+                    privateKeyFilePath,distributionDomain,keyPairId);
+        }
+
+        return TempAssignmentDetailResponse.of(
+                link,
+                tempMaterial.getName(),
+                tempMaterial.getMajor(),
+                tempMaterial.getSemester(),
+                tempMaterial.getClassName(),
+                tempMaterial.getProfessor(),
+                tempMaterial.getGrade(),
+                tempMaterial.getFullScore(),
+                tempMaterial.getScore(),
+                tempMaterial.getDescription()
+        );
+    }
+
+    /**
+     * 임시보관함
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     */
+    public String deleteTempMaterial(Long memberId, Long tempMaterialId) {
+
     }
 
     /**

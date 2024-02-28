@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
+import majorfolio.backend.root.domain.material.dto.response.TempAssignmentDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.TempAssignmentShowResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentDownloadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
@@ -161,8 +162,34 @@ public class AssignmentController {
     @GetMapping("/temp")
     public BaseResponse<List<TempAssignmentShowResponse>> showTempStorage(@MemberInfo Long memberId,
                                                                           @RequestParam(name = "page") int page,
-                                                                          @RequestParam(name = "pageSize", defaultValue = "10") int pageSize){
+                                                                          @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
         return new BaseResponse<>(assignmentService.showTempStorage(memberId, page, pageSize));
+    }
+
+    /**
+     * 임시보관함 상세 조회 API
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    @GetMapping("/temp/{tempMaterialId}")
+    public BaseResponse<TempAssignmentDetailResponse> showTempMaterialDetail(@MemberInfo Long memberId,
+                                                                             @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(assignmentService.showTempMaterialDetail(memberId, tempMaterialId));
+    }
+
+    /**
+     * 임시보관함 객체 삭제 API
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     */
+    @DeleteMapping("/temp/{tempMaterialId}")
+    public BaseResponse<String> deleteTempMaterial(@MemberInfo Long memberId,
+                                                   @PathVariable(name = "tempMaterialId") Long tempMaterialId){
+        return new BaseResponse<>(assignmentService.deleteTempMaterial(memberId, tempMaterialId));
     }
 
 }
