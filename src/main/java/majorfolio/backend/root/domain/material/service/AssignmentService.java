@@ -574,13 +574,15 @@ public class AssignmentService {
      * 파일 s3에서 삭제
      * @param fileName
      */
-    public void fileDeleteToS3(String fileName, Long memberId, Long tempMaterialId) {
+    public Boolean fileDeleteToS3(String fileName, Long memberId, Long tempMaterialId) {
 
         fileName = memberId + "/TempStorage/" + tempMaterialId + "/" + fileName;
         boolean isObjectExist = amazonS3.doesObjectExist(s3Bucket, fileName);
         if(isObjectExist){
             amazonS3.deleteObject(new DeleteObjectRequest(s3Bucket, fileName));
+            return true;
         }
+        return false;
     }
 
     /**
@@ -674,13 +676,35 @@ public class AssignmentService {
     }
 
     /**
-     * 임시보관함
+     * 임시보관함 삭제 서비스 구현
      * @param memberId
      * @param tempMaterialId
      * @return
      */
     public String deleteTempMaterial(Long memberId, Long tempMaterialId) {
+        Member member = memberRepository.findById(memberId).get();
+        TempMaterial tempMaterial = tempMaterialRepository.findById(tempMaterialId).get();
+        String fileName = tempMaterial.getLink();
 
+        //만약 다른 사용자의 임시저장함에 접근하려고 할 때
+        if(isTempMaterialYours(member, tempMaterial)){
+            //예외처리
+            throw new UserException(NOT_MATCH_USER);
+        }
+
+        if(!fileName.equals("")){
+            Boolean isSuccess = fileDeleteToS3(fileName, memberId, tempMaterialId);
+            //삭제를 할 수 없을 때
+            if(!isSuccess){
+                throw new S3Exception(S3_ERROR);
+            }
+        }
+
+        //삭제작업 수행
+        tempMaterial.setTempStorage(null);
+        tempMaterialRepository.save(tempMaterial);
+        tempMaterialRepository.delete(tempMaterial);
+        return "삭제가 성공적으로 진행되었습니다!";
     }
 
     /**

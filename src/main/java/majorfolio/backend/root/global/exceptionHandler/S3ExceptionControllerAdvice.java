@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class S3ExceptionControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(S3Exception.class)
-    public BaseErrorResponse handle_UserException(UserException e) {
+    public BaseErrorResponse handle_S3Exception_BAD_REQUEST(S3Exception e) {
         log.error("[handle_S3Exception]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
