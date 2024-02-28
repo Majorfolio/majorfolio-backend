@@ -11,6 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.text.SimpleDateFormat;
@@ -29,6 +31,7 @@ public class MakeSignedUrlUtil {
         String privateKeyFileName = privateKeyFileFullName.split("\\.")[0];
         String privateKeyFileType = privateKeyFileFullName.split("\\.")[1];
         File privateKeyFile = File.createTempFile(privateKeyFileName, "." + privateKeyFileType);
+        s3FileName = URLEncoder.encode(s3FileName, StandardCharsets.UTF_8);
         try {
             FileUtils.copyInputStreamToFile(inputStream, privateKeyFile);
         } finally {

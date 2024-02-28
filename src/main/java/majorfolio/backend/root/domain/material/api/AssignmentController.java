@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentDownloadResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
@@ -164,5 +165,19 @@ public class AssignmentController {
     public BaseResponse<String> saveTemporarily(@Validated @ModelAttribute TempAssignmentSaveRequest tempAssignmentSaveRequest,
                                                 @MemberInfo Long memberId) throws IOException {
         return new BaseResponse<>(assignmentService.saveTemporarily(memberId, tempAssignmentSaveRequest));
+    }
+
+    /**
+     * 임시보관함 수정
+     * @param tempAssignmentModifyRequest
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     * @throws IOException
+     */
+    @PatchMapping("/temp/{tempMaterialId}")
+    public BaseResponse<String> modifyTemporarily(@Validated @ModelAttribute TempAssignmentModifyRequest tempAssignmentModifyRequest,
+                                                  @MemberInfo Long memberId, @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws IOException {
+        return new BaseResponse<>(assignmentService.modifyTempMaterial(memberId, tempMaterialId, tempAssignmentModifyRequest));
     }
 }

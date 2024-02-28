@@ -23,4 +23,28 @@ public class TempAssignmentSaveRequest {
     private Integer fullScore;
     private Integer score;
     private String description;
+
+    public static TempAssignmentSaveRequest of(
+            String title,
+            String major,
+            String semester,
+            String className,
+            String professor,
+            String grade,
+            Integer fullScore,
+            Integer score,
+            String description
+    ){
+        return TempAssignmentSaveRequest.builder()
+                .title(title)
+                .major(major)
+                .semester(semester)
+                .className(className)
+                .professor(professor)
+                .grade(grade)
+                .fullScore(fullScore)
+                .score(score)
+                .description(description)
+                .build();
+    }
 }

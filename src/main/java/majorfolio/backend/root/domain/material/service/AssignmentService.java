@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
+import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
 import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.*;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.BookmarkStat;
@@ -29,9 +30,7 @@ import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.domain.payments.entity.BuyInfo;
 import majorfolio.backend.root.domain.payments.repository.BuyInfoRepository;
 import majorfolio.backend.root.global.CustomMultipartFile;
-import majorfolio.backend.root.global.exception.JwtInvalidException;
-import majorfolio.backend.root.global.exception.NotDownloadAuthorizationException;
-import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
+import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.util.MakeSignedUrlUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -54,6 +53,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.spec.InvalidKeySpecException;
@@ -512,6 +513,88 @@ public class AssignmentService {
         tempMaterial.setTempStorage(tempStorage);
 
         tempMaterialRepository.save(tempMaterial);
+    }
+
+    /**
+     * 임시저장 수정 서비스 구현
+     * @param memberId
+     * @param tempMaterialId
+     * @param tempAssignmentModifyRequest
+     * @return
+     * @throws IOException
+     */
+    public String modifyTempMaterial(Long memberId, Long tempMaterialId,
+                                     TempAssignmentModifyRequest tempAssignmentModifyRequest) throws IOException {
+        Member member = memberRepository.findById(memberId).get();
+        TempMaterial tempMaterial = tempMaterialRepository.findById(tempMaterialId).get();
+        TempStorage tempStorage = member.getTempStorage();
+        String fileName = tempMaterial.getLink();
+
+        //만약 다른 사용자의 임시저장함을 보려고 할 때
+        if(!isTempMaterialYours(member, tempMaterial)){
+            //예외처리
+            throw new UserException(NOT_MATCH_USER);
+        }
+
+        if(tempAssignmentModifyRequest.getIsFileModify().equals("yes")){
+            //이전에 있던 파일 url 삭제, s3에서도 삭제
+            //pdf파일 전처리 과정
+            MultipartFile pdfFile;
+            PDDocument document;
+
+            log.info("s3삭제 작업 수행");
+            fileDeleteToS3(fileName, memberId, tempMaterialId);
+
+            //새로운 파일 올리기
+            pdfFile = tempAssignmentModifyRequest.getFile();
+            try {
+                document = PDDocument.load(pdfFile.getBytes());
+                fileName = generateFileName(pdfFile);
+                fileSaveToS3(document, fileName, memberId, tempMaterialId, "TempStorage");
+            }catch (IOException e){
+                fileName = "";
+            }
+        }
+
+        TempAssignmentSaveRequest tempAssignmentSaveRequest =
+                TempAssignmentSaveRequest.of(
+                        tempAssignmentModifyRequest.getTitle(),
+                        tempAssignmentModifyRequest.getMajor(),
+                        tempAssignmentModifyRequest.getSemester(),
+                        tempAssignmentModifyRequest.getClassName(),
+                        tempAssignmentModifyRequest.getProfessor(),
+                        tempAssignmentModifyRequest.getGrade(),
+                        tempAssignmentModifyRequest.getFullScore(),
+                        tempAssignmentModifyRequest.getScore(),
+                        tempAssignmentModifyRequest.getDescription()
+                );
+        saveToTempMaterial(tempStorage, tempMaterial, tempAssignmentSaveRequest, fileName);
+
+        return "수정에 성공하였습니다!";
+    }
+
+    /**
+     * 파일 s3에서 삭제
+     * @param fileName
+     */
+    public void fileDeleteToS3(String fileName, Long memberId, Long tempMaterialId) {
+
+        fileName = memberId + "/TempStorage/" + tempMaterialId + "/" + fileName;
+        boolean isObjectExist = amazonS3.doesObjectExist(s3Bucket, fileName);
+        if(isObjectExist){
+            amazonS3.deleteObject(new DeleteObjectRequest(s3Bucket, fileName));
+        }
+    }
+
+    /**
+     * 다른 사람이 임시저장함 수정, 조회 하는걸 방지하기 위함
+     * @return
+     */
+    public boolean isTempMaterialYours(Member member, TempMaterial tempMaterial){
+        TempStorage memberTempStorage = member.getTempStorage();
+        TempStorage originTempStorage = tempMaterial.getTempStorage();
+
+        return memberTempStorage.equals(originTempStorage);
     }
 
     /**

@@ -71,6 +71,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_CERTIFICATION_USER(6003, HttpStatus.BAD_REQUEST.value(), "이메일 인증한 사용자가 아닙니다."),
     NOT_FOUND_USER(6004, HttpStatus.BAD_REQUEST.value(), "토큰에서 사용자를 찾을 수 없습니다."),
     INVALID_USER_PHONE_NUMBER(6005, HttpStatus.BAD_REQUEST.value(), "올바른 전화번호 형식이 아닙니다."),
+    NOT_MATCH_USER(6006, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 유저입니다."),
 
     /**
      * 7000 : 과제관련 오류
@@ -116,7 +117,12 @@ public enum BaseExceptionStatus implements ResponseStatus{
     /**
      * 11000 : 자료 다운 관련 오류
      */
-    NOT_DOWNLOAD_AUTHORIZATION(11001, HttpStatus.BAD_REQUEST.value(), "위 자료를 다운로드 할 권한이 없습니다.");
+    NOT_DOWNLOAD_AUTHORIZATION(11001, HttpStatus.BAD_REQUEST.value(), "위 자료를 다운로드 할 권한이 없습니다."),
+
+    /**
+     * 12000 : S3 관련 오류
+     */
+    NOT_FILE_IN_S3(12001, HttpStatus.BAD_REQUEST.value(), "해당 자료는 S3저장소에 존재하지 않습니다.");
 
 
 
