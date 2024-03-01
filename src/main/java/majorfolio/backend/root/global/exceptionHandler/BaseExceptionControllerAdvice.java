@@ -115,6 +115,9 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("score")){
                     return makeResponse(NOT_NULL_SCORE);
                 }
+                if(errorVariable.equals("file")){
+                    return makeResponse(NOT_NULL_FILE);
+                }
             }
 
             if(bindAnnotation.equals("Pattern")){

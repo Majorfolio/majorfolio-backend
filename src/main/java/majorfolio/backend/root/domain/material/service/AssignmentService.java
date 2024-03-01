@@ -746,6 +746,16 @@ public class AssignmentService {
     }
 
     /**
+     * 자료 수정 서비스 구현
+     * @param memberId
+     * @param materialId
+     * @return
+     */
+    public String modifyAssignment(Long memberId, Long materialId) {
+
+    }
+
+    /**
      * 스프링의 MultipartFile 인터페이스를 구현하는 InMemoryMultipartFile 클래스 정의
      */
     private static class InMemoryMultipartFile implements MultipartFile {

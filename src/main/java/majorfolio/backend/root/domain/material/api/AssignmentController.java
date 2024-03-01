@@ -199,4 +199,11 @@ public class AssignmentController {
         return new BaseResponse<>(assignmentService.deleteTempMaterial(memberId, tempMaterialId));
     }
 
+    @PatchMapping("/{materialId}")
+    public BaseResponse<String> modifyAssignment(@MemberInfo Long memberId,
+                                                 @PathVariable(name = "materialId") Long materialId,
+                                                 AssignmentUploadRequest assignmentUploadRequest){
+        return new BaseResponse<>(assignmentService.modifyAssignment(memberId, materialId));
+    }
+
 }
