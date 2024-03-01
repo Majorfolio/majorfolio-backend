@@ -9,55 +9,32 @@
  */
 package majorfolio.backend.root.domain.material.api;
 
-import com.amazonaws.Protocol;
-import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
-import com.amazonaws.services.cloudfront.util.SignerUtils;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.internal.ServiceUtils;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.DateUtils;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.*;
+import majorfolio.backend.root.domain.material.dto.request.TempAssignmentModifyRequest;
+import majorfolio.backend.root.domain.material.dto.request.TempAssignmentSaveRequest;
+import majorfolio.backend.root.domain.material.dto.response.TempAssignmentDetailResponse;
+import majorfolio.backend.root.domain.material.dto.response.TempAssignmentShowResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentDownloadResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.AssignmentUploadResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialDetailResponse;
+import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
-import majorfolio.backend.root.global.CustomMultipartFile;
 import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.response.BaseResponse;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.rendering.ImageType;
-import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.security.PrivateKey;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * assignment/* 로 오는 url요청 컨트롤러
@@ -131,9 +108,10 @@ public class AssignmentController {
 
     /**
      * 과제 파일 업로드 API
-     * @param pdfFile
      * @param assignmentUploadRequest
+     * @param servletRequest
      * @return
+     * @throws IOException
      */
     @PutMapping("/upload")
     public BaseResponse<AssignmentUploadResponse> upload(@Validated @ModelAttribute AssignmentUploadRequest assignmentUploadRequest,
@@ -154,75 +132,71 @@ public class AssignmentController {
         return new BaseResponse<>(assignmentService.showPreview(materialId));
     }
 
+    /**
+     * 임시보관함 저장
+     * @param tempAssignmentSaveRequest
+     * @param memberId
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/temp/save")
+    public BaseResponse<String> saveTemporarily(@Validated @ModelAttribute TempAssignmentSaveRequest tempAssignmentSaveRequest,
+                                                @MemberInfo Long memberId) throws IOException {
+        return new BaseResponse<>(assignmentService.saveTemporarily(memberId, tempAssignmentSaveRequest));
+    }
 
-//    /**
-//     * 파일 조회 테스트 용
-//     * @param file
-//     * @return
-//     */
-//
-//    @GetMapping("/s3/get")
-//    public BaseResponse<String> s3Get() throws InvalidKeySpecException, IOException {
-//        String fileName = "majorfolio/dced1ead-2d0c-46a3-9aa3-8f202df186bf-73828535-67c6-4c95-92c0-68048f7fd1dc-Activity_8_Overall_Architecture_1+(2).pdf-3.jpeg";
-//        String signedUrl = getSignedURLWithCannedPolicy(fileName);
-//        return new BaseResponse<>(signedUrl);
-//    }
-//
-//    private ObjectMetadata getObjectMetadata(MultipartFile file) {
-//        ObjectMetadata objectMetadata = new ObjectMetadata();
-//        objectMetadata.setContentType(file.getContentType());
-//        objectMetadata.setContentLength(file.getSize());
-//        return objectMetadata;
-//    }
-//
-//    private String generateFileName(MultipartFile file) {
-//        return UUID.randomUUID() + "-" + file.getOriginalFilename();
-//    }
-//
-//    private MultipartFile convertBufferedImageToMultipartFile(BufferedImage image) {
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        try {
-//            ImageIO.write(image, "jpeg", out);
-//        } catch (IOException e) {
-//            log.error("IO Error", e);
-//            return null;
-//        }
-//        byte[] bytes = out.toByteArray();
-//        return new CustomMultipartFile(bytes, "image", "image.jpeg", "jpeg", bytes.length);
-//    }
-//
-//
-//    public String getSignedURLWithCannedPolicy( String fileName ) throws InvalidKeySpecException,
-//            IOException {
-//        File privateKeyFile = new File(privateKeyFilePath);
-//        String signedURL = "";
-//
-//       String policyResourcePath = "https://" + distributionDomain + "/" + fileName;
-//
-//       Date dateLessThan = ServiceUtils.parseIso8601Date("2024-02-17T00:00:00.00Z");
-//
-//       String policy = CloudFrontUrlSigner.buildCustomPolicyForSignedUrl(
-//               policyResourcePath,
-//               dateLessThan,
-//               "0.0.0.0/0",
-//               null
-//
-//       );
-//
-//       PrivateKey privateKey = SignerUtils.loadPrivateKey(privateKeyFile);
-//
-//       signedURL = CloudFrontUrlSigner.getSignedURLWithCustomPolicy(
-//                // Resource URL or Path
-//                policyResourcePath,
-//                // Certificate identifier, an active trusted signer for the distribution
-//                keyPairId,
-//                // DER Private key data
-//                privateKey,
-//                // Access control policy
-//                policy
-//        );
-//        log.info(signedURL);
-//        return signedURL;
-//    }
+    /**
+     * 임시보관함 수정
+     * @param tempAssignmentModifyRequest
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     * @throws IOException
+     */
+    @PatchMapping("/temp/{tempMaterialId}")
+    public BaseResponse<String> modifyTemporarily(@Validated @ModelAttribute TempAssignmentModifyRequest tempAssignmentModifyRequest,
+                                                  @MemberInfo Long memberId, @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws IOException {
+        return new BaseResponse<>(assignmentService.modifyTempMaterial(memberId, tempMaterialId, tempAssignmentModifyRequest));
+    }
+
+    /**
+     * 임시보관함 조회 API
+     * @param memberId
+     * @param page
+     * @param pageSize
+     * @return
+     */
+    @GetMapping("/temp")
+    public BaseResponse<List<TempAssignmentShowResponse>> showTempStorage(@MemberInfo Long memberId,
+                                                                          @RequestParam(name = "page") int page,
+                                                                          @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
+        return new BaseResponse<>(assignmentService.showTempStorage(memberId, page, pageSize));
+    }
+
+    /**
+     * 임시보관함 상세 조회 API
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    @GetMapping("/temp/{tempMaterialId}")
+    public BaseResponse<TempAssignmentDetailResponse> showTempMaterialDetail(@MemberInfo Long memberId,
+                                                                             @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(assignmentService.showTempMaterialDetail(memberId, tempMaterialId));
+    }
+
+    /**
+     * 임시보관함 객체 삭제 API
+     * @param memberId
+     * @param tempMaterialId
+     * @return
+     */
+    @DeleteMapping("/temp/{tempMaterialId}")
+    public BaseResponse<String> deleteTempMaterial(@MemberInfo Long memberId,
+                                                   @PathVariable(name = "tempMaterialId") Long tempMaterialId){
+        return new BaseResponse<>(assignmentService.deleteTempMaterial(memberId, tempMaterialId));
+    }
 
 }

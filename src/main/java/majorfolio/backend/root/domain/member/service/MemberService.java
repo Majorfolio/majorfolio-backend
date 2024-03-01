@@ -60,7 +60,7 @@ public class MemberService {
     private final CouponBoxRepository couponBoxRepository;
     private final SellListItemRepository sellListItemRepository;
     private final BuyListItemRepository buyListItemRepository;
-
+    private final TempStorageRepository tempStorageRepository;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -224,11 +224,14 @@ public class MemberService {
         couponBoxRepository.save(couponBox);
         FollowerList followerList = majorfolio.backend.root.domain.member.entity.FollowerList.builder().build();
         followerListRepository.save(followerList);
+        TempStorage tempStorage = TempStorage.builder().build();
+        tempStorageRepository.save(tempStorage);
+        ;
 
         Member member = Member.of(signupRequest.getNickName(), signupRequest.getUniversityName(),
                 signupRequest.getMajor1(), signupRequest.getMajor2(), signupRequest.getStudentId(),
                 signupRequest.getPersonalAgree(), signupRequest.getServiceAgree(), signupRequest.getMarketingAgree(),
-                basket, buyList, sellList, followerList, couponBox);
+                basket, buyList, sellList, followerList, couponBox, tempStorage);
 
         memberRepository.save(member);
 
