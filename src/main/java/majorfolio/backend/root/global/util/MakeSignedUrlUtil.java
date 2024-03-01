@@ -46,7 +46,7 @@ public class MakeSignedUrlUtil {
             policyResourcePath = "https://" + distributionDomain + "/" + bucketName + "/" + memberId + "/"
                     + materialId + "/" + type + "/" + s3FileName;
         }
-        else if(type.equals("Downloads")){
+        else if(type.equals("Downloads") || type.equals("TempStorage")){
             policyResourcePath = "https://" + distributionDomain + "/" + bucketName + "/" + memberId + "/"
                     + type + "/" + materialId + "/" + s3FileName;
         }
