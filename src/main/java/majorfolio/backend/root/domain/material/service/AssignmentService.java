@@ -68,6 +68,7 @@ import java.util.*;
 
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
+import static majorfolio.backend.root.global.status.StatusEnum.MATERIAL_OLD;
 
 /**
  * assignment/** 요청의 서비스 구현
@@ -125,7 +126,12 @@ public class AssignmentService {
         Long memberId = member.getId();
         //pdf파일 전처리 과정
         MultipartFile pdfFile = assignmentUploadRequest.getFile();
-        PDDocument document = PDDocument.load(pdfFile.getBytes());
+        PDDocument document;
+        try {
+            document = PDDocument.load(pdfFile.getBytes());
+        }catch (IOException e){
+            throw new FileException(NOT_NULL_FILE);
+        }
         String fileName = generateFileName(pdfFile);
         //파일 부가 정보 저장
         int page = document.getNumberOfPages();
@@ -751,8 +757,19 @@ public class AssignmentService {
      * @param materialId
      * @return
      */
-    public String modifyAssignment(Long memberId, Long materialId) {
+    public AssignmentUploadResponse modifyAssignment(Long memberId, Long materialId, AssignmentUploadRequest assignmentUploadRequest) throws IOException {
+        Member member = memberRepository.findById(memberId).get();
+        Material material = materialRepository.findById(materialId).get();
+        if(material.getMember() != member){
+            throw new UserException(NOT_MATCH_USER);
+        }
 
+        Long kakaoId = kakaoSocialLoginRepository.findByMember(member).getId();
+        AssignmentUploadResponse assignmentUploadResponse = uploadPdfFile(kakaoId, assignmentUploadRequest);
+
+        material.setStatus(MATERIAL_OLD.getStatus());
+        materialRepository.save(material);
+        return assignmentUploadResponse;
     }
 
     /**

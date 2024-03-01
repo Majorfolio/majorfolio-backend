@@ -117,7 +117,6 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_BLANK_DESCRIPTION(10009, HttpStatus.BAD_REQUEST.value(), "설명이 쓰여 있어야 합니다."),
     TOO_MANY_DESCRIPTION(10010, HttpStatus.BAD_REQUEST.value(), "설명은 80자로 제한됩니다."),
     SEMESTER_PATTERN_ERROR(10011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다."),
-    NOT_NULL_FILE(10012, HttpStatus.BAD_REQUEST.value(), "파일이 비어있으면 안됩니다!"),
 
     /**
      * 11000 : 자료 다운 관련 오류
@@ -128,8 +127,13 @@ public enum BaseExceptionStatus implements ResponseStatus{
      * 12000 : S3 관련 오류
      */
     S3_ERROR(12000, HttpStatus.BAD_REQUEST.value(), "s3 저장소에서 오류가 발생했습니다."),
-    NOT_FILE_IN_S3(12001, HttpStatus.BAD_REQUEST.value(), "해당 자료는 S3저장소에 존재하지 않습니다.");
+    NOT_FILE_IN_S3(12001, HttpStatus.BAD_REQUEST.value(), "해당 자료는 S3저장소에 존재하지 않습니다."),
 
+
+    /**
+     * 13000 : 파일 관련 오류
+     */
+    NOT_NULL_FILE(13001, HttpStatus.BAD_REQUEST.value(), "파일이 비어있으면 안됩니다!");
 
 
 

@@ -1,5 +1,6 @@
 package majorfolio.backend.root.global.exceptionHandler;
 
+import jakarta.annotation.Priority;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.CancelAfterPayException;
@@ -118,6 +119,7 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("file")){
                     return makeResponse(NOT_NULL_FILE);
                 }
+
             }
 
             if(bindAnnotation.equals("Pattern")){

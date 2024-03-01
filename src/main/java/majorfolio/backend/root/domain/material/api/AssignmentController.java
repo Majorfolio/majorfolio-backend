@@ -199,11 +199,19 @@ public class AssignmentController {
         return new BaseResponse<>(assignmentService.deleteTempMaterial(memberId, tempMaterialId));
     }
 
+    /**
+     * 자료 수정 API
+     * @param memberId
+     * @param materialId
+     * @param assignmentUploadRequest
+     * @return
+     * @throws IOException
+     */
     @PatchMapping("/{materialId}")
-    public BaseResponse<String> modifyAssignment(@MemberInfo Long memberId,
-                                                 @PathVariable(name = "materialId") Long materialId,
-                                                 AssignmentUploadRequest assignmentUploadRequest){
-        return new BaseResponse<>(assignmentService.modifyAssignment(memberId, materialId));
+    public BaseResponse<AssignmentUploadResponse> modifyAssignment(@Validated @ModelAttribute AssignmentUploadRequest assignmentUploadRequest,
+                                                                    @MemberInfo Long memberId,
+                                                                    @PathVariable(name = "materialId") Long materialId) throws IOException {
+        return new BaseResponse<>(assignmentService.modifyAssignment(memberId, materialId, assignmentUploadRequest));
     }
 
 }
