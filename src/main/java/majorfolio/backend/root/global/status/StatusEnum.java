@@ -12,7 +12,12 @@ public enum StatusEnum implements DBstatus{
     ACTIVE("Member", "active", "활성상태"),
     DORMANCY("Member", "dormancy", "휴면상태"),
     BEN("Member", "ben", "밴 상태"),
-    DELETE("Member", "delete", "탈퇴 상태");
+    DELETE("Member", "delete", "탈퇴 상태"),
+
+    //Material테이블 쪽 status
+    MATERIAL_ACTIVE("Material", "active", "활성상태"),
+    MATERIAL_REVIEWING("Material", "reviewing", "대기상태"),
+    MATERIAL_OLD("Material", "old", "수정전 파일");
 
 
     private final String DBTable;
