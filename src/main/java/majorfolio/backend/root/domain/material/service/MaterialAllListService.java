@@ -49,7 +49,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SingleMaterialListResponse.of(page, materialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SingleMaterialListResponse.of(page, materialResponses, isLastPage);
     }
 
     /**
@@ -67,7 +70,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SingleMaterialListResponse.of(page, materialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SingleMaterialListResponse.of(page, materialResponses, isLastPage);
     }
 
     /**
@@ -103,7 +109,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SingleMaterialListResponse.of(page, materialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SingleMaterialListResponse.of(page, materialResponses, isLastPage);
     }
 
     /**
@@ -140,7 +149,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SingleMaterialListResponse.of(page, materialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SingleMaterialListResponse.of(page, materialResponses, isLastPage);
     }
 
     /**
@@ -176,7 +188,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SingleMaterialListResponse.of(page, materialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SingleMaterialListResponse.of(page, materialResponses, isLastPage);
     }
 
     /**
@@ -211,7 +226,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SingleMaterialListResponse.of(page, materialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SingleMaterialListResponse.of(page, materialResponses, isLastPage);
     }
 
     /**
@@ -232,7 +250,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return NameMaterialListResponse.of(page, nameMaterialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return NameMaterialListResponse.of(page, nameMaterialResponses, isLastPage);
     }
 
     /**
@@ -256,7 +277,10 @@ public class MaterialAllListService {
             throw new NotFoundException(NOT_FOUND_MATERIAL);
         }
 
-        return SellerMaterialListResponse.of(page, nameMaterialResponses);
+        int totalPages = materialPage.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SellerMaterialListResponse.of(page, nameMaterialResponses, isLastPage);
     }
 
     /**

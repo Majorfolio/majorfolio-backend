@@ -15,16 +15,18 @@ import java.util.List;
 public class SingleMaterialListResponse {
     private int page;
     private final List<MaterialResponse> materialResponseList;
+    private boolean isEnd;
 
     /**
      * material들의 list 응답 형태 생성
      * @author 김태혁
      * @version 0.0.1
      */
-    public static SingleMaterialListResponse of(int page, List<MaterialResponse> materialResponseList){
+    public static SingleMaterialListResponse of(int page, List<MaterialResponse> materialResponseList, boolean isEnd){
         return SingleMaterialListResponse.builder()
                 .page(page)
                 .materialResponseList(materialResponseList)
+                .isEnd(isEnd)
                 .build();
     }
 }
