@@ -3,6 +3,7 @@ package majorfolio.backend.root.config;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.global.argument_resolver.MemberIdArgumentResolver;
+import majorfolio.backend.root.global.interceptor.AdminInterceptor;
 import majorfolio.backend.root.global.interceptor.IdTokenInterceptor;
 import majorfolio.backend.root.global.interceptor.RefreshTokenInterceptor;
 import majorfolio.backend.root.global.interceptor.ServiceServerTokenInterceptor;
@@ -22,6 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final IdTokenInterceptor idTokenInterceptor;
     private final ServiceServerTokenInterceptor serviceServerTokenInterceptor;
     private final RefreshTokenInterceptor refreshTokenInterceptor;
+    private final AdminInterceptor adminInterceptor;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
 
     @Value("${jwt.secret}")
@@ -34,11 +36,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/member/login");
         registry.addInterceptor(serviceServerTokenInterceptor)
                 .order(1)
-                .addPathPatterns("/member/**", "/assignment/**", "/my/**", "/home/my/**", "/library/**", "/payments/**", "/transaction/**", "/report/**")
+                .addPathPatterns("/member/**", "/assignment/**", "/my/**", "/home/my/**", "/library/**", "/payments/**", "/transaction/**", "/report/**", "/admin/**")
                 .excludePathPatterns("/member/login", "/member/remake/token", "/assignment/{materialId}/detail", "/payments/info/{buyInfoId}", "payments/cancel/{buyInfoId}","/payments/refund/{buyInfoId}", "/assignment/{materialId}/previews");
         registry.addInterceptor(refreshTokenInterceptor)
                 .order(1)
                 .addPathPatterns("/member/remake/token");
+        registry.addInterceptor(adminInterceptor)
+                .order(2)
+                .addPathPatterns("/admin/**");
     }
 
     @Override
