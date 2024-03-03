@@ -4,11 +4,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.payments.dto.request.CreateBuyInfoRequest;
+import majorfolio.backend.root.domain.payments.dto.request.RefundRequest;
 import majorfolio.backend.root.domain.payments.dto.response.BuyCancelResponse;
 import majorfolio.backend.root.domain.payments.dto.response.BuyInfoResponse;
 import majorfolio.backend.root.domain.payments.dto.response.BuyMaterialListResponse;
 import majorfolio.backend.root.domain.payments.dto.response.CreateBuyInfoResponse;
 import majorfolio.backend.root.domain.payments.service.PaymentsService;
+import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -61,5 +63,15 @@ public class PaymentsController {
     @PostMapping("/cancel/{buyInfoId}")
     public BuyCancelResponse doBuyCancel(@PathVariable Long buyInfoId){
         return paymentsService.doBuyCancel(buyInfoId);
+    }
+
+    @GetMapping("/refund/{buyInfoId}")
+    public BaseResponse<String> checkRefundInfo(@PathVariable Long buyInfoId){
+        return new BaseResponse<>(paymentsService.checkRefundInfo(buyInfoId));
+    }
+
+    @PostMapping("/refund/{buyInfoId}")
+    public BaseResponse<String> createRefundInfo(@PathVariable Long buyInfoId, @RequestBody RefundRequest refundRequest){
+        return new BaseResponse<>(paymentsService.createRefundInfo(buyInfoId, refundRequest));
     }
 }
