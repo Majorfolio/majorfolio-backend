@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
     private final AdminService adminService;
     @PostMapping("/notice")
-    public BaseResponse<PostNoticeResponse> postNotice(@Validated @ModelAttribute PostNoticeRequest postNoticeRequest){
+    public BaseResponse<PostNoticeResponse> postNotice(@Validated @ModelAttribute PostNoticeRequest postNoticeRequest) throws IOException {
         return new BaseResponse<>(adminService.postNotice(postNoticeRequest));
     }
 }

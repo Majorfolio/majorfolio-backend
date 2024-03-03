@@ -42,7 +42,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1)
                 .addPathPatterns("/member/remake/token");
         registry.addInterceptor(adminInterceptor)
-                .order(2)
+                .order(1)
                 .addPathPatterns("/admin/**");
     }
 
