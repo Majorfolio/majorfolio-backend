@@ -20,6 +20,8 @@ public enum StatusEnum implements DBstatus{
     MATERIAL_OLD("Material", "old", "수정전 파일");
 
 
+
+
     private final String DBTable;
     private final String status;
     private final String description;

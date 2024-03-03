@@ -3,7 +3,6 @@ package majorfolio.backend.root.config;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.member.repository.KakaoSocialLoginRepository;
 import majorfolio.backend.root.global.argument_resolver.MemberIdArgumentResolver;
-import majorfolio.backend.root.global.interceptor.AdminInterceptor;
 import majorfolio.backend.root.global.interceptor.IdTokenInterceptor;
 import majorfolio.backend.root.global.interceptor.RefreshTokenInterceptor;
 import majorfolio.backend.root.global.interceptor.ServiceServerTokenInterceptor;
@@ -14,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -23,7 +21,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final IdTokenInterceptor idTokenInterceptor;
     private final ServiceServerTokenInterceptor serviceServerTokenInterceptor;
     private final RefreshTokenInterceptor refreshTokenInterceptor;
-    private final AdminInterceptor adminInterceptor;
     private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
 
     @Value("${jwt.secret}")
@@ -41,9 +38,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(refreshTokenInterceptor)
                 .order(1)
                 .addPathPatterns("/member/remake/token");
-        registry.addInterceptor(adminInterceptor)
-                .order(1)
-                .addPathPatterns("/admin/**");
     }
 
     @Override
