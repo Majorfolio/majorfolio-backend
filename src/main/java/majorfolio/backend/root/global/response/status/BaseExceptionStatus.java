@@ -108,7 +108,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     /**
      * 10000 : 과제업로드 관련 오류
      */
-    NOT_BLANK_MATERIAL_TITLE(10001, HttpStatus.BAD_REQUEST.value(), "과제 제목이 비어있으면 안됩니다."),
+    NOT_BLANK_MATERIAL_TITLE(10001, HttpStatus.BAD_REQUEST.value(), "제목이 비어있으면 안됩니다."),
     NOT_BLANK_MATERIAL_MAJOR(10002, HttpStatus.BAD_REQUEST.value(), "전공이 비어있으면 안됩니다."),
     NOT_BLANK_MATERIAL_SEMESTER(10003, HttpStatus.BAD_REQUEST.value(), "학기정보가 비어있으면 안됩니다."),
     NOT_BLANK_SUBJECT_NAME(10004, HttpStatus.BAD_REQUEST.value(), "과목명이 비어있으면 안됩니다."),

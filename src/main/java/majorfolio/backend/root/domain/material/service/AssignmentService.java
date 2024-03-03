@@ -37,7 +37,7 @@ import majorfolio.backend.root.global.exception.MaterialException;
 import majorfolio.backend.root.global.exception.NotDownloadAuthorizationException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
 import majorfolio.backend.root.global.exception.*;
-import majorfolio.backend.root.global.util.MakeSignedUrlUtil;
+import majorfolio.backend.root.global.util.S3Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -132,7 +132,7 @@ public class AssignmentService {
         }catch (IOException e){
             throw new FileException(NOT_NULL_FILE);
         }
-        String fileName = generateFileName(pdfFile);
+        String fileName = S3Util.generateFileName(pdfFile);
         //파일 부가 정보 저장
         int page = document.getNumberOfPages();
         Preview preview = Preview.builder().build();
@@ -274,7 +274,7 @@ public class AssignmentService {
         }
         //이미지 이름 생성
         for(int i=0; i<size; i++){
-            imageNames[i] = generateFileName(images[i]);
+            imageNames[i] = S3Util.generateFileName(images[i]);
         }
         //메타데이터 생성
         for(int i=0; i<size; i++){
@@ -361,7 +361,7 @@ public class AssignmentService {
 
         if(buyListItem.getIsDown()){
             fileLink = "downloadMode" + fileLink;
-            signedUrl = MakeSignedUrlUtil.makeSignedUrl(fileLink, s3Bucket, memberId, materialId, "Downloads",
+            signedUrl = S3Util.makeSignedUrl(fileLink, s3Bucket, memberId, materialId, "Downloads",
                     privateKeyFilePath, distributionDomain, keyPairId);
             return AssignmentDownloadResponse.of(signedUrl);
         }
@@ -371,7 +371,7 @@ public class AssignmentService {
 
         //파일 가져와서 워터마크 표기하기
         log.info(fileLink);
-        signedUrl = MakeSignedUrlUtil.makeSignedUrl(fileLink, s3Bucket, uploaderId, materialId, "originalFile",
+        signedUrl = S3Util.makeSignedUrl(fileLink, s3Bucket, uploaderId, materialId, "originalFile",
                 privateKeyFilePath, distributionDomain, keyPairId);
         log.info(signedUrl);
 
@@ -452,7 +452,7 @@ public class AssignmentService {
 
         document.close();
         //다시 signedUrl 가져오기
-        signedUrl = MakeSignedUrlUtil.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
+        signedUrl = S3Util.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
                 privateKeyFilePath, distributionDomain, keyPairId);
 
         //구매완료로 바꾸고 download상태 바꾸기
@@ -492,7 +492,7 @@ public class AssignmentService {
             String link = previewImagesRepository.findByPreviewAndPosition(preview, i).getImageUrl();
             String[] linkList = link.split("/");
             link = linkList[linkList.length - 1];
-            link = MakeSignedUrlUtil.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
+            link = S3Util.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
             previewImages.add(link);
         }
 
@@ -521,7 +521,7 @@ public class AssignmentService {
         try {
             pdfFile = tempAssignmentSaveRequest.getFile();
             document = PDDocument.load(pdfFile.getBytes());
-            fileName = generateFileName(pdfFile);
+            fileName = S3Util.generateFileName(pdfFile);
             fileSaveToS3(document, fileName, memberId, tempMaterialId, "TempStorage");
         }catch (NullPointerException | IOException e){
             fileName = "";
@@ -590,7 +590,7 @@ public class AssignmentService {
             pdfFile = tempAssignmentModifyRequest.getFile();
             try {
                 document = PDDocument.load(pdfFile.getBytes());
-                fileName = generateFileName(pdfFile);
+                fileName = S3Util.generateFileName(pdfFile);
                 fileSaveToS3(document, fileName, memberId, tempMaterialId, "TempStorage");
             }catch (IOException e){
                 fileName = "";
@@ -701,7 +701,7 @@ public class AssignmentService {
 
         String link = null;
         if(fileName != null){
-            link = MakeSignedUrlUtil.makeSignedUrl(fileName, s3Bucket, memberId, tempMaterialId, "TempStorage",
+            link = S3Util.makeSignedUrl(fileName, s3Bucket, memberId, tempMaterialId, "TempStorage",
                     privateKeyFilePath,distributionDomain,keyPairId);
         }
 
@@ -824,16 +824,7 @@ public class AssignmentService {
         }
     }
 
-    /**
-     * S3에 들어갈 파일 이름 정의해주는 메소드
-     * @param file
-     * @return
-     */
-    private String generateFileName(MultipartFile file) {
-        String originName = file.getOriginalFilename();
-        originName = originName.replace(" ", "");
-        return UUID.randomUUID() + "-" + originName;
-    }
+
 
 
     /**
@@ -1066,7 +1057,7 @@ public class AssignmentService {
         String imageS3Name = imageS3UrlPacket[imageS3UrlPacket.length-1];
         Long memberId = member.getId();
         log.info(imageS3Name);
-        image = MakeSignedUrlUtil.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
+        image = S3Util.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
         return image;
     }
 

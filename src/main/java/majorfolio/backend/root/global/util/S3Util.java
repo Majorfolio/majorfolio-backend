@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,9 +20,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.UUID;
 
 @Slf4j
-public class MakeSignedUrlUtil {
+public class S3Util {
 
     public static String makeSignedUrl(String s3FileName, String bucketName,  Long memberId, Long materialId, String type, String privateKeyFilePath,
                                        String distributionDomain, String keyPairId) throws InvalidKeySpecException, IOException {
@@ -92,5 +94,14 @@ public class MakeSignedUrlUtil {
         return signedURL;
     }
 
-
+    /**
+     * S3에 들어갈 파일 이름 정의해주는 메소드
+     * @param file
+     * @return
+     */
+    public static String generateFileName(MultipartFile file) {
+        String originName = file.getOriginalFilename();
+        originName = originName.replace(" ", "");
+        return UUID.randomUUID() + "-" + originName;
+    }
 }
