@@ -5,9 +5,13 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
+import majorfolio.backend.root.domain.admin.dto.request.PostEventRequest;
 import majorfolio.backend.root.domain.admin.dto.request.PostNoticeRequest;
+import majorfolio.backend.root.domain.admin.dto.response.PostEventResponse;
 import majorfolio.backend.root.domain.admin.dto.response.PostNoticeResponse;
+import majorfolio.backend.root.domain.admin.entity.Event;
 import majorfolio.backend.root.domain.admin.entity.Notice;
+import majorfolio.backend.root.domain.admin.repository.EventRepository;
 import majorfolio.backend.root.domain.admin.repository.NoticeRepository;
 import majorfolio.backend.root.global.util.S3Util;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static majorfolio.backend.root.global.status.S3DirectoryEnum.EVENTS3;
 import static majorfolio.backend.root.global.status.S3DirectoryEnum.NOTICES3;
 
 
@@ -28,6 +33,7 @@ public class AdminService {
     private final AmazonS3Client amazonS3;
 
     private final NoticeRepository noticeRepository;
+    private final EventRepository eventRepository;
 
     /**
      * 공지사항 글쓰기 서비스 구현
@@ -48,7 +54,6 @@ public class AdminService {
 
         return PostNoticeResponse.of(notice.getId());
     }
-
 
 
 
@@ -77,5 +82,26 @@ public class AdminService {
         }
 
         return fileDirectory + "/" + fileName;
+    }
+
+    /**
+     * 이벤트 작성 서비스 구현
+     * @param postEventRequest
+     * @return
+     * @throws IOException
+     */
+    public PostEventResponse postEvent(PostEventRequest postEventRequest) throws IOException {
+        MultipartFile multipartFile = postEventRequest.getFile();
+        String fileName = S3Util.generateFileName(multipartFile);
+        Event event = Event.builder().build();
+        eventRepository.save(event);
+        String link = uploadS3Image(multipartFile, fileName, event.getId(), EVENTS3.getS3DirectoryName());
+
+        event.setTitle(postEventRequest.getTitle());
+        event.setLink(link);
+
+        eventRepository.save(event);
+
+        return PostEventResponse.of(event.getId());
     }
 }
