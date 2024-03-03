@@ -135,7 +135,13 @@ public enum BaseExceptionStatus implements ResponseStatus{
     /**
      * 13000 : 파일 관련 오류
      */
-    NOT_NULL_FILE(13001, HttpStatus.BAD_REQUEST.value(), "파일이 비어있으면 안됩니다!");
+    NOT_NULL_FILE(13001, HttpStatus.BAD_REQUEST.value(), "파일이 비어있으면 안됩니다!"),
+
+    /**
+     * 14000 : admin관련 오류
+     */
+
+    NOT_ADMIN_USER(14001, HttpStatus.UNAUTHORIZED.value(), "운영자가 아닙니다.");
 
 
 

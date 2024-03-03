@@ -8,10 +8,13 @@ import majorfolio.backend.root.domain.admin.entity.Admin;
 import majorfolio.backend.root.domain.admin.repository.AdminRepository;
 import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.repository.MemberRepository;
+import majorfolio.backend.root.global.exception.AdminException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.NoSuchElementException;
+
+import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_ADMIN_USER;
 
 /**
  * admin인지 아닌지 판별해주는 interceptor클래스
@@ -33,6 +36,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             Admin admin = adminRepository.findByMember(member);
         }catch (NoSuchElementException e){
             // 예외처리
+            throw new AdminException(NOT_ADMIN_USER);
         }
 
         return true;
