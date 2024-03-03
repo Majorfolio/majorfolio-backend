@@ -40,7 +40,7 @@ public class MaterialAllListService {
      */
     public SingleMaterialListResponse getAllUnivUploadList(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Material> materialPage = materialRepository.findByStatusOrderByCreatedAtDescIdAsc("active",pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMemberStatusOrderByCreatedAtDescIdAsc("active","active", pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
 
@@ -59,7 +59,7 @@ public class MaterialAllListService {
      */
     public SingleMaterialListResponse getAllUnivLike(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Material> materialPage = materialRepository.findByStatusOrderByTotalRecommendDescIdAsc("active",pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMemberStatusOrderByTotalRecommendDescIdAsc("active","active", pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
         if (materialResponses == null || materialResponses.isEmpty()) {
@@ -95,7 +95,7 @@ public class MaterialAllListService {
 
 
         String univName = kakaoSocialLogin.getMember().getUniversityName();
-        Page<Material> materialPage = materialRepository.findByStatusAndMemberUniversityNameOrderByCreatedAtDescIdAsc("active",univName, pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMemberUniversityNameAndMemberStatusOrderByCreatedAtDescIdAsc("active",univName, "active", pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
         if (materialResponses == null || materialResponses.isEmpty()) {
@@ -132,7 +132,7 @@ public class MaterialAllListService {
 
 
         String univName = kakaoSocialLogin.getMember().getUniversityName();
-        Page<Material> materialPage = materialRepository.findByStatusAndMemberUniversityNameOrderByTotalRecommendDescIdAsc("active",univName, pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMemberUniversityNameAndMemberStatusOrderByTotalRecommendDescIdAsc("active",univName, "active", pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
         if (materialResponses == null || materialResponses.isEmpty()) {
@@ -168,7 +168,7 @@ public class MaterialAllListService {
         }
 
         String major = kakaoSocialLogin.getMember().getMajor1();
-        Page<Material> materialPage = materialRepository.findByStatusAndMajorOrderByCreatedAtDescIdAsc("active",major, pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMajorAndMemberStatusOrderByCreatedAtDescIdAsc("active",major, "active", pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
         if (materialResponses == null || materialResponses.isEmpty()) {
@@ -203,7 +203,7 @@ public class MaterialAllListService {
         }
 
         String major = kakaoSocialLogin.getMember().getMajor1();
-        Page<Material> materialPage = materialRepository.findByStatusAndMajorOrderByTotalRecommendDescIdAsc("active",major, pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMajorAndMemberStatusOrderByTotalRecommendDescIdAsc("active",major, "active", pageable);
 
         List<MaterialResponse> materialResponses = convertToMaterialResponseList(materialPage.getContent());
         if (materialResponses == null || materialResponses.isEmpty()) {
@@ -224,7 +224,7 @@ public class MaterialAllListService {
 //        Material material = materialRepository.findById(materialID).orElse(null);
         Material material = materialRepository.findById(materialID).orElseThrow(() -> new NotFoundException(NOT_FOUND_MATERIAL_FROM_MEMBER_ID));
 
-        Page<Material> materialPage = materialRepository.findByStatusAndClassNameAndProfessorAndMember_UniversityNameAndMajor("active",material.getClassName(), material.getProfessor(), material.getMember().getUniversityName(), material.getMajor(), pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndClassNameAndProfessorAndMember_UniversityNameAndMajorAndMemberStatus("active",material.getClassName(), material.getProfessor(), material.getMember().getUniversityName(), material.getMajor(), "active", pageable);
 
         List<NameMaterialResponse> nameMaterialResponses = convertToMaterialNamedResponseList(materialPage.getContent());
         if (nameMaterialResponses == null || nameMaterialResponses.isEmpty()) {
@@ -248,7 +248,7 @@ public class MaterialAllListService {
         }
 
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        Page<Material> materialPage = materialRepository.findByStatusAndMember("active",member, pageable);
+        Page<Material> materialPage = materialRepository.findByStatusAndMemberAndMemberStatus("active",member, "active", pageable);
         List<SellerMaterialResponse> nameMaterialResponses = convertToMaterialSellerResponseList(materialPage.getContent());
 
         if (nameMaterialResponses == null || nameMaterialResponses.isEmpty()) {
