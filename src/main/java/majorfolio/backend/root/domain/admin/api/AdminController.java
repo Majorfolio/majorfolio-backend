@@ -22,11 +22,24 @@ import java.io.IOException;
 @Slf4j
 public class AdminController {
     private final AdminService adminService;
+
+    /**
+     * 공지사항 작성 API
+     * @param postNoticeRequest
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/notice")
     public BaseResponse<PostNoticeResponse> postNotice(@Validated @ModelAttribute PostNoticeRequest postNoticeRequest) throws IOException {
         return new BaseResponse<>(adminService.postNotice(postNoticeRequest));
     }
 
+    /**
+     * 이벤트 작성 API
+     * @param postEventRequest
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/event")
     public BaseResponse<PostEventResponse> postEvent(@Validated @ModelAttribute PostEventRequest postEventRequest) throws IOException {
         return new BaseResponse<>(adminService.postEvent(postEventRequest));
