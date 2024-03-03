@@ -38,6 +38,7 @@ public class AdminService {
         MultipartFile multipartFile = postNoticeRequest.getFile();
         String fileName = S3Util.generateFileName(multipartFile);
         Notice notice = Notice.builder().build();
+        noticeRepository.save(notice);
         String link = uploadS3Image(multipartFile, fileName, notice.getId(), NOTICES3.getS3DirectoryName());
 
         notice.setTitle(postNoticeRequest.getTitle());
