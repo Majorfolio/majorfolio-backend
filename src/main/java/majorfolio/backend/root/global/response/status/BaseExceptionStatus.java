@@ -73,12 +73,15 @@ public enum BaseExceptionStatus implements ResponseStatus{
     INVALID_USER_PHONE_NUMBER(6005, HttpStatus.BAD_REQUEST.value(), "올바른 전화번호 형식이 아닙니다."),
     OVERLAP_MEMBER(6006, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
     NOT_ACTIVE_MEMBER(6007, HttpStatus.BAD_REQUEST.value(), "현재 회원 상태가 활성상태가 아닙니다!"),
+    NOT_MATCH_USER(6008, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 유저입니다."),
+
 
     /**
      * 7000 : 과제관련 오류
      */
 
     NOT_MATCH_MATERIAL_AND_MEMBER(7001, HttpStatus.BAD_REQUEST.value(), "과제 주인과 현재 사용자가 다릅니다."),
+    NOT_PRESENT_MATERIAL(7002, HttpStatus.BAD_REQUEST.value(), "해당 자료가 존재하지 않습니다."),
 
     /**
      * 8000 : Found관련 오류
@@ -120,7 +123,19 @@ public enum BaseExceptionStatus implements ResponseStatus{
     /**
      * 11000 : 자료 다운 관련 오류
      */
-    NOT_DOWNLOAD_AUTHORIZATION(11001, HttpStatus.BAD_REQUEST.value(), "위 자료를 다운로드 할 권한이 없습니다.");
+    NOT_DOWNLOAD_AUTHORIZATION(11001, HttpStatus.BAD_REQUEST.value(), "위 자료를 다운로드 할 권한이 없습니다."),
+
+    /**
+     * 12000 : S3 관련 오류
+     */
+    S3_ERROR(12000, HttpStatus.BAD_REQUEST.value(), "s3 저장소에서 오류가 발생했습니다."),
+    NOT_FILE_IN_S3(12001, HttpStatus.BAD_REQUEST.value(), "해당 자료는 S3저장소에 존재하지 않습니다."),
+
+
+    /**
+     * 13000 : 파일 관련 오류
+     */
+    NOT_NULL_FILE(13001, HttpStatus.BAD_REQUEST.value(), "파일이 비어있으면 안됩니다!");
 
 
 
