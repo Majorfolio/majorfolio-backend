@@ -1,10 +1,7 @@
 package majorfolio.backend.root.domain.report.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Setter
 public class MaterialReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +35,7 @@ public class MaterialReport {
                 .reason(reason)
                 .description(description)
                 .processing(false)
-                .status("received")
+                .status("accepted")
                 .build();
     }
 
