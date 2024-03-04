@@ -11,8 +11,11 @@ package majorfolio.backend.root.domain.material.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import majorfolio.backend.root.domain.admin.entity.Notice;
+import majorfolio.backend.root.domain.admin.repository.NoticeRepository;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterial;
+import majorfolio.backend.root.domain.material.dto.response.ShowNoticeListResponse;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
 import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
@@ -53,6 +56,7 @@ public class MyService {
     private final BookmarkRepository bookmarkRepository;
     private final MemberGlobalService memberGlobalService;
     private final MemberRepository memberRepository;
+    private final NoticeRepository noticeRepository;
 
     /**
      * 좋아요 기능 구현
@@ -251,5 +255,25 @@ public class MyService {
         member.setProfileImage(Integer.toString(profileImageId));
         memberRepository.save(member);
         return "이미지가 변경되었습니다.";
+    }
+
+    /**
+     * 공지사항 모아보기 서비스 구현
+     * @return
+     */
+    public List<ShowNoticeListResponse> showNoticeList() {
+        List<Notice> noticeList = noticeRepository.findAll();
+        List<ShowNoticeListResponse> showNoticeListResponseList
+                = convertNoticeListResponseList(noticeList);
+        return showNoticeListResponseList;
+    }
+
+    // 공지사항 모아보기 응답 객체 변환 메소드
+    private List<ShowNoticeListResponse> convertNoticeListResponseList(List<Notice> noticeList) {
+        List<ShowNoticeListResponse> showNoticeListResponseList = new ArrayList<>();
+        for(Notice n : noticeList){
+            showNoticeListResponseList.add(ShowNoticeListResponse.of(n.getId(), n.getTitle()));
+        }
+        return showNoticeListResponseList;
     }
 }

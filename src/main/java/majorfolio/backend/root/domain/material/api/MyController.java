@@ -13,11 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
+import majorfolio.backend.root.domain.material.dto.response.ShowNoticeListResponse;
 import majorfolio.backend.root.domain.material.service.MyService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
 import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * /My 요청에 관한 컨트롤러 정의
@@ -96,5 +99,13 @@ public class MyController {
     @PatchMapping("/image")
     public BaseResponse<String> changeProfileImage(@RequestBody ProfileImageRequest profileImageRequest, HttpServletRequest request){
         return new BaseResponse<>(myService.changeProfileImage(profileImageRequest,request));
+    }
+
+    /**
+     * 공지사항 모아보기 API 구현
+     */
+    @GetMapping("/notice")
+    public BaseResponse<List<ShowNoticeListResponse>> showNoticeList(){
+        return new BaseResponse<>(myService.showNoticeList());
     }
 }
