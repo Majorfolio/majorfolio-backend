@@ -129,4 +129,16 @@ public class MyController {
     public BaseResponse<ShowNoticeDetailResponse> showNoticeDetail(@PathVariable(name = "noticeId") Long noticeId) throws InvalidKeySpecException, IOException {
         return new BaseResponse<>(myService.showNoticeDetail(noticeId));
     }
+
+    /**
+     * 이벤트 상세보기 API 구현
+     * @param eventId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    @GetMapping("/event/{eventId}")
+    public BaseResponse<ShowEventDetailResponse> showEventDetail(@PathVariable(name = "eventId") Long eventId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(myService.showEventDetail(eventId));
+    }
  }

@@ -45,6 +45,7 @@ import java.util.NoSuchElementException;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_INFO_FROM_KAKAOID;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_MATERIAL;
+import static majorfolio.backend.root.global.status.S3DirectoryEnum.EVENTS3;
 import static majorfolio.backend.root.global.status.S3DirectoryEnum.NOTICES3;
 
 /**
@@ -315,7 +316,7 @@ public class MyService {
     }
 
     /**
-     * 공지사항 상세 보기 api 구현
+     * 공지사항 상세 보기 서비스 구현
      * @param noticeId
      * @return
      */
@@ -323,5 +324,16 @@ public class MyService {
         Notice notice = noticeRepository.findById(noticeId).get();
         String link = S3Util.makeSignedUrl(notice.getLink(), s3Bucket, 0L, 0L, NOTICES3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId);
         return ShowNoticeDetailResponse.of(notice.getTitle(), link);
+    }
+
+    /**
+     * 이벤트 상세 보기 서비스 구현
+     * @param eventId
+     * @return
+     */
+    public ShowEventDetailResponse showEventDetail(Long eventId) throws InvalidKeySpecException, IOException {
+        Event event = eventRepository.findById(eventId).get();
+        String link = S3Util.makeSignedUrl(event.getLink(), s3Bucket, 0L, 0L, EVENTS3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId);
+        return ShowEventDetailResponse.of(event.getTitle(), link);
     }
 }
