@@ -20,7 +20,7 @@ public class ReportController {
         return new BaseResponse<>(reportService.reportMember(reportMemberRequest, request));
     }
 
-    @PostMapping("/material")
+    @PostMapping("/assignment")
     public BaseResponse<String> reportMaterial(@RequestBody ReportMaterialRequest reportMaterialRequest,
                                              HttpServletRequest request){
         return new BaseResponse<>(reportService.reportMaterial(reportMaterialRequest, request));
