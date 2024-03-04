@@ -11,10 +11,13 @@ package majorfolio.backend.root.domain.material.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import majorfolio.backend.root.domain.admin.entity.Event;
 import majorfolio.backend.root.domain.admin.entity.Notice;
+import majorfolio.backend.root.domain.admin.repository.EventRepository;
 import majorfolio.backend.root.domain.admin.repository.NoticeRepository;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterial;
+import majorfolio.backend.root.domain.material.dto.response.ShowEventListResponse;
 import majorfolio.backend.root.domain.material.dto.response.ShowNoticeListResponse;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
@@ -57,6 +60,7 @@ public class MyService {
     private final MemberGlobalService memberGlobalService;
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
+    private final EventRepository eventRepository;
 
     /**
      * 좋아요 기능 구현
@@ -263,9 +267,7 @@ public class MyService {
      */
     public List<ShowNoticeListResponse> showNoticeList() {
         List<Notice> noticeList = noticeRepository.findAll();
-        List<ShowNoticeListResponse> showNoticeListResponseList
-                = convertNoticeListResponseList(noticeList);
-        return showNoticeListResponseList;
+        return convertNoticeListResponseList(noticeList);
     }
 
     // 공지사항 모아보기 응답 객체 변환 메소드
@@ -275,5 +277,23 @@ public class MyService {
             showNoticeListResponseList.add(ShowNoticeListResponse.of(n.getId(), n.getTitle()));
         }
         return showNoticeListResponseList;
+    }
+
+    /**
+     * 이벤트 모아보기 서비스 구현
+     * @return
+     */
+    public List<ShowEventListResponse> showEventList() {
+        List<Event> eventList = eventRepository.findAll();
+        return convertEventListResponseList(eventList);
+    }
+
+    // 이벤트 모아보기 응답 객체 변환 메소드
+    private List<ShowEventListResponse> convertEventListResponseList(List<Event> eventList) {
+        List<ShowEventListResponse> showEventListResponseList = new ArrayList<>();
+        for(Event e : eventList){
+            showEventListResponseList.add(ShowEventListResponse.of(e.getId(), e.getTitle()));
+        }
+        return showEventListResponseList;
     }
 }

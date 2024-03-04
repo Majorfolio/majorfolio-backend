@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
 import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
+import majorfolio.backend.root.domain.material.dto.response.ShowEventListResponse;
 import majorfolio.backend.root.domain.material.dto.response.ShowNoticeListResponse;
 import majorfolio.backend.root.domain.material.service.MyService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
@@ -107,5 +108,10 @@ public class MyController {
     @GetMapping("/notice")
     public BaseResponse<List<ShowNoticeListResponse>> showNoticeList(){
         return new BaseResponse<>(myService.showNoticeList());
+    }
+
+    @GetMapping("/event")
+    public BaseResponse<List<ShowEventListResponse>> showEventList(){
+        return new BaseResponse<>(myService.showEventList());
     }
 }
