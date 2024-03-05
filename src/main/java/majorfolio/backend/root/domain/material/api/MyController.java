@@ -11,13 +11,16 @@ package majorfolio.backend.root.domain.material.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
-import majorfolio.backend.root.domain.material.dto.response.ProfileResponse;
+import majorfolio.backend.root.domain.material.dto.response.*;
 import majorfolio.backend.root.domain.material.service.MyService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
 import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 /**
  * /My 요청에 관한 컨트롤러 정의
@@ -97,4 +100,45 @@ public class MyController {
     public BaseResponse<String> changeProfileImage(@RequestBody ProfileImageRequest profileImageRequest, HttpServletRequest request){
         return new BaseResponse<>(myService.changeProfileImage(profileImageRequest,request));
     }
-}
+
+    /**
+     * 공지사항 모아보기 API 구현
+     */
+    @GetMapping("/notice")
+    public BaseResponse<List<ShowNoticeListResponse>> showNoticeList(){
+        return new BaseResponse<>(myService.showNoticeList());
+    }
+
+    /**
+     * 이벤트 모아보기 API 구현
+     * @return
+     */
+    @GetMapping("/event")
+    public BaseResponse<List<ShowEventListResponse>> showEventList(){
+        return new BaseResponse<>(myService.showEventList());
+    }
+
+    /**
+     * 공지사항 상세보기 API 구현
+     * @param noticeId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    @GetMapping("/notice/{noticeId}")
+    public BaseResponse<ShowNoticeDetailResponse> showNoticeDetail(@PathVariable(name = "noticeId") Long noticeId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(myService.showNoticeDetail(noticeId));
+    }
+
+    /**
+     * 이벤트 상세보기 API 구현
+     * @param eventId
+     * @return
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    @GetMapping("/event/{eventId}")
+    public BaseResponse<ShowEventDetailResponse> showEventDetail(@PathVariable(name = "eventId") Long eventId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(myService.showEventDetail(eventId));
+    }
+ }

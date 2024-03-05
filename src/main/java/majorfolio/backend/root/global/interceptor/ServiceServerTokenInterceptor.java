@@ -13,7 +13,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import majorfolio.backend.root.domain.admin.entity.Admin;
+import majorfolio.backend.root.domain.admin.repository.AdminRepository;
+import majorfolio.backend.root.domain.member.entity.Member;
 import majorfolio.backend.root.domain.member.repository.MemberRepository;
+import majorfolio.backend.root.global.exception.AdminException;
 import majorfolio.backend.root.global.exception.JwtExpiredException;
 import majorfolio.backend.root.global.exception.JwtInvalidException;
 import majorfolio.backend.root.global.exception.UserException;
@@ -21,8 +25,12 @@ import majorfolio.backend.root.global.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.NoSuchElementException;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
+import static majorfolio.backend.root.global.status.EndPointStatusEnum.ADMIN;
 import static majorfolio.backend.root.global.status.StatusEnum.ACTIVE;
 
 /**
@@ -38,7 +46,9 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private MemberRepository memberRepository;
+
+    private final AdminRepository adminRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -64,7 +74,29 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
         Long memberId = JwtUtil.getMemberId(userToken, secretKey);
         request.setAttribute("memberId", memberId);
 
+        //만약 요청 url이 /admin/**이라면
+        if(request.getRequestURI().split("/")[1].equals(ADMIN.getEndPoint())){
+            isAdmin(memberId);
+        }
 
         return true;
     }
+
+    /**
+     * 운영자인지 아닌지 확인
+     * @param memberId
+     */
+    public void isAdmin(Long memberId){
+        Member member = memberRepository.findById(memberId).get();
+
+        try {
+            Admin admin = adminRepository.findByMember(member);
+            log.info(admin.toString());
+        }catch (NullPointerException e){
+            // 예외처리
+            throw new AdminException(NOT_ADMIN_USER);
+        }
+    }
 }
+
+

@@ -9,10 +9,14 @@
  */
 package majorfolio.backend.root.domain.material.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import majorfolio.backend.root.domain.material.dto.response.MyMaterialResponse;
-import majorfolio.backend.root.domain.material.dto.response.MyMaterial;
+import majorfolio.backend.root.domain.admin.entity.Event;
+import majorfolio.backend.root.domain.admin.entity.Notice;
+import majorfolio.backend.root.domain.admin.repository.EventRepository;
+import majorfolio.backend.root.domain.admin.repository.NoticeRepository;
+import majorfolio.backend.root.domain.material.dto.response.*;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
 import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
@@ -26,17 +30,23 @@ import majorfolio.backend.root.domain.member.repository.LikeRepository;
 import majorfolio.backend.root.domain.member.repository.MemberRepository;
 import majorfolio.backend.root.domain.member.service.MemberGlobalService;
 import majorfolio.backend.root.global.exception.NotFoundException;
+import majorfolio.backend.root.global.util.S3Util;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_INFO_FROM_KAKAOID;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.NOT_FOUND_MATERIAL;
+import static majorfolio.backend.root.global.status.S3DirectoryEnum.EVENTS3;
+import static majorfolio.backend.root.global.status.S3DirectoryEnum.NOTICES3;
 
 /**
  * /My 요청에 관한 서비스 로직 정의
@@ -53,6 +63,22 @@ public class MyService {
     private final BookmarkRepository bookmarkRepository;
     private final MemberGlobalService memberGlobalService;
     private final MemberRepository memberRepository;
+    private final NoticeRepository noticeRepository;
+    private final EventRepository eventRepository;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String s3Bucket;
+
+    @Value("${cloud.aws.cloudFront.distributionDomain}")
+    private String distributionDomain;
+
+    @Value("${cloud.aws.path}")
+    private String privateKeyFilePath;
+
+    @Value("${cloud.aws.cloudFront.keyPairId}")
+    private String keyPairId;
+
+    private final AmazonS3Client amazonS3;
 
     /**
      * 좋아요 기능 구현
@@ -251,5 +277,63 @@ public class MyService {
         member.setProfileImage(Integer.toString(profileImageId));
         memberRepository.save(member);
         return "이미지가 변경되었습니다.";
+    }
+
+    /**
+     * 공지사항 모아보기 서비스 구현
+     * @return
+     */
+    public List<ShowNoticeListResponse> showNoticeList() {
+        List<Notice> noticeList = noticeRepository.findAll();
+        return convertNoticeListResponseList(noticeList);
+    }
+
+    // 공지사항 모아보기 응답 객체 변환 메소드
+    private List<ShowNoticeListResponse> convertNoticeListResponseList(List<Notice> noticeList) {
+        List<ShowNoticeListResponse> showNoticeListResponseList = new ArrayList<>();
+        for(Notice n : noticeList){
+            showNoticeListResponseList.add(ShowNoticeListResponse.of(n.getId(), n.getTitle()));
+        }
+        return showNoticeListResponseList;
+    }
+
+    /**
+     * 이벤트 모아보기 서비스 구현
+     * @return
+     */
+    public List<ShowEventListResponse> showEventList() {
+        List<Event> eventList = eventRepository.findAll();
+        return convertEventListResponseList(eventList);
+    }
+
+    // 이벤트 모아보기 응답 객체 변환 메소드
+    private List<ShowEventListResponse> convertEventListResponseList(List<Event> eventList) {
+        List<ShowEventListResponse> showEventListResponseList = new ArrayList<>();
+        for(Event e : eventList){
+            showEventListResponseList.add(ShowEventListResponse.of(e.getId(), e.getTitle()));
+        }
+        return showEventListResponseList;
+    }
+
+    /**
+     * 공지사항 상세 보기 서비스 구현
+     * @param noticeId
+     * @return
+     */
+    public ShowNoticeDetailResponse showNoticeDetail(Long noticeId) throws InvalidKeySpecException, IOException {
+        Notice notice = noticeRepository.findById(noticeId).get();
+        String link = S3Util.makeSignedUrl(notice.getLink(), s3Bucket, 0L, 0L, NOTICES3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId);
+        return ShowNoticeDetailResponse.of(notice.getTitle(), link);
+    }
+
+    /**
+     * 이벤트 상세 보기 서비스 구현
+     * @param eventId
+     * @return
+     */
+    public ShowEventDetailResponse showEventDetail(Long eventId) throws InvalidKeySpecException, IOException {
+        Event event = eventRepository.findById(eventId).get();
+        String link = S3Util.makeSignedUrl(event.getLink(), s3Bucket, 0L, 0L, EVENTS3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId);
+        return ShowEventDetailResponse.of(event.getTitle(), link);
     }
 }
