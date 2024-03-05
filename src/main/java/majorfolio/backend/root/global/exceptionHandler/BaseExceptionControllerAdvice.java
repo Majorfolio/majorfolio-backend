@@ -40,12 +40,12 @@ public class BaseExceptionControllerAdvice {
         return new BaseErrorResponse(METHOD_NOT_ALLOWED);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ConstraintViolationException.class)
-    public BaseErrorResponse handle_ConstraintViolationException(ConstraintViolationException e) {
-        log.error("[handle_ConstraintViolationException]", e);
-        return new BaseErrorResponse(BAD_REQUEST, e.getMessage());
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(ConstraintViolationException.class)
+//    public BaseErrorResponse handle_ConstraintViolationException(ConstraintViolationException e) {
+//        log.error("[handle_ConstraintViolationException]", e);
+//        return new BaseErrorResponse(BAD_REQUEST, e.getMessage());
+//    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalServerErrorException.class)
@@ -61,7 +61,7 @@ public class BaseExceptionControllerAdvice {
         return new BaseErrorResponse(SERVER_ERROR);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class,ConstraintViolationException.class})
     public BaseErrorResponse handle_MethodArgumentNotValidException(
             MethodArgumentNotValidException e
     ){
@@ -126,10 +126,6 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("score")){
                     return makeResponse(NOT_NULL_SCORE);
                 }
-                if(errorVariable.equals("file")){
-                    return makeResponse(NOT_NULL_FILE);
-                }
-
             }
 
             if(bindAnnotation.equals("Pattern")){
@@ -147,6 +143,12 @@ public class BaseExceptionControllerAdvice {
             if(bindAnnotation.equals("Size")){
                 if(errorVariable.equals("description")){
                     return makeResponse(TOO_MANY_DESCRIPTION);
+                }
+            }
+
+            if(bindAnnotation.equals("ValidFile")){
+                if(errorVariable.equals("file")){
+                    return makeResponse(NOT_NULL_FILE);
                 }
             }
         }
