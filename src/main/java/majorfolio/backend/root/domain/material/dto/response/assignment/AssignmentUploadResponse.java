@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class AssignmentUploadResponse {
-    private Boolean isRegisterPhoneNumber;
+    private Long materialId;
 
-    public static AssignmentUploadResponse of(Boolean isRegisterPhoneNumber){
+    public static AssignmentUploadResponse of(Long materialId){
         return AssignmentUploadResponse.builder()
-                .isRegisterPhoneNumber(isRegisterPhoneNumber)
+                .materialId(materialId)
                 .build();
     }
 }

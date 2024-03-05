@@ -147,14 +147,11 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-        //전화번호 업로드 여부
-        Boolean isRegisterPhoneNumber = true;
-
         if(member.getPhoneNumber() == null){
-            isRegisterPhoneNumber = false;
+            throw new UserException(NONE_PHONE_NUMBER);
         }
 
-        return AssignmentUploadResponse.of(isRegisterPhoneNumber);
+        return AssignmentUploadResponse.of(materialId);
     }
 
     /**
