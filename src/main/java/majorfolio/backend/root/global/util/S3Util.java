@@ -22,6 +22,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.UUID;
 
+import static majorfolio.backend.root.global.status.S3DirectoryEnum.EVENTS3;
+import static majorfolio.backend.root.global.status.S3DirectoryEnum.NOTICES3;
+
 @Slf4j
 public class S3Util {
 
@@ -51,6 +54,9 @@ public class S3Util {
         else if(type.equals("Downloads") || type.equals("TempStorage")){
             policyResourcePath = "https://" + distributionDomain + "/" + bucketName + "/" + memberId + "/"
                     + type + "/" + materialId + "/" + s3FileName;
+        }
+        else if(type.equals(NOTICES3.getS3DirectoryName()) || type.equals(EVENTS3.getS3DirectoryName())){
+            policyResourcePath = "https://" + distributionDomain + "/" + s3FileName;
         }
 
 
