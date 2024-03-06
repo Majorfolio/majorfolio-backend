@@ -46,6 +46,13 @@ public class UserExceptionControllerAdvice {
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UserException.class)
+    public BaseErrorResponse handle_UserAuthException(UserException e){
+        log.error("[handle_UserAuthException]", e);
+        return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
+    }
+
     /**
      * 필수동의사항 미동의시 예외사항 처리
      * @param e

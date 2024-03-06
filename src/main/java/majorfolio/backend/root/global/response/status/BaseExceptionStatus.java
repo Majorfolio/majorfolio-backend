@@ -74,6 +74,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     OVERLAP_MEMBER(6006, HttpStatus.BAD_REQUEST.value(), "이미 존재하는 회원입니다."),
     NOT_ACTIVE_MEMBER(6007, HttpStatus.BAD_REQUEST.value(), "현재 회원 상태가 활성상태가 아닙니다!"),
     NOT_MATCH_USER(6008, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 유저입니다."),
+    NOT_UNIV_AUTH(6009, HttpStatus.UNAUTHORIZED.value(), "대학인증을 해야 합니다."),
 
 
     /**

@@ -25,13 +25,11 @@ import majorfolio.backend.root.global.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
-import static majorfolio.backend.root.global.status.EndPointStatusEnum.ADMIN;
-import static majorfolio.backend.root.global.status.StatusEnum.ACTIVE;
+import static majorfolio.backend.root.global.status.EndPointStatusEnum.*;
 
 /**
  * 서비스에서 발행한 JWT가 유효한지 사전에 체크하는 interceptor 구현
@@ -74,12 +72,26 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
         Long memberId = JwtUtil.getMemberId(userToken, secretKey);
         request.setAttribute("memberId", memberId);
 
+        String requestUrl = request.getRequestURI();
+        String[] requestUrlDomain = requestUrl.split("/");
+        log.info("url : " + requestUrl);
         //만약 요청 url이 /admin/**이라면
-        if(request.getRequestURI().split("/")[1].equals(ADMIN.getEndPoint())){
+        if(requestUrlDomain[1].equals(ADMIN.getDomain())){
             isAdmin(memberId);
         }
 
+        //대학 인증이 필요한 url
+        List<String> needUnivAuth = List.of(
+                ASSIGNMENT.getDomain(), MY.getDomain(), LIBRARY.getDomain(),
+                PAYMENTS.getDomain(), TRANSACTION.getDomain());
 
+        //만약 대학인증이 필요한 url에 접속하려고 하려면
+        if(emailId == 0 && needUnivAuth.contains(requestUrl)){
+            //과제 상세페이지 조회 제외하곤
+            if(!requestUrlDomain[requestUrlDomain.length-1].equals(DETAIL.getDomain())){
+                throw new UserException(NOT_UNIV_AUTH);
+            }
+        }
 
         return true;
     }
