@@ -147,14 +147,11 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-        //전화번호 업로드 여부
-        Boolean isRegisterPhoneNumber = true;
-
         if(member.getPhoneNumber() == null){
-            isRegisterPhoneNumber = false;
+            throw new UserException(NONE_PHONE_NUMBER);
         }
 
-        return AssignmentUploadResponse.of(isRegisterPhoneNumber);
+        return AssignmentUploadResponse.of(materialId);
     }
 
     /**
@@ -904,12 +901,15 @@ public class AssignmentService {
         }
 
 
-        //멤버가 좋아요, 북마크 체크 했는지 여부
+        //멤버가 좋아요, 북마크 체크 및 해당 자료 구매했는지 여부
         Boolean isMemberBookmark = false;
         Boolean isMemberLike = false;
+        Boolean isMemberBuy = false;
         Member binderMember = null;
+        BuyList buyList = null;
         try {
             binderMember = memberRepository.findById(binderMemberId).get();
+            buyList = binderMember.getBuyList();
         }catch (NoSuchElementException e){
             isMemberBookmark = false;
             isMemberLike = false;
@@ -918,6 +918,7 @@ public class AssignmentService {
         if(binderMember != null){
             isMemberBookmark = isBookmark(material, binderMember);
             isMemberLike = isLike(material, binderMember);
+            isMemberBuy = isBuy(buyList, material);
         }
 
 
@@ -943,8 +944,19 @@ public class AssignmentService {
                 pages,
                 isMemberBookmark,
                 isMemberLike,
+                isMemberBuy,
                 materialsTop5
         );
+    }
+
+    /**
+     * 유저가 해당 과제를 구매했는지 여부
+     * @param buyList
+     * @param material
+     * @return
+     */
+    private Boolean isBuy(BuyList buyList, Material material) {
+        return buyListItemRepository.existsByBuyListAndMaterial(buyList, material);
     }
 
     /**
