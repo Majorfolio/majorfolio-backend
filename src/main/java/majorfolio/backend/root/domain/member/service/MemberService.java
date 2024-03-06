@@ -26,6 +26,7 @@ import majorfolio.backend.root.domain.member.dto.*;
 import majorfolio.backend.root.domain.member.entity.*;
 import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.domain.university.repository.UniversityRepository;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.util.JwtUtil;
 import majorfolio.backend.root.global.util.RandomCodeUtil;
@@ -78,10 +79,12 @@ public class MemberService {
      * @return
      */
     public LoginResponse memberLogin(Long kakaoId, String nonce, String state){
-        Boolean isMember = false;
+        boolean isMember = false;
         Long memberId;
         Long emailId;
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
+
+
         if(kakaoSocialLogin == null){
             // 카카오 소셜 로그인 객체가 없으면 만들어서 DB에 저장한다.
             kakaoSocialLogin = KakaoSocialLogin.builder().build();
@@ -93,22 +96,12 @@ public class MemberService {
             emailId = 0L;
         }
         try {
-            memberId = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId).getMember().getId();
+            memberId = kakaoSocialLogin.getMember().getId();
             isMember = true;
         }catch (NoSuchElementException | NullPointerException e){
-            memberId = 0L;
+            Member member = createMember();
+            memberId = member.getId();
         }
-//        if(memberId == 0){
-//            log.info("memberId is null");
-//            emailId = 0L;
-//        }
-//        else{
-//            log.info("memberId = {}", memberId);
-//            emailId = emailDBRepository.findByMember(memberRepository.findById(memberId).get()).getId();
-//        }
-//        if(memberId != 0){
-//            isMember = true;
-//        }
 
         String accessToken = JwtUtil.createAccessToken(memberId, kakaoSocialLogin.getId(), emailId, secretKey);
 
@@ -122,6 +115,34 @@ public class MemberService {
         kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
         return LoginResponse.of(isMember, memberId, emailId, accessToken, refreshToken);
+    }
+
+    // 멤버 생성
+    private Member createMember() {
+        Member member = Member.builder().build();
+        // 장바구니, 구매리스트, 판매리스트, 쿠폰박스, 팔로워 목록 만들어두기
+        Basket basket = Basket.builder().build();
+        basketRepository.save(basket);
+        BuyList buyList = BuyList.builder().build();
+        buyListRepository.save(buyList);
+        SellList sellList = SellList.builder().build();
+        sellListRepository.save(sellList);
+        CouponBox couponBox = CouponBox.builder().build();
+        couponBoxRepository.save(couponBox);
+        FollowerList followerList = majorfolio.backend.root.domain.member.entity.FollowerList.builder().build();
+        followerListRepository.save(followerList);
+        TempStorage tempStorage = TempStorage.builder().build();
+        tempStorageRepository.save(tempStorage);
+
+        member.setBasket(basket);
+        member.setBuyList(buyList);
+        member.setCouponBox(couponBox);
+        member.setFollowerList(followerList);
+        member.setTempStorage(tempStorage);
+
+        memberRepository.save(member);
+
+        return member;
     }
 
     /**
