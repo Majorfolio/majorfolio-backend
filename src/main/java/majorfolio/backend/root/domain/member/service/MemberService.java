@@ -196,10 +196,10 @@ public class MemberService {
 
         String code = RandomCodeUtil.GenerateRandomCode(6);
         simpleMailMessage.setText("우리끼리 만드는 과제장터, 메이저폴리오!\n" +
-                "학교인증 코드는 아래와 같습니다.\n"
+                "학교인증 코드는 아래와 같습니다.\n\n"
                 + code
                 + "\n\n"+
-                "*인증 오류가 있다면, 인증 화면에서 '재발송하기'를 눌러주시거나 다음날 다시 요청해주세요");
+                "*인증 오류가 있다면, 인증 화면에서 '재발송하기'를 눌러주시거나 다음날 다시 요청해주세요.");
 
         try {
             javaMailSender.send(simpleMailMessage);
