@@ -79,6 +79,8 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
             isAdmin(memberId);
         }
 
+
+
         return true;
     }
 

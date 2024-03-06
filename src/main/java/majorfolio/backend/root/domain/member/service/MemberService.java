@@ -38,7 +38,7 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
-import static majorfolio.backend.root.global.status.StatusEnum.DELETE;
+import static majorfolio.backend.root.global.status.StatusEnum.*;
 
 /**
  * MemeberController에서 수행되는 서비스 동작을 정의한 클래스
@@ -80,6 +80,7 @@ public class MemberService {
      */
     public LoginResponse memberLogin(Long kakaoId, String nonce, String state){
         boolean isMember = false;
+        boolean isWriteMemberDetailInfo = false;
         Long memberId;
         Long emailId;
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
@@ -96,11 +97,14 @@ public class MemberService {
             emailId = 0L;
         }
         try {
-            memberId = kakaoSocialLogin.getMember().getId();
+            Member member = kakaoSocialLogin.getMember();
+            memberId = member.getId();
+            isWriteMemberDetailInfo = checkIsWriteMemberDetailInfo(member);
             isMember = true;
         }catch (NoSuchElementException | NullPointerException e){
             Member member = createMember();
             memberId = member.getId();
+
         }
 
         String accessToken = JwtUtil.createAccessToken(memberId, kakaoSocialLogin.getId(), emailId, secretKey);
@@ -108,13 +112,24 @@ public class MemberService {
         String refreshToken = JwtUtil.createRefreshToken(kakaoSocialLogin.getId(), secretKey);
 
         //리프레쉬 토큰 db에 저장
+        setKakaoSocialLogin(kakaoSocialLogin, kakaoId, state, nonce, refreshToken);
+
+        return LoginResponse.of(isMember, isWriteMemberDetailInfo, memberId, emailId, accessToken, refreshToken);
+    }
+
+    //상세 정보 입력했는지 확인
+    private boolean checkIsWriteMemberDetailInfo(Member member) {
+        return !member.getStatus().equals(CREATING.getStatus());
+    }
+
+    private void setKakaoSocialLogin(KakaoSocialLogin kakaoSocialLogin, Long kakaoId, String state,
+                                     String nonce, String refreshToken){
+        //리프레쉬 토큰 db에 저장
         kakaoSocialLogin.setKakaoNumber(kakaoId);
         kakaoSocialLogin.setState(state);
         kakaoSocialLogin.setNonce(nonce);
         kakaoSocialLogin.setRefreshToken(refreshToken);
         kakaoSocialLoginRepository.save(kakaoSocialLogin);
-
-        return LoginResponse.of(isMember, memberId, emailId, accessToken, refreshToken);
     }
 
     // 멤버 생성
@@ -139,6 +154,7 @@ public class MemberService {
         member.setCouponBox(couponBox);
         member.setFollowerList(followerList);
         member.setTempStorage(tempStorage);
+        member.setStatus(CREATING.getStatus());
 
         memberRepository.save(member);
 
