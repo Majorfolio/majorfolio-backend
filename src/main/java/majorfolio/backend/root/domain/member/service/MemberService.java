@@ -26,7 +26,6 @@ import majorfolio.backend.root.domain.member.dto.*;
 import majorfolio.backend.root.domain.member.entity.*;
 import majorfolio.backend.root.domain.member.repository.*;
 import majorfolio.backend.root.domain.university.repository.UniversityRepository;
-import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
 import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.util.JwtUtil;
 import majorfolio.backend.root.global.util.RandomCodeUtil;

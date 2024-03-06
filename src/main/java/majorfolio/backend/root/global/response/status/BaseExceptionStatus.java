@@ -75,6 +75,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_ACTIVE_MEMBER(6007, HttpStatus.BAD_REQUEST.value(), "현재 회원 상태가 활성상태가 아닙니다!"),
     NOT_MATCH_USER(6008, HttpStatus.BAD_REQUEST.value(), "유효하지 않은 유저입니다."),
     NOT_UNIV_AUTH(6009, HttpStatus.UNAUTHORIZED.value(), "대학인증을 해야 합니다."),
+    NOT_VALID_USER_INFO(6010, HttpStatus.UNAUTHORIZED.value(), "사용자 토큰에 이메일 정보가 없거나 소셜로그인 정보가 없거나 멤버 정보가 없습니다"),
 
 
     /**
