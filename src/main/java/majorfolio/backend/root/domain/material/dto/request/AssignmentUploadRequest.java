@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.ValidFile;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -29,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class AssignmentUploadRequest {
-    @NotNull(message = "file : 파일이 비어있으면 안됩니다.")
+    @ValidFile(message = "file : 파일이 비어있으면 안됩니다.")
     private MultipartFile file;
     @NotBlank(message = "title : 과제 제목이 비어있으면 안됩니다.")
     private String title;
@@ -42,14 +43,14 @@ public class AssignmentUploadRequest {
     private String subjectName;
     @NotBlank(message = "professor : 교수명이 비어있으면 안됩니다.")
     private String professor;
-    @Pattern(regexp = "A[+-]?|B[+-]?|C[+-]?|D[+-]?|F", message = "grade : 올바른 학점 형식이어야 합니다.")
+    @Pattern(regexp = "A[+-]?|B[+-]?|C[+-]?|D[+-]?|F|P|NP", message = "grade : 올바른 학점 형식이어야 합니다.")
     private String grade;
     @NotNull(message = "fullScore : 총점이 비어있으면 안됩니다.")
     private Integer fullScore;
     @NotNull(message = "score : 점수가 비어있으면 안됩니다.")
     private Integer score;
     @NotBlank(message = "description : 설명이 쓰여 있어야 합니다.")
-    @Size(max = 80, message = "description : 설명은 80자로 제한됩니다.")
+    @Size(max = 80, message = "description : 설명은 10자 이상 80자이내로 제한됩니다.")
     private String description;
 
 }

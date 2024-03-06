@@ -3,6 +3,7 @@ package majorfolio.backend.root.domain.member.repository;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.member.entity.BuyList;
 import majorfolio.backend.root.domain.member.entity.BuyListItem;
+import majorfolio.backend.root.domain.payments.entity.BuyInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,6 @@ public interface BuyListItemRepository extends JpaRepository<BuyListItem, Long> 
     BuyListItem findByBuyListAndMaterial(BuyList buyList, Material material);
 
     Boolean existsBuyListItemByBuyList(BuyList buyList);
+
+    Boolean existsByBuyListAndMaterial(BuyList buyList, Material material);
 }

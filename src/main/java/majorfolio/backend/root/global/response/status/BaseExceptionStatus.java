@@ -119,6 +119,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     NOT_BLANK_DESCRIPTION(10009, HttpStatus.BAD_REQUEST.value(), "설명이 쓰여 있어야 합니다."),
     TOO_MANY_DESCRIPTION(10010, HttpStatus.BAD_REQUEST.value(), "설명은 80자로 제한됩니다."),
     SEMESTER_PATTERN_ERROR(10011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다."),
+    NONE_PHONE_NUMBER(10012, HttpStatus.BAD_REQUEST.value(), "전화번호를 입력해주세요"),
 
     /**
      * 11000 : 자료 다운 관련 오류
