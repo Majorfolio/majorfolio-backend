@@ -254,9 +254,13 @@ public class MemberService {
         }
         try {
             // 이메일 레포지토리 생성
-            emailDB = emailDBRepository.findById(emailId).get();
+            Member member = memberRepository.findById(memberId).get();
+            emailDB = emailDBRepository.findByMember(member);
             if(!emailDB.getStatus()){
                 emailDB = null;
+            }
+            else {
+                emailId = emailDB.getId();
             }
         }catch (NoSuchElementException e){
             emailDB = null;
