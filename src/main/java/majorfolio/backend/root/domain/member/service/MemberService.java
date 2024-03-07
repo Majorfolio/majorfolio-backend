@@ -99,7 +99,10 @@ public class MemberService {
             Member member = kakaoSocialLogin.getMember();
             memberId = member.getId();
             isWriteMemberDetailInfo = checkIsWriteMemberDetailInfo(member);
-            isMember = true;
+            //상세 정보까지 입력되어있으면
+            if(isWriteMemberDetailInfo){
+                isMember = true;
+            }
         }catch (NoSuchElementException | NullPointerException e){
             Member member = createMember();
             memberId = member.getId();
@@ -153,7 +156,10 @@ public class MemberService {
         member.setCouponBox(couponBox);
         member.setFollowerList(followerList);
         member.setTempStorage(tempStorage);
+        member.setSellList(sellList);
         member.setStatus(CREATING.getStatus());
+
+        //isMember -> memberStatus값 따라 바뀌도록 해야함
 
         memberRepository.save(member);
 
@@ -225,7 +231,7 @@ public class MemberService {
      * @param kakaoId
      * @return
      */
-    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId){
+    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId, Long memberId){
         EmailDB emailDB;
         KakaoSocialLogin kakaoSocialLogin;
         if(!signupRequest.getServiceAgree()
@@ -249,25 +255,16 @@ public class MemberService {
             throw new UserException(OVERLAP_MEMBER);
         }
 
-        // 장바구니, 구매리스트, 판매리스트, 쿠폰박스, 팔로워 목록 만들어두기
-        Basket basket = Basket.builder().build();
-        basketRepository.save(basket);
-        BuyList buyList = BuyList.builder().build();
-        buyListRepository.save(buyList);
-        SellList sellList = SellList.builder().build();
-        sellListRepository.save(sellList);
-        CouponBox couponBox = CouponBox.builder().build();
-        couponBoxRepository.save(couponBox);
-        FollowerList followerList = majorfolio.backend.root.domain.member.entity.FollowerList.builder().build();
-        followerListRepository.save(followerList);
-        TempStorage tempStorage = TempStorage.builder().build();
-        tempStorageRepository.save(tempStorage);
-        ;
-
-        Member member = Member.of(signupRequest.getNickName(), signupRequest.getUniversityName(),
-                signupRequest.getMajor1(), signupRequest.getMajor2(), signupRequest.getStudentId(),
-                signupRequest.getPersonalAgree(), signupRequest.getServiceAgree(), signupRequest.getMarketingAgree(),
-                basket, buyList, sellList, followerList, couponBox, tempStorage);
+        Member member = memberRepository.findById(memberId).get();
+        member.setStatus(ACTIVE.getStatus());
+        member.setNickName(signupRequest.getNickName());
+        member.setMajor1(signupRequest.getMajor1());
+        member.setMajor2(signupRequest.getMajor2());
+        member.setMarketingAgree(signupRequest.getMarketingAgree());
+        member.setNoticeEvent(signupRequest.getPersonalAgree());
+        member.setPersonalAgree(signupRequest.getPersonalAgree());
+        member.setStudentId(signupRequest.getStudentId());
+        member.setUniversityName(signupRequest.getUniversityName());
 
         memberRepository.save(member);
 
@@ -353,7 +350,7 @@ public class MemberService {
      * 이메일 코드 대조 API 서비스 구현
      * @param emailCodeRequest
      */
-    public String emailCodeCompare(Long emailId, String code, Long kakaoId){
+    public String emailCodeCompare(Long emailId, String code, Long kakaoId, Long memberId){
         if(!checkExpireCode(emailId)){
             //인증코드 만료시
             throw new ExpiredCodeException(EXPIRED_CODE);
@@ -369,7 +366,7 @@ public class MemberService {
         emailDB.setStatus(true);
         emailDB.setEmailDate(LocalDateTime.now());
         emailDB.setKakaoSocialLogin(kakaoSocialLoginRepository.findById(kakaoId).get());
-
+        emailDB.setMember(memberRepository.findById(memberId).get());
         emailDBRepository.save(emailDB);
 
         return "";

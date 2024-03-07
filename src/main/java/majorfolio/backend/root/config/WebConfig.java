@@ -50,6 +50,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new MemberIdArgumentResolver(kakaoSocialLoginRepository, secretKey));
+        resolvers.add(new MemberIdArgumentResolver());
     }
 }

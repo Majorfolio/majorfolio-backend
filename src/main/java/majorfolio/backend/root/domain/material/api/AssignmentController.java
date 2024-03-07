@@ -26,7 +26,6 @@ import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialD
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
-import majorfolio.backend.root.global.argument_resolver.TokenInformation;
 import majorfolio.backend.root.global.argument_resolver.custom_annotation.TokenInfo;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.beans.factory.annotation.Value;

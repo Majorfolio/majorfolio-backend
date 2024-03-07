@@ -28,10 +28,7 @@ import static majorfolio.backend.root.global.response.status.BaseExceptionStatus
 @Slf4j
 public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final KakaoSocialLoginRepository kakaoSocialLoginRepository;
-    private final MemberRepository memberRepository;
-    private final EmailDBRepository emailDBRepository;
-    private final String secretKey;
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasAnnotation = parameter.hasParameterAnnotation(TokenInfo.class);

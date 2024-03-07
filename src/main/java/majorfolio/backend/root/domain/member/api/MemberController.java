@@ -79,9 +79,9 @@ public class MemberController {
     @GetMapping("/school-email/{emailId}/{code}")
     public BaseResponse<String> emailCodeCompare(@PathVariable(name = "emailId") Long emailId,
                                                  @PathVariable(name = "code") String code,
-                                                 ServletRequest servletRequest){
+                                                 ServletRequest servletRequest, @TokenInfo Long memberId){
         Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
-        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code, kakaoId));
+        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code, kakaoId, memberId));
     }
 
     /**
@@ -97,8 +97,9 @@ public class MemberController {
         }
 
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+        Long memberId = Long.parseLong(request.getAttribute("memberId").toString());
 
-        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId));
+        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId, memberId));
     }
 
     /**

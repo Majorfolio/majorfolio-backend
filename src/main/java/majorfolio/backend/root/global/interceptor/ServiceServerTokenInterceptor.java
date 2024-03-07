@@ -30,6 +30,7 @@ import java.util.List;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 import static majorfolio.backend.root.global.status.EndPointStatusEnum.*;
+import static majorfolio.backend.root.global.status.StatusEnum.ACTIVE;
 
 /**
  * 서비스에서 발행한 JWT가 유효한지 사전에 체크하는 interceptor 구현
@@ -90,6 +91,10 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
             //과제 상세페이지 조회 제외하곤
             if(!requestUrlDomain[requestUrlDomain.length-1].equals(DETAIL.getDomain())){
                 throw new UserException(NOT_UNIV_AUTH);
+            }
+            //멤버 status가 active가 아닐 때
+            if(!memberRepository.findById(memberId).get().getStatus().equals(ACTIVE.getStatus())){
+                throw new UserException(NOT_ACTIVE_MEMBER);
             }
         }
 
