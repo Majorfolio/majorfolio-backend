@@ -13,6 +13,7 @@ public enum StatusEnum implements DBstatus{
     DORMANCY("Member", "dormancy", "휴면상태"),
     BEN("Member", "ben", "밴 상태"),
     DELETE("Member", "delete", "탈퇴 상태"),
+    CREATING("Member", "creating", "만들고 있는 상태(상세정보 입력 안됨"),
 
     //Material테이블 쪽 status
     MATERIAL_ACTIVE("Material", "active", "활성상태"),

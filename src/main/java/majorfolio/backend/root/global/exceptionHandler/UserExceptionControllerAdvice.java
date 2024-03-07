@@ -11,10 +11,7 @@ package majorfolio.backend.root.global.exceptionHandler;
 
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
-import majorfolio.backend.root.global.exception.NotCertificationUserException;
-import majorfolio.backend.root.global.exception.NotSatisfiedAgreePolicyException;
-import majorfolio.backend.root.global.exception.OverlapNicknameException;
-import majorfolio.backend.root.global.exception.UserException;
+import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.response.BaseErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +40,13 @@ public class UserExceptionControllerAdvice {
     @ExceptionHandler(UserException.class)
     public BaseErrorResponse handle_UserException(UserException e) {
         log.error("[handle_UserException]", e);
+        return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(NoAuthUserException.class)
+    public BaseErrorResponse handle_UserAuthException(NoAuthUserException e){
+        log.error("[handle_UserAuthException]", e);
         return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
     }
 
