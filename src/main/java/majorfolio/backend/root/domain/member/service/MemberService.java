@@ -473,9 +473,11 @@ public class MemberService {
 
         makeMemberDelete(member, kakaoSocialLogin);
 
-        emailDB.setEmail("탈퇴한 회원의 Email");
-        emailDB.setStatus(false);
-        emailDBRepository.save(emailDB);
+        if(emailDB != null){
+            emailDB.setEmail("탈퇴한 회원의 Email");
+            emailDB.setStatus(false);
+            emailDBRepository.save(emailDB);
+        }
 
         member.setPhoneNumber("");
         memberRepository.save(member);
