@@ -317,7 +317,12 @@ public class MemberService {
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
         Member member = kakaoSocialLogin.getMember();
         Long memberId = member.getId();
-        Long emailId = emailDBRepository.findByMember(member).getId();
+        Long emailId;
+        try {
+            emailId = emailDBRepository.findByMember(member).getId();
+        }catch (NullPointerException e){
+            emailId = 0L;
+        }
 
         // 데이터 베이스에 존재하는 리프레쉬 토큰
         String dataRefreshToken = kakaoSocialLoginRepository.findById(kakaoId).get().getRefreshToken();
@@ -327,7 +332,7 @@ public class MemberService {
         }
 
         //액세스 및 리프레쉬 토큰 새로 발급
-        String accessToken = JwtUtil.createAccessToken(memberId, emailId, kakaoId, secretKey);
+        String accessToken = JwtUtil.createAccessToken(memberId, kakaoId, emailId, secretKey);
         String refreshToken = JwtUtil.createRefreshToken(kakaoId, secretKey);
 
         //새로 발급 받은 토큰 DB에 다시 저장
