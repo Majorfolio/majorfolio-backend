@@ -86,8 +86,9 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
                 ASSIGNMENT.getDomain(), MY.getDomain(), LIBRARY.getDomain(),
                 PAYMENTS.getDomain(), TRANSACTION.getDomain());
 
+
         //만약 대학인증이 필요한 url에 접속하려고 하려면
-        if(emailId == 0 && needUnivAuth.contains(requestUrl)){
+        if(emailId == 0 && needUnivAuth.contains(requestUrlDomain[1])){
             //과제 상세페이지 조회 제외하곤
             if(!requestUrlDomain[requestUrlDomain.length-1].equals(DETAIL.getDomain())){
                 throw new UserException(NOT_UNIV_AUTH);

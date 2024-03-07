@@ -247,15 +247,15 @@ public class MemberService {
             // 이메일 레포지토리 생성
             emailDB = emailDBRepository.findById(emailId).get();
             if(!emailDB.getStatus()){
-                throw new UserException(INVALID_USER_VALUE);
+                emailDB = null;
             }
         }catch (NoSuchElementException e){
-            throw new UserException(INVALID_USER_VALUE);
+            emailDB = null;
         }
         kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
 
         //이미 존재하는 멤버일 때
-        if(kakaoSocialLogin.getMember() != null){
+        if(kakaoSocialLogin.getMember() != null && !kakaoSocialLogin.getMember().getStatus().equals(CREATING.getStatus())){
             throw new UserException(OVERLAP_MEMBER);
         }
 
@@ -275,11 +275,13 @@ public class MemberService {
         log.info(String.valueOf(kakaoId));
 
         // 이메일 레포에도 memberId값 저장
-        emailDB.setMember(member);
-        emailDBRepository.save(emailDB);
+        if(emailDB != null){
+            emailDB.setMember(member);
+            emailDBRepository.save(emailDB);
+        }
 
         //액세스 토큰 생성
-        String accessToken = JwtUtil.createAccessToken(member.getId(), kakaoSocialLogin.getId(), emailDB.getId(), secretKey);
+        String accessToken = JwtUtil.createAccessToken(member.getId(), kakaoSocialLogin.getId(), emailId, secretKey);
 
         return SignupResponse.of(member.getId(), accessToken);
     }
