@@ -15,14 +15,17 @@ public class SaleTransactionListResponse {
     private int page;
     private List<TransactionResponse> pending;
     private List<TransactionResponse> complete;
+    private boolean isEnd;
 
     public static SaleTransactionListResponse of(int page,
                                                  List<TransactionResponse> pending,
-                                                 List<TransactionResponse> complete){
+                                                 List<TransactionResponse> complete,
+                                                 boolean isEnd){
         return SaleTransactionListResponse.builder()
                 .page(page)
                 .pending(pending)
                 .complete(complete)
+                .isEnd(isEnd)
                 .build();
     }
 }
