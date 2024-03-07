@@ -21,6 +21,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MyMaterial {
+    private Long materialId;
     private String nickName;
     private String profileUrl;
     private String className;
@@ -30,6 +31,7 @@ public class MyMaterial {
     private int totalRecommend;
 
     public static MyMaterial of(
+            Long materialId,
             String nickName,
             String profileUrl,
             String className,
@@ -39,6 +41,7 @@ public class MyMaterial {
             int totalRecommend
     ){
         return MyMaterial.builder()
+                .materialId(materialId)
                 .nickName(nickName)
                 .profileUrl(profileUrl)
                 .className(className)
