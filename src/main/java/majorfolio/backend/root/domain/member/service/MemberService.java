@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
-import majorfolio.backend.root.domain.member.dto.response.EmailCodeCompareResponse;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.dto.response.SignupProgressResponse;
@@ -36,7 +35,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 import static majorfolio.backend.root.global.status.StatusEnum.*;
@@ -240,7 +238,7 @@ public class MemberService {
      * @param kakaoId
      * @return
      */
-    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId, Long memberId, Long emailId){
+    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId, Long memberId){
         EmailDB emailDB;
         KakaoSocialLogin kakaoSocialLogin;
         if(!signupRequest.getServiceAgree()
@@ -248,22 +246,21 @@ public class MemberService {
             // 개인정보나 서비스 이용약관에 비동의 시
             throw new NotSatisfiedAgreePolicyException(NOT_SATISFIED_AGREE_POLICY);
         }
+
         try {
-            // 이메일 레포지토리 생성
-            Member member = memberRepository.findById(memberId).get();
-            emailDB = emailDBRepository.findByMember(member);
-            if(emailDB != null){
-                if(!emailDB.getStatus()){
-                    emailDB = null;
-                }
-                else {
-                    emailId = emailDB.getId();
-                }
+            emailDB = emailDBRepository.findById(signupRequest.getEmailId()).get();
+            Long emailMemberId = emailDB.getMember().getId();
+            if(!emailMemberId.equals(memberId)){
+                throw new UserException(INVALID_USER_VALUE);
             }
 
+        }catch (NullPointerException e){
+            throw new NoAuthUserException(NOT_UNIV_AUTH);
         }catch (NoSuchElementException e){
-            emailDB = null;
+            throw new UserException(INVALID_USER_VALUE);
         }
+
+
         kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
 
         //이미 존재하는 멤버일 때
@@ -287,13 +284,11 @@ public class MemberService {
         log.info(String.valueOf(kakaoId));
 
         // 이메일 레포에도 memberId값 저장
-        if(emailDB != null){
-            emailDB.setMember(member);
-            emailDBRepository.save(emailDB);
-        }
+        emailDB.setMember(member);
+        emailDBRepository.save(emailDB);
 
         //액세스 토큰 생성
-        String accessToken = JwtUtil.createAccessToken(member.getId(), kakaoSocialLogin.getId(), emailId, secretKey);
+        String accessToken = JwtUtil.createAccessToken(member.getId(), kakaoSocialLogin.getId(), signupRequest.getEmailId(), secretKey);
 
         return SignupResponse.of(member.getId(), accessToken);
     }
@@ -369,7 +364,7 @@ public class MemberService {
      * 이메일 코드 대조 API 서비스 구현
      * @param emailCodeRequest
      */
-    public EmailCodeCompareResponse emailCodeCompare(Long emailId, String code, Long kakaoId, Long memberId){
+    public String emailCodeCompare(Long emailId, String code, Long kakaoId, Long memberId){
         if(!checkExpireCode(emailId)){
             //인증코드 만료시
             throw new ExpiredCodeException(EXPIRED_CODE);
@@ -394,7 +389,7 @@ public class MemberService {
         emailDBRepository.save(emailDB);
 
         String accessToken = JwtUtil.createAccessToken(memberId, kakaoId, emailId, secretKey);
-        return EmailCodeCompareResponse.of(accessToken);
+        return "";
     }
 
     public String createPhoneNumber(Long memberId, PhoneNumberRequest phoneNumberRequest){
