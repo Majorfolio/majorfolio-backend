@@ -38,6 +38,10 @@ public class MemberIdArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return Long.parseLong(webRequest.getAttribute("memberId", RequestAttributes.SCOPE_REQUEST).toString());
+        try {
+            return Long.parseLong(webRequest.getAttribute("memberId", RequestAttributes.SCOPE_REQUEST).toString());
+        }catch (NullPointerException e){
+            return 0L;
+        }
     }
 }
