@@ -98,8 +98,9 @@ public class MemberController {
 
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
         Long memberId = Long.parseLong(request.getAttribute("memberId").toString());
+        Long emailId = Long.parseLong(request.getAttribute("emailId").toString());
 
-        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId, memberId));
+        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId, memberId, emailId));
     }
 
     /**

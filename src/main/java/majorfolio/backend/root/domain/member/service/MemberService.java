@@ -82,8 +82,8 @@ public class MemberService {
         boolean isWriteMemberDetailInfo = false;
         Long memberId;
         Long emailId;
+        Member member;
         KakaoSocialLogin kakaoSocialLogin = kakaoSocialLoginRepository.findByKakaoNumber(kakaoId);
-
 
         if(kakaoSocialLogin == null){
             // 카카오 소셜 로그인 객체가 없으면 만들어서 DB에 저장한다.
@@ -95,8 +95,9 @@ public class MemberService {
         }catch (NoSuchElementException | NullPointerException e){
             emailId = 0L;
         }
+
         try {
-            Member member = kakaoSocialLogin.getMember();
+            member = kakaoSocialLogin.getMember();
             memberId = member.getId();
             isWriteMemberDetailInfo = checkIsWriteMemberDetailInfo(member);
             //상세 정보까지 입력되어있으면
@@ -104,10 +105,13 @@ public class MemberService {
                 isMember = true;
             }
         }catch (NoSuchElementException | NullPointerException e){
-            Member member = createMember();
+            member = createMember();
             memberId = member.getId();
-
         }
+
+        //카카오 소셜 로그인 DB에 member값 저장
+        kakaoSocialLogin.setMember(member);
+        kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
         String accessToken = JwtUtil.createAccessToken(memberId, kakaoSocialLogin.getId(), emailId, secretKey);
 
@@ -231,7 +235,7 @@ public class MemberService {
      * @param kakaoId
      * @return
      */
-    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId, Long memberId){
+    public SignupResponse signup(SignupRequest signupRequest, Long kakaoId, Long memberId, Long emailId){
         EmailDB emailDB;
         KakaoSocialLogin kakaoSocialLogin;
         if(!signupRequest.getServiceAgree()
@@ -241,14 +245,14 @@ public class MemberService {
         }
         try {
             // 이메일 레포지토리 생성
-            emailDB = emailDBRepository.findById(signupRequest.getEmailId()).get();
+            emailDB = emailDBRepository.findById(emailId).get();
             if(!emailDB.getStatus()){
                 throw new UserException(INVALID_USER_VALUE);
             }
-            kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
         }catch (NoSuchElementException e){
             throw new UserException(INVALID_USER_VALUE);
         }
+        kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
 
         //이미 존재하는 멤버일 때
         if(kakaoSocialLogin.getMember() != null){
@@ -269,10 +273,6 @@ public class MemberService {
         memberRepository.save(member);
 
         log.info(String.valueOf(kakaoId));
-        // 카카오 레포에도 memberId값 저장
-        kakaoSocialLogin = kakaoSocialLoginRepository.findById(kakaoId).get();
-        kakaoSocialLogin.setMember(member);
-        kakaoSocialLoginRepository.save(kakaoSocialLogin);
 
         // 이메일 레포에도 memberId값 저장
         emailDB.setMember(member);
