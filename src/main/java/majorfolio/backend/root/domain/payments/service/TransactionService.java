@@ -72,7 +72,10 @@ public class TransactionService {
         List<TransactionResponse> afterRefundList = convertToTransactionResponseListByBuyListItem(afterRefundListItem);
         List<TransactionResponse> cancelList = convertToTransactionResponseListByBuyListItem(cancelListItem);
 
-        return BuyTransactionListResponse.of(page, beforeBuyList, beforeRefundList, afterBuyList, downBuyList, cancelList, afterRefundList);
+        int totalPages = pagedBuyListItems.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return BuyTransactionListResponse.of(page, beforeBuyList, beforeRefundList, afterBuyList, downBuyList, cancelList, afterRefundList, isLastPage);
     }
 
     private List<TransactionResponse> convertToTransactionResponseListByBuyListItem(List<BuyListItem> buyListItems) {
@@ -110,7 +113,10 @@ public class TransactionService {
         List<TransactionResponse> pendingTransactionResponseList = convertToTransactionSaleResponseListByMaterial(pendingMaterials);
         List<TransactionResponse> completeTransactionResponseList = convertToTransactionSaleResponseListByMaterial(completeMaterials);
 
-        return SaleTransactionListResponse.of(page, pendingTransactionResponseList, completeTransactionResponseList);
+        int totalPages = sellListItems.getTotalPages();
+        boolean isLastPage = page >= totalPages;
+
+        return SaleTransactionListResponse.of(page, pendingTransactionResponseList, completeTransactionResponseList, isLastPage);
     }
 
     private List<TransactionResponse> convertToTransactionSaleResponseListByMaterial(List<Material> materials) {
