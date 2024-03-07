@@ -80,7 +80,6 @@ public class MemberService {
      * @return
      */
     public LoginResponse memberLogin(Long kakaoId, String nonce, String state){
-        boolean isMember = false;
         boolean isWriteMemberDetailInfo = false;
         Long memberId;
         Long emailId;
@@ -102,10 +101,6 @@ public class MemberService {
             member = kakaoSocialLogin.getMember();
             memberId = member.getId();
             isWriteMemberDetailInfo = checkIsWriteMemberDetailInfo(member);
-            //상세 정보까지 입력되어있으면
-            if(isWriteMemberDetailInfo){
-                isMember = true;
-            }
         }catch (NoSuchElementException | NullPointerException e){
             member = createMember();
             memberId = member.getId();
@@ -122,7 +117,7 @@ public class MemberService {
         //리프레쉬 토큰 db에 저장
         setKakaoSocialLogin(kakaoSocialLogin, kakaoId, state, nonce, refreshToken);
 
-        return LoginResponse.of(isMember, isWriteMemberDetailInfo, memberId, emailId, accessToken, refreshToken);
+        return LoginResponse.of(isWriteMemberDetailInfo, memberId, emailId, accessToken, refreshToken);
     }
 
     //상세 정보 입력했는지 확인
@@ -236,7 +231,7 @@ public class MemberService {
         emailDB.setStatus(false);
         emailDBRepository.save(emailDB);
 
-        return EmailResponse.of(emailDB.getId(), code);
+        return EmailResponse.of(emailDB.getId());
     }
 
     /**
