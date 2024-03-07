@@ -35,6 +35,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 import static majorfolio.backend.root.global.status.StatusEnum.*;
@@ -179,16 +180,23 @@ public class MemberService {
      * @param emailRequest
      * @return
      */
-    public EmailResponse emailAuth(EmailRequest emailRequest){
+    public EmailResponse emailAuth(EmailRequest emailRequest, Long memberId){
         String email = emailRequest.getEmail();
         if(!checkSchoolEmail(email)){
             // 학교 이메일이 아닐 경우
             throw new NotSchoolEmailException(NOT_SCHOOL_EMAIL);
         }
-        if(!checkOverlapEmail(email)){
+        if(!checkOverlapEmail(email)) {
             //이미 인증할 이메일일 경우
             throw new OverlapEmailException(OVERLAP_EMAIL);
         }
+        if(memberId > 0){
+            Member member = memberRepository.findById(memberId).get();
+            if(emailDBRepository.existsByMember(member)){
+                throw new UserException(OVERLAP_EMAIL_AUTH);
+            }
+        }
+
 
         EmailDB emailDB = emailDBRepository.findByEmail(email);
         if(emailDB == null){
@@ -196,6 +204,7 @@ public class MemberService {
             emailDB = EmailDB.builder().build();
             emailDBRepository.save(emailDB);
         }
+
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 

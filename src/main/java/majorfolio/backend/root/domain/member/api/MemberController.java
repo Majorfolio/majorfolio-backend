@@ -65,11 +65,13 @@ public class MemberController {
      * @return
      */
     @PostMapping("/school-email/code")
-    public BaseResponse<EmailResponse> sendEmailAuthCode(@RequestBody @Validated EmailRequest emailRequest, BindingResult bindingResult){
+    public BaseResponse<EmailResponse> sendEmailAuthCode(@RequestBody @Validated EmailRequest emailRequest, BindingResult bindingResult,
+                                                         ServletRequest servletRequest){
         if(bindingResult.hasErrors()){
             throw new EmailException(EMAIL_ERROR, BindingResultUtil.getErrorMessages(bindingResult));
         }
-        return new BaseResponse<>(memberService.emailAuth(emailRequest));
+        Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
+        return new BaseResponse<>(memberService.emailAuth(emailRequest, memberId));
     }
 
     /**
