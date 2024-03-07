@@ -381,6 +381,11 @@ public class MemberService {
             // 인증 코드가 다를때
             throw new NotEqualCodeException(NOT_EQUAL_CODE);
         }
+        //이메일 인증을 이미 했는데 또 한 경우
+        Member member = emailDB.getMember();
+        if(member != null){
+            throw new UserException(OVERLAP_EMAIL_AUTH);
+        }
 
         emailDB.setStatus(true);
         emailDB.setEmailDate(LocalDateTime.now());
