@@ -19,6 +19,7 @@ public class BuyTransactionListResponse {
     private List<TransactionResponse> isDown;
     private List<TransactionResponse> cancel;
     private List<TransactionResponse> afterRefund;
+    private boolean isEnd;
 
     public static BuyTransactionListResponse of(int page,
                                                 List<TransactionResponse> beforePay,
@@ -26,7 +27,8 @@ public class BuyTransactionListResponse {
                                                 List<TransactionResponse> afterPay,
                                                 List<TransactionResponse> isDown,
                                                 List<TransactionResponse> cancel,
-                                                List<TransactionResponse> afterRefund){
+                                                List<TransactionResponse> afterRefund,
+                                                boolean isEnd){
         return BuyTransactionListResponse.builder()
                 .page(page)
                 .beforePay(beforePay)
@@ -35,6 +37,7 @@ public class BuyTransactionListResponse {
                 .isDown(isDown)
                 .cancel(cancel)
                 .afterRefund(afterRefund)
+                .isEnd(isEnd)
                 .build();
     }
 }

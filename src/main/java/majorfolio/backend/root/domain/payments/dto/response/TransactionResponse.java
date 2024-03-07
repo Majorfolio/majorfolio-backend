@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class TransactionResponse {
     private Long id;
     private String className;
+    private String major;
     private String univ;
     private int price;
     LocalDate updateAt;
@@ -24,6 +25,7 @@ public class TransactionResponse {
         return TransactionResponse.builder()
                 .id(material.getId())
                 .className(material.getClassName())
+                .major(material.getMajor())
                 .univ(material.getMember().getUniversityName())
                 .price(material.getPrice())
                 .updateAt(updateAt.toLocalDate())
