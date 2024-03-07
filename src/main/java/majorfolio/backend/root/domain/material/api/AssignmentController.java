@@ -26,7 +26,7 @@ import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialD
 import majorfolio.backend.root.domain.material.dto.response.assignment.MaterialMyDetailResponse;
 import majorfolio.backend.root.domain.material.dto.response.assignment.stat.MaterialStatsResponse;
 import majorfolio.backend.root.domain.material.service.AssignmentService;
-import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.TokenInfo;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
@@ -75,7 +75,7 @@ public class AssignmentController {
     @GetMapping("/{materialId}/detail")
     public BaseResponse<MaterialDetailResponse> showDetailMaterial(@PathVariable(name = "materialId")
                                                              Long materialId,
-                                                                   @MemberInfo Long binderMemberId) throws InvalidKeySpecException, IOException {
+                                                                   @TokenInfo Long binderMemberId) throws InvalidKeySpecException, IOException {
         return new BaseResponse<>(assignmentService.showDetailMaterial(materialId, binderMemberId));
     }
 
@@ -141,7 +141,7 @@ public class AssignmentController {
      */
     @PostMapping("/temp/save")
     public BaseResponse<String> saveTemporarily(@Validated @ModelAttribute TempAssignmentSaveRequest tempAssignmentSaveRequest,
-                                                @MemberInfo Long memberId) throws IOException {
+                                                @TokenInfo Long memberId) throws IOException {
         return new BaseResponse<>(assignmentService.saveTemporarily(memberId, tempAssignmentSaveRequest));
     }
 
@@ -155,7 +155,7 @@ public class AssignmentController {
      */
     @PatchMapping("/temp/{tempMaterialId}")
     public BaseResponse<String> modifyTemporarily(@Validated @ModelAttribute TempAssignmentModifyRequest tempAssignmentModifyRequest,
-                                                  @MemberInfo Long memberId, @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws IOException {
+                                                  @TokenInfo Long memberId, @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws IOException {
         return new BaseResponse<>(assignmentService.modifyTempMaterial(memberId, tempMaterialId, tempAssignmentModifyRequest));
     }
 
@@ -167,7 +167,7 @@ public class AssignmentController {
      * @return
      */
     @GetMapping("/temp")
-    public BaseResponse<List<TempAssignmentShowResponse>> showTempStorage(@MemberInfo Long memberId,
+    public BaseResponse<List<TempAssignmentShowResponse>> showTempStorage(@TokenInfo Long memberId,
                                                                           @RequestParam(name = "page") int page,
                                                                           @RequestParam(name = "pageSize", defaultValue = "5") int pageSize){
         return new BaseResponse<>(assignmentService.showTempStorage(memberId, page, pageSize));
@@ -182,7 +182,7 @@ public class AssignmentController {
      * @throws IOException
      */
     @GetMapping("/temp/{tempMaterialId}")
-    public BaseResponse<TempAssignmentDetailResponse> showTempMaterialDetail(@MemberInfo Long memberId,
+    public BaseResponse<TempAssignmentDetailResponse> showTempMaterialDetail(@TokenInfo Long memberId,
                                                                              @PathVariable(name = "tempMaterialId") Long tempMaterialId) throws InvalidKeySpecException, IOException {
         return new BaseResponse<>(assignmentService.showTempMaterialDetail(memberId, tempMaterialId));
     }
@@ -194,7 +194,7 @@ public class AssignmentController {
      * @return
      */
     @DeleteMapping("/temp/{tempMaterialId}")
-    public BaseResponse<String> deleteTempMaterial(@MemberInfo Long memberId,
+    public BaseResponse<String> deleteTempMaterial(@TokenInfo Long memberId,
                                                    @PathVariable(name = "tempMaterialId") Long tempMaterialId){
         return new BaseResponse<>(assignmentService.deleteTempMaterial(memberId, tempMaterialId));
     }
@@ -209,7 +209,7 @@ public class AssignmentController {
      */
     @PatchMapping("/{materialId}")
     public BaseResponse<AssignmentUploadResponse> modifyAssignment(@Validated @ModelAttribute AssignmentUploadRequest assignmentUploadRequest,
-                                                                    @MemberInfo Long memberId,
+                                                                    @TokenInfo Long memberId,
                                                                     @PathVariable(name = "materialId") Long materialId) throws IOException {
         return new BaseResponse<>(assignmentService.modifyAssignment(memberId, materialId, assignmentUploadRequest));
     }

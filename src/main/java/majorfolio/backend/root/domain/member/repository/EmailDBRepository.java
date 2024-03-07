@@ -26,4 +26,6 @@ public interface EmailDBRepository extends JpaRepository<EmailDB, Long> {
     EmailDB findByMember(Member member);
 
     EmailDB findByKakaoSocialLoginAndStatus(KakaoSocialLogin kakaoSocialLogin, Boolean status);
+
+    Boolean existsByMember(Member member);
 }

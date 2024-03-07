@@ -11,19 +11,17 @@ package majorfolio.backend.root.domain.member.api;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.member.dto.RemakeTokenResponse;
 import majorfolio.backend.root.domain.member.dto.SignupRequest;
 import majorfolio.backend.root.domain.member.dto.SignupResponse;
-import majorfolio.backend.root.domain.member.dto.request.EmailCodeRequest;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.dto.response.SignupProgressResponse;
 import majorfolio.backend.root.domain.member.service.MemberService;
-import majorfolio.backend.root.global.argument_resolver.custom_annotation.MemberInfo;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.TokenInfo;
 import majorfolio.backend.root.global.exception.EmailException;
 import majorfolio.backend.root.global.exception.UserException;
 import majorfolio.backend.root.global.response.BaseResponse;
@@ -67,11 +65,13 @@ public class MemberController {
      * @return
      */
     @PostMapping("/school-email/code")
-    public BaseResponse<EmailResponse> sendEmailAuthCode(@RequestBody @Validated EmailRequest emailRequest, BindingResult bindingResult){
+    public BaseResponse<EmailResponse> sendEmailAuthCode(@RequestBody @Validated EmailRequest emailRequest, BindingResult bindingResult,
+                                                         ServletRequest servletRequest){
         if(bindingResult.hasErrors()){
             throw new EmailException(EMAIL_ERROR, BindingResultUtil.getErrorMessages(bindingResult));
         }
-        return new BaseResponse<>(memberService.emailAuth(emailRequest));
+        Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
+        return new BaseResponse<>(memberService.emailAuth(emailRequest, memberId));
     }
 
     /**
@@ -80,10 +80,10 @@ public class MemberController {
      */
     @GetMapping("/school-email/{emailId}/{code}")
     public BaseResponse<String> emailCodeCompare(@PathVariable(name = "emailId") Long emailId,
-                                                 @PathVariable(name = "code") String code,
-                                                 ServletRequest servletRequest){
+                                                                   @PathVariable(name = "code") String code,
+                                                                   ServletRequest servletRequest, @TokenInfo Long memberId){
         Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
-        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code, kakaoId));
+        return new BaseResponse<>(memberService.emailCodeCompare(emailId, code, kakaoId, memberId));
     }
 
     /**
@@ -99,8 +99,9 @@ public class MemberController {
         }
 
         Long kakaoId = Long.parseLong(request.getAttribute("kakaoId").toString());
+        Long memberId = Long.parseLong(request.getAttribute("memberId").toString());
 
-        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId));
+        return new BaseResponse<>(memberService.signup(signupRequest, kakaoId, memberId));
     }
 
     /**
@@ -134,7 +135,7 @@ public class MemberController {
     }
 
     @PostMapping("/phone-number")
-    public BaseResponse<String> createPhoneNumber(@MemberInfo Long memberId,
+    public BaseResponse<String> createPhoneNumber(@TokenInfo Long memberId,
                                                   @Validated @RequestBody PhoneNumberRequest phoneNumberRequest){
         return new BaseResponse<>(memberService.createPhoneNumber(memberId, phoneNumberRequest));
     }
@@ -150,7 +151,7 @@ public class MemberController {
     }
 
     @PostMapping("/delete")
-    public BaseResponse<String> deleteMember(@MemberInfo Long memberId){
+    public BaseResponse<String> deleteMember(@TokenInfo Long memberId){
         return new BaseResponse<>(memberService.deleteMember(memberId));
     }
 

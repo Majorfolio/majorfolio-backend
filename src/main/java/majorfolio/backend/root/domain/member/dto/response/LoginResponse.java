@@ -21,16 +21,17 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 public class LoginResponse {
-    private Boolean isMember;
+    private Boolean isWriteMemberDetailInfo; // 상세 정보(학교명, 학번 등 기입했는지 여부)
     private Long memberId;
     private Long emailId;
     private String accessToken;
     private String refreshToken;
 
-    public static LoginResponse of(Boolean isMember, Long memberId, Long emailId, String accessToken,
+    public static LoginResponse of(Boolean isWriteMemberDetailInfo,
+                                   Long memberId, Long emailId, String accessToken,
                                    String refreshToken){
         return LoginResponse.builder()
-                .isMember(isMember)
+                .isWriteMemberDetailInfo(isWriteMemberDetailInfo)
                 .memberId(memberId)
                 .emailId(emailId)
                 .accessToken(accessToken)
