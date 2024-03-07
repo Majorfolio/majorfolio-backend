@@ -89,14 +89,16 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
 
         //만약 대학인증이 필요한 url에 접속하려고 하려면
         if(emailId == 0 && needUnivAuth.contains(requestUrlDomain[1])){
-            //과제 상세페이지 조회 제외하곤
-            if(!requestUrlDomain[requestUrlDomain.length-1].equals(DETAIL.getDomain())){
-                throw new UserException(NOT_UNIV_AUTH);
-            }
+            log.info("진입");
             //멤버 status가 active가 아닐 때
             if(!memberRepository.findById(memberId).get().getStatus().equals(ACTIVE.getStatus())){
                 throw new UserException(NOT_ACTIVE_MEMBER);
             }
+            //과제 상세페이지 조회 제외하곤
+            if(!requestUrlDomain[requestUrlDomain.length-1].equals(DETAIL.getDomain())){
+                throw new UserException(NOT_UNIV_AUTH);
+            }
+
         }
 
         return true;
