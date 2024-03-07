@@ -17,6 +17,7 @@ import majorfolio.backend.root.domain.member.dto.SignupRequest;
 import majorfolio.backend.root.domain.member.dto.SignupResponse;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
+import majorfolio.backend.root.domain.member.dto.response.EmailCodeCompareResponse;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.dto.response.SignupProgressResponse;
@@ -79,9 +80,9 @@ public class MemberController {
      * @return
      */
     @GetMapping("/school-email/{emailId}/{code}")
-    public BaseResponse<String> emailCodeCompare(@PathVariable(name = "emailId") Long emailId,
-                                                 @PathVariable(name = "code") String code,
-                                                 ServletRequest servletRequest, @TokenInfo Long memberId){
+    public BaseResponse<EmailCodeCompareResponse> emailCodeCompare(@PathVariable(name = "emailId") Long emailId,
+                                                                   @PathVariable(name = "code") String code,
+                                                                   ServletRequest servletRequest, @TokenInfo Long memberId){
         Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
         return new BaseResponse<>(memberService.emailCodeCompare(emailId, code, kakaoId, memberId));
     }

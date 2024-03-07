@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.member.dto.request.EmailRequest;
 import majorfolio.backend.root.domain.member.dto.request.PhoneNumberRequest;
+import majorfolio.backend.root.domain.member.dto.response.EmailCodeCompareResponse;
 import majorfolio.backend.root.domain.member.dto.response.EmailResponse;
 import majorfolio.backend.root.domain.member.dto.response.LoginResponse;
 import majorfolio.backend.root.domain.member.dto.response.SignupProgressResponse;
@@ -256,12 +257,15 @@ public class MemberService {
             // 이메일 레포지토리 생성
             Member member = memberRepository.findById(memberId).get();
             emailDB = emailDBRepository.findByMember(member);
-            if(!emailDB.getStatus()){
-                emailDB = null;
+            if(emailDB != null){
+                if(!emailDB.getStatus()){
+                    emailDB = null;
+                }
+                else {
+                    emailId = emailDB.getId();
+                }
             }
-            else {
-                emailId = emailDB.getId();
-            }
+
         }catch (NoSuchElementException e){
             emailDB = null;
         }
@@ -365,7 +369,7 @@ public class MemberService {
      * 이메일 코드 대조 API 서비스 구현
      * @param emailCodeRequest
      */
-    public String emailCodeCompare(Long emailId, String code, Long kakaoId, Long memberId){
+    public EmailCodeCompareResponse emailCodeCompare(Long emailId, String code, Long kakaoId, Long memberId){
         if(!checkExpireCode(emailId)){
             //인증코드 만료시
             throw new ExpiredCodeException(EXPIRED_CODE);
@@ -384,7 +388,8 @@ public class MemberService {
         emailDB.setMember(memberRepository.findById(memberId).get());
         emailDBRepository.save(emailDB);
 
-        return "";
+        String accessToken = JwtUtil.createAccessToken(memberId, kakaoId, emailId, secretKey);
+        return EmailCodeCompareResponse.of(accessToken);
     }
 
     public String createPhoneNumber(Long memberId, PhoneNumberRequest phoneNumberRequest){
