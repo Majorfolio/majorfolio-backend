@@ -2,10 +2,13 @@ package majorfolio.backend.root.global.util;
 
 import com.amazonaws.services.cloudfront.CloudFrontUrlSigner;
 import com.amazonaws.services.cloudfront.util.SignerUtils;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.internal.ServiceUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,17 +29,19 @@ import static majorfolio.backend.root.global.status.S3DirectoryEnum.EVENTS3;
 import static majorfolio.backend.root.global.status.S3DirectoryEnum.NOTICES3;
 
 @Slf4j
+@RequiredArgsConstructor
 public class S3Util {
 
+
     public static String makeSignedUrl(String s3FileName, String bucketName,  Long memberId, Long materialId, String type, String privateKeyFilePath,
-                                       String distributionDomain, String keyPairId) throws InvalidKeySpecException, IOException {
+                                       String distributionDomain, String keyPairId, AmazonS3Client amazonS3) throws InvalidKeySpecException, IOException {
         InputStream inputStream = new ClassPathResource(privateKeyFilePath).getInputStream();
         String[] privateKeyFileNameArray = privateKeyFilePath.split("/");
         String privateKeyFileFullName = privateKeyFileNameArray[privateKeyFileNameArray.length-1];
         String privateKeyFileName = privateKeyFileFullName.split("\\.")[0];
         String privateKeyFileType = privateKeyFileFullName.split("\\.")[1];
         File privateKeyFile = File.createTempFile(privateKeyFileName, "." + privateKeyFileType);
-        s3FileName = URLEncoder.encode(s3FileName, StandardCharsets.UTF_8);
+
         try {
             FileUtils.copyInputStreamToFile(inputStream, privateKeyFile);
         } finally {

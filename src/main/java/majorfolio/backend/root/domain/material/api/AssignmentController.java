@@ -13,6 +13,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.domain.material.dto.request.AssignmentUploadRequest;
 import majorfolio.backend.root.domain.material.dto.response.assignment.*;
@@ -212,6 +213,14 @@ public class AssignmentController {
                                                                     @TokenInfo Long memberId,
                                                                     @PathVariable(name = "materialId") Long materialId) throws IOException {
         return new BaseResponse<>(assignmentService.modifyAssignment(memberId, materialId, assignmentUploadRequest));
+    }
+
+    /**
+     * 다운로드url 테스트용
+     */
+    @GetMapping("/download/{materialId}/test")
+    public BaseResponse<String> downloadTest(@PathVariable (name = "materialId") Long materialId) throws InvalidKeySpecException, IOException {
+        return new BaseResponse<>(assignmentService.downloadTest(materialId));
     }
 
 }

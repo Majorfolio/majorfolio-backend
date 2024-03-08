@@ -359,7 +359,7 @@ public class AssignmentService {
         if(buyListItem.getIsDown()){
             fileLink = "downloadMode" + fileLink;
             signedUrl = S3Util.makeSignedUrl(fileLink, s3Bucket, memberId, materialId, "Downloads",
-                    privateKeyFilePath, distributionDomain, keyPairId);
+                    privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
             return AssignmentDownloadResponse.of(signedUrl);
         }
 
@@ -369,7 +369,7 @@ public class AssignmentService {
         //파일 가져와서 워터마크 표기하기
         log.info(fileLink);
         signedUrl = S3Util.makeSignedUrl(fileLink, s3Bucket, uploaderId, materialId, "originalFile",
-                privateKeyFilePath, distributionDomain, keyPairId);
+                privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         log.info(signedUrl);
 
         PDDocument document = null;
@@ -450,7 +450,7 @@ public class AssignmentService {
         document.close();
         //다시 signedUrl 가져오기
         signedUrl = S3Util.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
-                privateKeyFilePath, distributionDomain, keyPairId);
+                privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
 
         //구매완료로 바꾸고 download상태 바꾸기
         buyInfo.setStatus("buyComplete");
@@ -489,7 +489,7 @@ public class AssignmentService {
             String link = previewImagesRepository.findByPreviewAndPosition(preview, i).getImageUrl();
             String[] linkList = link.split("/");
             link = linkList[linkList.length - 1];
-            link = S3Util.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
+            link = S3Util.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
             previewImages.add(link);
         }
 
@@ -699,7 +699,7 @@ public class AssignmentService {
         String link = null;
         if(fileName != null){
             link = S3Util.makeSignedUrl(fileName, s3Bucket, memberId, tempMaterialId, "TempStorage",
-                    privateKeyFilePath,distributionDomain,keyPairId);
+                    privateKeyFilePath,distributionDomain,keyPairId, amazonS3);
         }
 
         return TempAssignmentDetailResponse.of(
@@ -767,6 +767,14 @@ public class AssignmentService {
         material.setStatus(MATERIAL_OLD.getStatus());
         materialRepository.save(material);
         return assignmentUploadResponse;
+    }
+
+    public String downloadTest(Long materialId) throws InvalidKeySpecException, IOException {
+        String materialName = materialRepository.findById(materialId).get().getLink();
+        Member uploader = materialRepository.findById(materialId).get().getMember();
+        String signedUrl = S3Util.makeSignedUrl(materialName, s3Bucket, uploader.getId(), materialId, "originalFile",
+                privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
+        return signedUrl;
     }
 
     /**
@@ -1069,7 +1077,7 @@ public class AssignmentService {
         String imageS3Name = imageS3UrlPacket[imageS3UrlPacket.length-1];
         Long memberId = member.getId();
         log.info(imageS3Name);
-        image = S3Util.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId);
+        image = S3Util.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         return image;
     }
 

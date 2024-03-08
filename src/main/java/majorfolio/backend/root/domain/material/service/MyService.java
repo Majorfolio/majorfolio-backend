@@ -324,7 +324,7 @@ public class MyService {
      */
     public ShowNoticeDetailResponse showNoticeDetail(Long noticeId) throws InvalidKeySpecException, IOException {
         Notice notice = noticeRepository.findById(noticeId).get();
-        String link = S3Util.makeSignedUrl(notice.getLink(), s3Bucket, 0L, 0L, NOTICES3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId);
+        String link = S3Util.makeSignedUrl(notice.getLink(), s3Bucket, 0L, 0L, NOTICES3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         return ShowNoticeDetailResponse.of(notice.getTitle(), link);
     }
 
@@ -335,7 +335,7 @@ public class MyService {
      */
     public ShowEventDetailResponse showEventDetail(Long eventId) throws InvalidKeySpecException, IOException {
         Event event = eventRepository.findById(eventId).get();
-        String link = S3Util.makeSignedUrl(event.getLink(), s3Bucket, 0L, 0L, EVENTS3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId);
+        String link = S3Util.makeSignedUrl(event.getLink(), s3Bucket, 0L, 0L, EVENTS3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         return ShowEventDetailResponse.of(event.getTitle(), link);
     }
 }
