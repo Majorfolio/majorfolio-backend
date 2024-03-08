@@ -138,9 +138,6 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("phoneNumber")){
                     return makeResponse(INVALID_USER_PHONE_NUMBER);
                 }
-                if(errorVariable.equals("float")){
-                    return makeResponse(FLOAT_ERROR);
-                }
             }
 
             if(bindAnnotation.equals("Size")){
@@ -152,6 +149,12 @@ public class BaseExceptionControllerAdvice {
             if(bindAnnotation.equals("ValidFile")){
                 if(errorVariable.equals("file")){
                     return makeResponse(NOT_NULL_FILE);
+                }
+            }
+
+            if(bindAnnotation.equals("Digits")){
+                if(errorVariable.equals("float")){
+                    return makeResponse(FLOAT_ERROR);
                 }
             }
         }
