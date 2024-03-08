@@ -858,8 +858,8 @@ public class AssignmentService {
         String className = material.getClassName();
         String professor = material.getProfessor();
         String grade = material.getGrade();
-        int score = material.getScore();
-        int fullscore = material.getFullScore();
+        float score = material.getScore();
+        float fullscore = material.getFullScore();
         int pages = material.getPage();
 
         Long memberId = member.getId();
@@ -1028,7 +1028,7 @@ public class AssignmentService {
         String subjectTitle = material.getClassName();
         String professor = material.getProfessor();
         String grade = material.getGrade();
-        int score = material.getScore();
+        float score = material.getScore();
         int pages = material.getPage();
         String status = material.getStatus();
 
