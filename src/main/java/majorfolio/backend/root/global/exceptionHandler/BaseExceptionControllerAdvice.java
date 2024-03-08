@@ -138,6 +138,9 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("phoneNumber")){
                     return makeResponse(INVALID_USER_PHONE_NUMBER);
                 }
+                if(errorVariable.equals("float")){
+                    return makeResponse(FLOAT_ERROR);
+                }
             }
 
             if(bindAnnotation.equals("Size")){
