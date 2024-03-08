@@ -26,7 +26,7 @@ public class MaterialMyDetailResponse {
     private String subjectTitle;
     private String professor;
     private String grade;
-    private int score;
+    private float score;
     private int pages;
     private String status;
     private Boolean isMemberBookmark;
@@ -47,7 +47,7 @@ public class MaterialMyDetailResponse {
             String subjectTitle,
             String professor,
             String grade,
-            int score,
+            float score,
             int pages,
             String status,
             Boolean isMemberBookmark,

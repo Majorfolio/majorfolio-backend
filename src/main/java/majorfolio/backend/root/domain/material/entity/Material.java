@@ -34,8 +34,8 @@ public class Material {
     private String className;
     private String major;
     private String grade;
-    private int score;
-    private int fullScore;
+    private float score;
+    private float fullScore;
     private int page;
     private String status;
     private int price;
@@ -56,7 +56,7 @@ public class Material {
 
     public static Material of(String name, String description, String type, String semester,
                               String professor, String className, String major,
-                              String grade, int score, int fullScore, int page,
+                              String grade, float score, float fullScore, int page,
                               String link, Member member, Preview preview){
         return Material.builder()
                 .name(name)

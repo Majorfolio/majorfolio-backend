@@ -151,6 +151,12 @@ public class BaseExceptionControllerAdvice {
                     return makeResponse(NOT_NULL_FILE);
                 }
             }
+
+            if(bindAnnotation.equals("Digits")){
+                if(errorVariable.equals("float")){
+                    return makeResponse(FLOAT_ERROR);
+                }
+            }
         }
         return new BaseErrorResponse(BAD_REQUEST);
     }

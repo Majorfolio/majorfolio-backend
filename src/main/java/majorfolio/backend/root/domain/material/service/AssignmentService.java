@@ -124,6 +124,14 @@ public class AssignmentService {
         //업로드 한 사람 조회
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
+
+        if(assignmentUploadRequest.getScore() > assignmentUploadRequest.getFullScore()){
+            throw new MaterialException(SCORE_IS_BIGGER_THAN_FULL_SCORE);
+        }
+        if(member.getPhoneNumber() == null || member.getPhoneNumber().isEmpty()){
+            throw new UserException(NONE_PHONE_NUMBER);
+        }
+
         //pdf파일 전처리 과정
         MultipartFile pdfFile = assignmentUploadRequest.getFile();
         PDDocument document;
@@ -147,9 +155,7 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-        if(member.getPhoneNumber() == null){
-            throw new UserException(NONE_PHONE_NUMBER);
-        }
+
 
         return AssignmentUploadResponse.of(materialId);
     }
@@ -858,8 +864,8 @@ public class AssignmentService {
         String className = material.getClassName();
         String professor = material.getProfessor();
         String grade = material.getGrade();
-        int score = material.getScore();
-        int fullscore = material.getFullScore();
+        float score = material.getScore();
+        float fullscore = material.getFullScore();
         int pages = material.getPage();
 
         Long memberId = member.getId();
@@ -1028,7 +1034,7 @@ public class AssignmentService {
         String subjectTitle = material.getClassName();
         String professor = material.getProfessor();
         String grade = material.getGrade();
-        int score = material.getScore();
+        float score = material.getScore();
         int pages = material.getPage();
         String status = material.getStatus();
 
