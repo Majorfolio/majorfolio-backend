@@ -124,6 +124,11 @@ public class AssignmentService {
         //업로드 한 사람 조회
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
+
+        if(member.getPhoneNumber() == null){
+            throw new UserException(NONE_PHONE_NUMBER);
+        }
+
         //pdf파일 전처리 과정
         MultipartFile pdfFile = assignmentUploadRequest.getFile();
         PDDocument document;
@@ -147,9 +152,7 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-        if(member.getPhoneNumber() == null){
-            throw new UserException(NONE_PHONE_NUMBER);
-        }
+
 
         return AssignmentUploadResponse.of(materialId);
     }
