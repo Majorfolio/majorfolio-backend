@@ -46,9 +46,11 @@ public class AssignmentUploadRequest {
     @Pattern(regexp = "A[+-]?|B[+-]?|C[+-]?|D[+-]?|F|P|NP", message = "grade : 올바른 학점 형식이어야 합니다.")
     private String grade;
     @NotNull(message = "fullScore : 총점이 비어있으면 안됩니다.")
-    private Integer fullScore;
+    @Pattern(regexp = "^\\d+(\\.\\d{1})?$", message = "score: 소수점 첫째 자리까지 입력하세요.")
+    private float fullScore;
     @NotNull(message = "score : 점수가 비어있으면 안됩니다.")
-    private Integer score;
+    @Pattern(regexp = "^\\d+(\\.\\d{1})?$", message = "score: 소수점 첫째 자리까지 입력하세요.")
+    private float score;
     @NotBlank(message = "description : 설명이 쓰여 있어야 합니다.")
     @Size(max = 80, message = "description : 설명은 10자 이상 80자이내로 제한됩니다.")
     private String description;
