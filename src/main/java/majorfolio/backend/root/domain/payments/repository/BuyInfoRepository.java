@@ -18,4 +18,6 @@ public interface BuyInfoRepository extends JpaRepository<BuyInfo, Long> {
 
 
     List<BuyInfo> findByStatusAndIsPay(String status, Boolean isPay);
+
+    List<BuyInfo> findByBuyerId(Long buyerId);
 }

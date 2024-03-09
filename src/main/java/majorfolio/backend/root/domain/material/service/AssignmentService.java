@@ -922,6 +922,7 @@ public class AssignmentService {
         Member binderMember = null;
         BuyList buyList = null;
         try {
+            log.info(binderMemberId.toString());
             binderMember = memberRepository.findById(binderMemberId).get();
             buyList = binderMember.getBuyList();
         }catch (NoSuchElementException e){
@@ -970,6 +971,8 @@ public class AssignmentService {
      * @return
      */
     private Boolean isBuy(BuyList buyList, Material material) {
+        log.info(buyList.getId().toString());
+        log.info(material.getId().toString());
         return buyListItemRepository.existsByBuyListAndMaterial(buyList, material);
     }
 

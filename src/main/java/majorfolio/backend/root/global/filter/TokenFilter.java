@@ -14,6 +14,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.JwtUnsupportedTokenTypeException;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 
@@ -45,11 +46,27 @@ public class TokenFilter implements Filter {
         log.info("authorization : " + authorization);
         final boolean isBasicAuthentication = authorization != null && authorization.toLowerCase().startsWith(BASIC_TYPE_PREFIX.toLowerCase());
 
+        String requestUrl = ((HttpServletRequest) servletRequest).getRequestURI();
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        String pattern = "/assignment/*/detail";
+        log.info(requestUrl);
         if (!isBasicAuthentication) {
-            throw new JwtUnsupportedTokenTypeException(UNSUPPORTED_TOKEN_TYPE);
+            if(!pathMatcher.match(pattern, requestUrl)){
+                throw new JwtUnsupportedTokenTypeException(UNSUPPORTED_TOKEN_TYPE);
+            }
         }
 
-        String token = authorization.substring(BASIC_TYPE_PREFIX.length()).trim();
+        String token;
+        try{
+            token = authorization.substring(BASIC_TYPE_PREFIX.length()).trim();
+        }catch (NullPointerException e){
+            if(pathMatcher.match(pattern, requestUrl)){
+                token = "";
+            }
+            else{
+                throw new RuntimeException();
+            }
+        }
         request.setAttribute("token", token);
         filterChain.doFilter(request, servletResponse);
     }
