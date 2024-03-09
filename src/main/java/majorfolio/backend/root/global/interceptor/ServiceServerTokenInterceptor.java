@@ -24,9 +24,11 @@ import majorfolio.backend.root.global.exception.UserException;
 import majorfolio.backend.root.global.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.List;
+import java.util.Objects;
 
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
 import static majorfolio.backend.root.global.status.EndPointStatusEnum.*;
@@ -52,6 +54,14 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String userToken = request.getAttribute("token").toString();
+
+        String requestUrl = request.getRequestURI();
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        String pattern = "/assignment/*/detail";
+        if(Objects.equals(userToken, "") && pathMatcher.match(pattern,requestUrl)){
+            log.info(request.getRequestURI());
+            return true;
+        }
         String tokenType = JwtUtil.getTokenHeader(userToken).get("typ").toString();
         log.info(tokenType);
 
@@ -73,7 +83,6 @@ public class ServiceServerTokenInterceptor implements HandlerInterceptor {
         Long memberId = JwtUtil.getMemberId(userToken, secretKey);
         request.setAttribute("memberId", memberId);
 
-        String requestUrl = request.getRequestURI();
         String[] requestUrlDomain = requestUrl.split("/");
         log.info("url : " + requestUrl);
         //만약 요청 url이 /admin/**이라면
