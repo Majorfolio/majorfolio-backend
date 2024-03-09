@@ -24,6 +24,7 @@ import majorfolio.backend.root.domain.member.service.MemberService;
 import majorfolio.backend.root.global.argument_resolver.custom_annotation.TokenInfo;
 import majorfolio.backend.root.global.exception.EmailException;
 import majorfolio.backend.root.global.exception.UserException;
+import majorfolio.backend.root.global.response.BaseErrorResponse;
 import majorfolio.backend.root.global.response.BaseResponse;
 import majorfolio.backend.root.global.util.BindingResultUtil;
 import org.springframework.validation.BindingResult;
@@ -140,19 +141,15 @@ public class MemberController {
         return new BaseResponse<>(memberService.createPhoneNumber(memberId, phoneNumberRequest));
     }
 
-    /**
-     * 회원가입 어디까지 했는지 기억 하는 API(반영은 X)
-     * @param servletRequest
-     * @return
-     */
-    @GetMapping("/signup/progress")
-    public BaseResponse<SignupProgressResponse> checkSignupProgress(ServletRequest servletRequest){
-        return new BaseResponse<>(memberService.checkSignupProcess(servletRequest));
-    }
-
     @PostMapping("/delete")
     public BaseResponse<String> deleteMember(@TokenInfo Long memberId){
         return new BaseResponse<>(memberService.deleteMember(memberId));
+    }
+
+
+    @GetMapping("/phone-number")
+    public BaseResponse<Boolean> isMemberHavePhoneNumber(@TokenInfo Long memberId){
+        return new BaseResponse<>(memberService.isMemberHavePhoneNumber(memberId));
     }
 
 }
