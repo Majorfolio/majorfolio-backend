@@ -12,6 +12,7 @@ package majorfolio.backend.root.global.exceptionHandler;
 import jakarta.annotation.Priority;
 import lombok.extern.slf4j.Slf4j;
 import majorfolio.backend.root.global.exception.MaterialException;
+import majorfolio.backend.root.global.exception.NotFoundException;
 import majorfolio.backend.root.global.exception.NotMatchMaterialAndMemberException;
 import majorfolio.backend.root.global.response.BaseErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -47,4 +48,12 @@ public class MaterialExceptionControllerAdvice {
     public BaseErrorResponse handle_notMatchMaterialAndMemberException(NotMatchMaterialAndMemberException e){
         return new BaseErrorResponse(NOT_MATCH_MATERIAL_AND_MEMBER, e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public BaseErrorResponse handle_notFoundException(NotFoundException e){
+        return new BaseErrorResponse(e.getExceptionStatus(), e.getMessage());
+    }
+
+
 }
