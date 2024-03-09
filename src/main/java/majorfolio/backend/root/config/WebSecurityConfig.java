@@ -63,7 +63,6 @@ public class WebSecurityConfig {
                         "/home/all/**",
                         "/seller/**",
                         "/majorfolio/**",
-                        "/assignment/{materialId}/detail",
                         "/assignment/{materialId}/previews",
                         "/assignment/download/{materialId}/test")
 
