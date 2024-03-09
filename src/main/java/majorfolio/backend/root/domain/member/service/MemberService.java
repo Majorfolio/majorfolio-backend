@@ -440,13 +440,6 @@ public class MemberService {
         return true;
     }
 
-    public SignupProgressResponse checkSignupProcess(ServletRequest servletRequest) {
-        Long kakaoId = Long.parseLong(servletRequest.getAttribute("kakaoId").toString());
-        Long emailId = Long.parseLong(servletRequest.getAttribute("emailId").toString());
-        Long memberId = Long.parseLong(servletRequest.getAttribute("memberId").toString());
-
-        return SignupProgressResponse.of(kakaoId, emailId, memberId);
-    }
 
     /**
      * 회원탈퇴 서비스 구현
@@ -521,5 +514,13 @@ public class MemberService {
         }
 
         return false;
+    }
+
+    public Boolean isMemberHavePhoneNumber(Long memberId) {
+        Member member = memberRepository.findById(memberId).get();
+        if(member.getPhoneNumber() == null){
+            return false;
+        }
+        return !member.getPhoneNumber().isEmpty();
     }
 }
