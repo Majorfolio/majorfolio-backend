@@ -3,7 +3,7 @@ services:
   blue:
     image: rlaxoqkf/majorfolio:latest
     environment:
-      - JAVA_OPTS= -Xmx2g -Xms512m
+      - JAVA_OPTS= -Xmx4g -Xms4g
     container_name: blue
     restart: always
     ports:
@@ -11,7 +11,7 @@ services:
   green:
     image: rlaxoqkf/majorfolio:latest
     environment:
-      - JAVA_OPTS= -Xmx2g -Xms512m
+      - JAVA_OPTS= -Xmx4g -Xms4g
     container_name: green
     restart: always
     ports:
