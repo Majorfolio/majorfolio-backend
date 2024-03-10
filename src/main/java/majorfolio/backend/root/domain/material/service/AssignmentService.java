@@ -391,6 +391,7 @@ public class AssignmentService {
                 // Load the PDF document
                 document = PDDocument.load(inputStream, memoryUsageSetting);
             }
+            connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -415,6 +416,7 @@ public class AssignmentService {
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
             log.info("contentStream사용");
+
             // 사용자 지정 TTF 폰트 로드ㅎ
             String fontPath = "NanumBarunGothic.ttf";
             InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
@@ -427,6 +429,7 @@ public class AssignmentService {
                 FileUtils.copyInputStreamToFile(inputStream, fontFile);
             } finally {
                 IOUtils.closeQuietly(inputStream);
+                inputStream.close();
             }
             PDType0Font font = PDType0Font.load(document, fontFile);
             contentStream.setFont(font, 20);
@@ -448,8 +451,8 @@ public class AssignmentService {
             contentStream.showText(watermarkText);
             contentStream.endText();
             contentStream.close();
-            inputStream.close();
             fontFile.delete();
+
         }
 
         document.save(outputFile);
