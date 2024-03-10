@@ -453,8 +453,8 @@ public class AssignmentService {
             contentStream.endText();
             contentStream.close();
             fontFile.delete();
-
         }
+        log.info("반복문 끝");
 
         document.save(outputFile);
 
