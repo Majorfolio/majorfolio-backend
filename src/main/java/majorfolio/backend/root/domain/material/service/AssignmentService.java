@@ -448,6 +448,7 @@ public class AssignmentService {
             contentStream.showText(watermarkText);
             contentStream.endText();
             contentStream.close();
+            inputStream.close();
             fontFile.delete();
         }
 
