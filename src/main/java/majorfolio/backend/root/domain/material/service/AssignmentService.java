@@ -386,13 +386,16 @@ public class AssignmentService {
             URL url = new URL(signedUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(500 * 1024 * 1024); // 100MB로 설정
+            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(500 * 1024 * 1024);
             try (InputStream inputStream = new BufferedInputStream(connection.getInputStream())) {
                 // Load the PDF document
                 document = PDDocument.load(inputStream, memoryUsageSetting);
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            document.close();
         }
 //        //파일가져오기
 //        byte[] content = s3Object.getObjectContent().readAllBytes();
