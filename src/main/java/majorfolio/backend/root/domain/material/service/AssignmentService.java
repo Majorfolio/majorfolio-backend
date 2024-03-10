@@ -386,7 +386,7 @@ public class AssignmentService {
             URL url = new URL(signedUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(2048 * 2048); // 1MB로 설정
+            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(4096 * 4096); // 1MB로 설정
             try (InputStream inputStream = new BufferedInputStream(connection.getInputStream())) {
                 // Load the PDF document
                 document = PDDocument.load(inputStream, memoryUsageSetting);
