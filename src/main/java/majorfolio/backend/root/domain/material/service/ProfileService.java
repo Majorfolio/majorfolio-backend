@@ -48,8 +48,10 @@ public class ProfileService {
 
         List<Material> uploadList = materialRepository.findAllByMemberAndStatus(member, "active");
         uploadSize = Integer.toUnsignedLong(uploadList.size());
-        for(Material m : uploadList)
-            totalSale += sellListItemRepository.countByMaterialIdAndStatus(m.getId(),"complete");
+        for(Material m : uploadList){
+            totalSale += sellListItemRepository.countByMaterialIdAndStatus(m.getId(),"buyComplete");
+            totalSale += sellListItemRepository.countByMaterialIdAndStatus(m.getId(),"payComplete");
+        }
         Long totalFollower = followerRepository.countByMemberAndStatus(member.getId(),true);
 
         return ProfileResponse.of(member, uploadSize, totalSale, totalFollower);
