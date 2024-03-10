@@ -224,6 +224,7 @@ public class AssignmentService {
                     new PutObjectRequest(fileDirectory, fileName, fileInputStream, metadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead));
         }
+        outputStream.close();
         document.close();
     }
 
