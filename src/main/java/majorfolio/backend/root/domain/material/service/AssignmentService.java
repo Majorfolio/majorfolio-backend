@@ -414,8 +414,8 @@ public class AssignmentService {
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
-            contentStream.close();
-            // 사용자 지정 TTF 폰트 로드
+            log.info("contentStream사용");
+            // 사용자 지정 TTF 폰트 로드ㅎ
             String fontPath = "NanumBarunGothic.ttf";
             InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
             String[] fontFileNameArray = fontPath.split("/");
