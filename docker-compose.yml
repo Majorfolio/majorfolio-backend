@@ -2,12 +2,16 @@ version: '3'
 services:
   blue:
     image: rlaxoqkf/majorfolio:latest
+    environment:
+      - JAVA_OPTS=-Xmx2048m
     container_name: blue
     restart: always
     ports:
       - 8081:8080
   green:
     image: rlaxoqkf/majorfolio:latest
+    environment:
+      - JAVA_OPTS=-Xmx2048m
     container_name: green
     restart: always
     ports:
