@@ -3,4 +3,4 @@ EXPOSE 8080
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
-ENV JAVA_OPTS="-Xmx2g -Xms512m"
+ENV JAVA_OPTS="-Xms2048m -Xmx2048m"
