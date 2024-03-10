@@ -40,6 +40,7 @@ import majorfolio.backend.root.global.exception.*;
 import majorfolio.backend.root.global.util.S3Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -385,10 +386,10 @@ public class AssignmentService {
             URL url = new URL(signedUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
+            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(1024 * 1024); // 1MB로 설정
             try (InputStream inputStream = new BufferedInputStream(connection.getInputStream())) {
                 // Load the PDF document
-                document = PDDocument.load(inputStream);
-
+                document = PDDocument.load(inputStream, memoryUsageSetting);
             }
         } catch (IOException e) {
             e.printStackTrace();
