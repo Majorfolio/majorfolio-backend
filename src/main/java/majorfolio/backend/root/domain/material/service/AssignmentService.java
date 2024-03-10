@@ -223,6 +223,7 @@ public class AssignmentService {
                     new PutObjectRequest(fileDirectory, fileName, fileInputStream, metadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead));
         }
+        document.close();
     }
 
     /**
@@ -424,6 +425,7 @@ public class AssignmentService {
                 FileUtils.copyInputStreamToFile(inputStream, fontFile);
             } finally {
                 IOUtils.closeQuietly(inputStream);
+                fontFile.delete();
             }
             PDType0Font font = PDType0Font.load(document, fontFile);
             contentStream.setFont(font, 20);
