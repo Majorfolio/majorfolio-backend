@@ -425,7 +425,6 @@ public class AssignmentService {
                 FileUtils.copyInputStreamToFile(inputStream, fontFile);
             } finally {
                 IOUtils.closeQuietly(inputStream);
-                fontFile.delete();
             }
             PDType0Font font = PDType0Font.load(document, fontFile);
             contentStream.setFont(font, 20);
@@ -447,6 +446,7 @@ public class AssignmentService {
             contentStream.showText(watermarkText);
             contentStream.endText();
             contentStream.close();
+            fontFile.delete();
         }
 
         document.save(outputFile);
