@@ -394,9 +394,6 @@ public class AssignmentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finally {
-            document.close();
-        }
 //        //파일가져오기
 //        byte[] content = s3Object.getObjectContent().readAllBytes();
 //        MultipartFile pdfFile = new InMemoryMultipartFile(s3Object.getObjectMetadata().getContentDisposition(), content);
@@ -417,6 +414,7 @@ public class AssignmentService {
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
+            contentStream.close();
             // 사용자 지정 TTF 폰트 로드
             String fontPath = "NanumBarunGothic.ttf";
             InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
