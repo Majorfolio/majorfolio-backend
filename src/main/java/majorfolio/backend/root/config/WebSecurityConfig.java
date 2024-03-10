@@ -63,8 +63,7 @@ public class WebSecurityConfig {
                         "/home/all/**",
                         "/seller/**",
                         "/majorfolio/**",
-                        "/assignment/{materialId}/previews",
-                        "/assignment/download/{materialId}/test")
+                        "/assignment/{materialId}/previews")
 
                 .requestMatchers("/*"); // 인증 처리 하지 않을 케이스
     }
