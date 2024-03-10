@@ -387,7 +387,7 @@ public class AssignmentService {
             URL url = new URL(signedUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(500 * 1024 * 1024);
+            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(10 * 1024 * 1024);
             try (InputStream inputStream = new BufferedInputStream(connection.getInputStream())) {
                 // Load the PDF document
                 document = PDDocument.load(inputStream, memoryUsageSetting);
@@ -396,12 +396,6 @@ public class AssignmentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        //파일가져오기
-//        byte[] content = s3Object.getObjectContent().readAllBytes();
-//        MultipartFile pdfFile = new InMemoryMultipartFile(s3Object.getObjectMetadata().getContentDisposition(), content);
-
-//        //pdf파일 전처리 과정
-//        PDDocument document = PDDocument.load(pdfFile.getBytes());
 
         //워터마크 표기
 
