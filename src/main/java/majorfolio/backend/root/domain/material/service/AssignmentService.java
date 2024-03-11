@@ -404,22 +404,25 @@ public class AssignmentService {
         String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String watermarkText = "Majorfolio" + "/" + member.getNickName() + "/" + memberId + "/" + member.getUniversityName() + "/" + member.getMajor1() + "/" + formattedDate;
         String outputFile = "downloadMode"+fileLink;
+
+        // 사용자 지정 TTF 폰트 로드ㅎ
+        String fontPath = "NanumBarunGothic.ttf";
+        InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
+        String[] fontFileNameArray = fontPath.split("/");
+        String fontFileFullName = fontFileNameArray[fontFileNameArray.length-1];
+        String fontFileName = fontFileFullName.split("\\.")[0];
+        String fontFileType = fontFileFullName.split("\\.")[1];
+        File fontFile = File.createTempFile(fontFileName, "." + fontFileType);
+
         for (PDPage page : document.getPages()) {
             float pageWidth = page.getMediaBox().getWidth();
             float pageHeight = page.getMediaBox().getHeight();
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
+
             log.info("contentStream사용");
 
-            // 사용자 지정 TTF 폰트 로드ㅎ
-            String fontPath = "NanumBarunGothic.ttf";
-            InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
-            String[] fontFileNameArray = fontPath.split("/");
-            String fontFileFullName = fontFileNameArray[fontFileNameArray.length-1];
-            String fontFileName = fontFileFullName.split("\\.")[0];
-            String fontFileType = fontFileFullName.split("\\.")[1];
-            File fontFile = File.createTempFile(fontFileName, "." + fontFileType);
             try {
                 FileUtils.copyInputStreamToFile(inputStream, fontFile);
             } finally {
@@ -446,8 +449,8 @@ public class AssignmentService {
             contentStream.showText(watermarkText);
             contentStream.endText();
             contentStream.close();
-            fontFile.delete();
         }
+        fontFile.delete();
         log.info("반복문 끝");
 
         document.save(outputFile);
