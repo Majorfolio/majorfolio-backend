@@ -444,7 +444,7 @@ public class AssignmentService {
             contentStream.endText();
             contentStream.close();
         }
-        fontFile.delete(); // 임시 파일 삭제
+
         log.info("반복문 끝");
 
         document.save(outputFile);
@@ -454,6 +454,7 @@ public class AssignmentService {
         fileSaveToS3(document, outputFile, memberId, materialId, "Downloads");
 
         document.close();
+        fontFile.delete(); // 임시 파일 삭제
         //다시 signedUrl 가져오기
         signedUrl = S3Util.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
                 privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
