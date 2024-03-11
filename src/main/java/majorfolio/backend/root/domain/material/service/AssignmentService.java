@@ -404,8 +404,7 @@ public class AssignmentService {
         String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String watermarkText = "Majorfolio" + "/" + member.getNickName() + "/" + memberId + "/" + member.getUniversityName() + "/" + member.getMajor1() + "/" + formattedDate;
         String outputFile = "downloadMode"+fileLink;
-
-        // 사용자 지정 TTF 폰트 로드ㅎ
+        // 먼저 폰트를 한 번 로드하여 재사용합니다.
         String fontPath = "NanumBarunGothic.ttf";
         InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
         String[] fontFileNameArray = fontPath.split("/");
@@ -413,6 +412,9 @@ public class AssignmentService {
         String fontFileName = fontFileFullName.split("\\.")[0];
         String fontFileType = fontFileFullName.split("\\.")[1];
         File fontFile = File.createTempFile(fontFileName, "." + fontFileType);
+        FileUtils.copyInputStreamToFile(inputStream, fontFile);
+        PDType0Font font = PDType0Font.load(document, fontFile);
+        inputStream.close();
 
         for (PDPage page : document.getPages()) {
             float pageWidth = page.getMediaBox().getWidth();
@@ -420,16 +422,8 @@ public class AssignmentService {
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
+            log.info("contentStream 사용");
 
-            log.info("contentStream사용");
-
-            try {
-                FileUtils.copyInputStreamToFile(inputStream, fontFile);
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-                inputStream.close();
-            }
-            PDType0Font font = PDType0Font.load(document, fontFile);
             contentStream.setFont(font, 20);
             contentStream.setNonStrokingColor(234, 234, 234); // 워터마크의 색상 설정
 
@@ -450,7 +444,7 @@ public class AssignmentService {
             contentStream.endText();
             contentStream.close();
         }
-        fontFile.delete();
+        fontFile.delete(); // 임시 파일 삭제
         log.info("반복문 끝");
 
         document.save(outputFile);
