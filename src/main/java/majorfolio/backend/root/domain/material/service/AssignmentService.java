@@ -61,6 +61,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -146,7 +148,7 @@ public class AssignmentService {
         int page = document.getNumberOfPages();
         Preview preview = Preview.builder().build();
         previewRepository.save(preview);
-        Material material = getMaterial(assignmentUploadRequest, page, fileName, member, preview);
+        Material material = getMaterial(assignmentUploadRequest, page, URLEncoder.encode(fileName, StandardCharsets.UTF_8), member, preview);
         materialRepository.save(material);
         Long materialId = material.getId();
         //원본 파일 S3에올리기
