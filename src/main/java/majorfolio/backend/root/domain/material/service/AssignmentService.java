@@ -458,7 +458,7 @@ public class AssignmentService {
         document.close();
         fontFile.delete(); // 임시 파일 삭제
         //다시 signedUrl 가져오기
-        signedUrl = S3Util.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
+        signedUrl = S3Util.makeSignedUrl(URLEncoder.encode(outputFile, StandardCharsets.UTF_8), s3Bucket, memberId, materialId, "Downloads",
                 privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
 
         //구매완료로 바꾸고 download상태 바꾸기
