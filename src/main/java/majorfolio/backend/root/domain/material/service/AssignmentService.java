@@ -158,7 +158,7 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-
+        document.close();
 
         return AssignmentUploadResponse.of(materialId);
     }
@@ -227,7 +227,7 @@ public class AssignmentService {
                             .withCannedAcl(CannedAccessControlList.PublicRead));
         }
         outputStream.close();
-        document.close();
+        //document.close();
     }
 
     /**
