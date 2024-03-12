@@ -297,7 +297,7 @@ public class AssignmentService {
                 amazonS3.putObject(
                         new PutObjectRequest(fileDirectory, imageNames[i], imageInputStream, objectMetadatas[i])
                                 .withCannedAcl(CannedAccessControlList.PublicRead));
-                imageNames[i] = fileDirectory + "/" + imageNames[i];
+                imageNames[i] = fileDirectory + "/" + URLEncoder.encode(imageNames[i], StandardCharsets.UTF_8);
             }
         }
         //DB에 미리보기 이미지 저장
