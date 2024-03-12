@@ -22,6 +22,7 @@ import lombok.Getter;
 @Builder
 public class MyMaterial {
     private Long materialId;
+    private Long memberId;
     private String nickName;
     private String profileUrl;
     private String className;
@@ -32,6 +33,7 @@ public class MyMaterial {
 
     public static MyMaterial of(
             Long materialId,
+            Long memberId,
             String nickName,
             String profileUrl,
             String className,
@@ -42,6 +44,7 @@ public class MyMaterial {
     ){
         return MyMaterial.builder()
                 .materialId(materialId)
+                .memberId(memberId)
                 .nickName(nickName)
                 .profileUrl(profileUrl)
                 .className(className)

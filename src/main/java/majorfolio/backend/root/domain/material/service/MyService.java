@@ -255,6 +255,8 @@ public class MyService {
 
         //과제번호 가져오기
         Long materialId = material.getId();
+        //멤버Id 가져오기
+        Long memberId = material.getMember().getId();
         //과제 오너의 닉네임, 프로필 이미지, 대학명 가져오기
         String nickName = owner.getNickName();
         String profileUrl = owner.getProfileImage();
@@ -266,7 +268,7 @@ public class MyService {
         int totalRecommend = material.getTotalRecommend();
         String type = material.getType();
 
-        return MyMaterial.of(materialId, nickName, profileUrl, className,
+        return MyMaterial.of(materialId, memberId, nickName, profileUrl, className,
                 university, major, type, totalRecommend);
     }
 
