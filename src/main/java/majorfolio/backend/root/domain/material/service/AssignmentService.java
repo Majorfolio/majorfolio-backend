@@ -369,7 +369,7 @@ public class AssignmentService {
 
         if(buyListItem.getIsDown()){
             fileLink = "downloadMode" + fileLink;
-            signedUrl = S3Util.makeSignedUrl(fileLink, s3Bucket, memberId, materialId, "Downloads",
+            signedUrl = S3Util.makeSignedUrl(URLEncoder.encode(fileLink, StandardCharsets.UTF_8), s3Bucket, memberId, materialId, "Downloads",
                     privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
             return AssignmentDownloadResponse.of(signedUrl);
         }
