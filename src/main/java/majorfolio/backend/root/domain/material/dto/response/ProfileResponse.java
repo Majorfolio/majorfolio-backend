@@ -13,7 +13,7 @@ import majorfolio.backend.root.domain.member.entity.Member;
 @Builder
 public class ProfileResponse {
     private String nickName;
-    private String univName;
+    private String univ;
     private String major;
     private String image_url;
     private Long upload;
@@ -23,7 +23,7 @@ public class ProfileResponse {
     public static ProfileResponse of(Member member, Long upload, Long sell, Long follower){
         return ProfileResponse.builder()
                 .nickName(member.getNickName())
-                .univName(member.getUniversityName())
+                .univ(member.getUniversityName())
                 .major(member.getMajor1())
                 .image_url(member.getProfileImage())
                 .upload(upload)
