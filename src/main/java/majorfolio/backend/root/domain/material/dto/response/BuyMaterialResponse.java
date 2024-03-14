@@ -15,7 +15,7 @@ public class BuyMaterialResponse {
     private final Long id;
     private final Long memberId;
     private final String imageUrl;
-    private final String nickname;
+    private final String nickName;
     private final String className;
     private final String univ;
     private final String major;
@@ -30,7 +30,7 @@ public class BuyMaterialResponse {
                 .id(material.getId())
                 .memberId(material.getMember().getId())
                 .imageUrl(material.getMember().getProfileImage())
-                .nickname(material.getMember().getNickName())
+                .nickName(material.getMember().getNickName())
                 .className(material.getClassName())
                 .univ(material.getMember().getUniversityName())
                 .major(material.getMajor())

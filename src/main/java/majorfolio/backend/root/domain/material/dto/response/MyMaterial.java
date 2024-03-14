@@ -26,7 +26,7 @@ public class MyMaterial {
     private String nickName;
     private String profileUrl;
     private String className;
-    private String university;
+    private String univ;
     private String major;
     private String type;
     private int totalRecommend;
@@ -48,7 +48,7 @@ public class MyMaterial {
                 .nickName(nickName)
                 .profileUrl(profileUrl)
                 .className(className)
-                .university(university)
+                .univ(university)
                 .major(major)
                 .type(type)
                 .totalRecommend(totalRecommend)

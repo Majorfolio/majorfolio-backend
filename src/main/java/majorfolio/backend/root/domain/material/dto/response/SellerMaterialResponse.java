@@ -18,8 +18,8 @@ public class SellerMaterialResponse {
     private final Long id;
     private final Long memberId;
     private final String imageUrl;
-    private final String nickname;
-    private final String name;
+    private final String nickName;
+    private final String title;
     private final String univ;
     private final String major;
     private final String semester;
@@ -37,8 +37,8 @@ public class SellerMaterialResponse {
                 .id(material.getId())
                 .memberId(material.getMember().getId())
                 .imageUrl(material.getMember().getProfileImage())
-                .nickname(material.getMember().getNickName())
-                .name(material.getName())
+                .nickName(material.getMember().getNickName())
+                .title(material.getName())
                 .univ(material.getMember().getUniversityName())
                 .major(material.getMajor())
                 .semester(material.getSemester())

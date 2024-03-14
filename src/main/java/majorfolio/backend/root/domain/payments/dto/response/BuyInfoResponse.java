@@ -18,15 +18,15 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class BuyInfoResponse {
-    private List<MaterialNameResponse> materialNameResponseList;
+    private List<MaterialNameResponse> titleList;
     private int totalPrice;
     private LocalDate createDate;
     private String code;
 
-    public static BuyInfoResponse of(List<MaterialNameResponse> materialNameResponseList,
+    public static BuyInfoResponse of(List<MaterialNameResponse> titleList,
                                      BuyInfo buyInfo) {
         return BuyInfoResponse.builder()
-                .materialNameResponseList(materialNameResponseList)
+                .titleList(titleList)
                 .totalPrice(buyInfo.getPrice())
                 .createDate(buyInfo.getCreatedAt().toLocalDate())
                 .code(buyInfo.getCode())
