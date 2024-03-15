@@ -1095,12 +1095,21 @@ public class AssignmentService {
         Preview preview = material.getPreview();
         //S3객체의 Url에서 파일명 추출하기
         String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
-        String[] imageS3UrlPacket = amazonS3.getUrl(s3Bucket, image).toString().split("/");
+        String[] imageS3UrlPacket = image.split("/");
         String imageS3Name = imageS3UrlPacket[imageS3UrlPacket.length-1];
         Long memberId = member.getId();
         log.info(imageS3Name);
         image = S3Util.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         return image;
+
+        /*
+        for (int i = 1; i <= previewImageCount; i++) {
+            String link = previewImagesRepository.findByPreviewAndPosition(preview, i).getImageUrl();
+            String[] linkList = link.split("/");
+            link = linkList[linkList.length - 1];
+            link = S3Util.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
+            previewImages.add(link);
+        }*/
     }
 
     /**
