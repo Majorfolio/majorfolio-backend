@@ -61,6 +61,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -146,7 +148,7 @@ public class AssignmentService {
         int page = document.getNumberOfPages();
         Preview preview = Preview.builder().build();
         previewRepository.save(preview);
-        Material material = getMaterial(assignmentUploadRequest, page, fileName, member, preview);
+        Material material = getMaterial(assignmentUploadRequest, page, URLEncoder.encode(fileName, StandardCharsets.UTF_8), member, preview);
         materialRepository.save(material);
         Long materialId = material.getId();
         //원본 파일 S3에올리기
@@ -156,7 +158,7 @@ public class AssignmentService {
         //미리보기 이미지 S3올리기
         imageSaveToS3(pdfRenderer, fileName, page, memberId, materialId, preview);
 
-
+        document.close();
 
         return AssignmentUploadResponse.of(materialId);
     }
@@ -224,7 +226,8 @@ public class AssignmentService {
                     new PutObjectRequest(fileDirectory, fileName, fileInputStream, metadata)
                             .withCannedAcl(CannedAccessControlList.PublicRead));
         }
-        document.close();
+        outputStream.close();
+        //document.close();
     }
 
     /**
@@ -294,7 +297,7 @@ public class AssignmentService {
                 amazonS3.putObject(
                         new PutObjectRequest(fileDirectory, imageNames[i], imageInputStream, objectMetadatas[i])
                                 .withCannedAcl(CannedAccessControlList.PublicRead));
-                imageNames[i] = fileDirectory + "/" + imageNames[i];
+                imageNames[i] = fileDirectory + "/" + URLEncoder.encode(imageNames[i], StandardCharsets.UTF_8);
             }
         }
         //DB에 미리보기 이미지 저장
@@ -366,7 +369,7 @@ public class AssignmentService {
 
         if(buyListItem.getIsDown()){
             fileLink = "downloadMode" + fileLink;
-            signedUrl = S3Util.makeSignedUrl(fileLink, s3Bucket, memberId, materialId, "Downloads",
+            signedUrl = S3Util.makeSignedUrl(URLEncoder.encode(fileLink, StandardCharsets.UTF_8), s3Bucket, memberId, materialId, "Downloads",
                     privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
             return AssignmentDownloadResponse.of(signedUrl);
         }
@@ -386,20 +389,15 @@ public class AssignmentService {
             URL url = new URL(signedUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(50 * 1024 * 1024); // 1MB로 설정
+            MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(10 * 1024 * 1024);
             try (InputStream inputStream = new BufferedInputStream(connection.getInputStream())) {
                 // Load the PDF document
                 document = PDDocument.load(inputStream, memoryUsageSetting);
             }
+            connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        //파일가져오기
-//        byte[] content = s3Object.getObjectContent().readAllBytes();
-//        MultipartFile pdfFile = new InMemoryMultipartFile(s3Object.getObjectMetadata().getContentDisposition(), content);
-
-//        //pdf파일 전처리 과정
-//        PDDocument document = PDDocument.load(pdfFile.getBytes());
 
         //워터마크 표기
 
@@ -408,26 +406,26 @@ public class AssignmentService {
         String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String watermarkText = "Majorfolio" + "/" + member.getNickName() + "/" + memberId + "/" + member.getUniversityName() + "/" + member.getMajor1() + "/" + formattedDate;
         String outputFile = "downloadMode"+fileLink;
+        // 먼저 폰트를 한 번 로드하여 재사용합니다.
+        String fontPath = "NanumBarunGothic.ttf";
+        InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
+        String[] fontFileNameArray = fontPath.split("/");
+        String fontFileFullName = fontFileNameArray[fontFileNameArray.length-1];
+        String fontFileName = fontFileFullName.split("\\.")[0];
+        String fontFileType = fontFileFullName.split("\\.")[1];
+        File fontFile = File.createTempFile(fontFileName, "." + fontFileType);
+        FileUtils.copyInputStreamToFile(inputStream, fontFile);
+        PDType0Font font = PDType0Font.load(document, fontFile);
+        inputStream.close();
+
         for (PDPage page : document.getPages()) {
             float pageWidth = page.getMediaBox().getWidth();
             float pageHeight = page.getMediaBox().getHeight();
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true);
             contentStream.beginText();
-            // 사용자 지정 TTF 폰트 로드
-            String fontPath = "NanumBarunGothic.ttf";
-            InputStream inputStream = new ClassPathResource(fontPath).getInputStream();
-            String[] fontFileNameArray = fontPath.split("/");
-            String fontFileFullName = fontFileNameArray[fontFileNameArray.length-1];
-            String fontFileName = fontFileFullName.split("\\.")[0];
-            String fontFileType = fontFileFullName.split("\\.")[1];
-            File fontFile = File.createTempFile(fontFileName, "." + fontFileType);
-            try {
-                FileUtils.copyInputStreamToFile(inputStream, fontFile);
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-            }
-            PDType0Font font = PDType0Font.load(document, fontFile);
+            log.info("contentStream 사용");
+
             contentStream.setFont(font, 20);
             contentStream.setNonStrokingColor(234, 234, 234); // 워터마크의 색상 설정
 
@@ -447,8 +445,9 @@ public class AssignmentService {
             contentStream.showText(watermarkText);
             contentStream.endText();
             contentStream.close();
-            fontFile.delete();
         }
+
+        log.info("반복문 끝");
 
         document.save(outputFile);
 
@@ -457,8 +456,9 @@ public class AssignmentService {
         fileSaveToS3(document, outputFile, memberId, materialId, "Downloads");
 
         document.close();
+        fontFile.delete(); // 임시 파일 삭제
         //다시 signedUrl 가져오기
-        signedUrl = S3Util.makeSignedUrl(outputFile, s3Bucket, memberId, materialId, "Downloads",
+        signedUrl = S3Util.makeSignedUrl(URLEncoder.encode(outputFile, StandardCharsets.UTF_8), s3Bucket, memberId, materialId, "Downloads",
                 privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
 
         //구매완료로 바꾸고 download상태 바꾸기

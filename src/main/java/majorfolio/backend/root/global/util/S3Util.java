@@ -46,6 +46,7 @@ public class S3Util {
             FileUtils.copyInputStreamToFile(inputStream, privateKeyFile);
         } finally {
             IOUtils.closeQuietly(inputStream);
+            inputStream.close();
         }
         String signedURL = "";
 

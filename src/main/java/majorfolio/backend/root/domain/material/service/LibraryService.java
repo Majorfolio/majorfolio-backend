@@ -130,7 +130,7 @@ public class LibraryService {
         List<UploadMaterialResponse> activeMaterialResponseList = convertToUploadMaterialResponseListByMaterial(activeMaterials);
         List<UploadMaterialResponse> stopMaterialResponseList = convertToUploadMaterialResponseListByMaterial(stopMaterials);
 
-        return UploadMaterialListResponse.of(activeMaterialResponseList, stopMaterialResponseList);
+        return UploadMaterialListResponse.of(stopMaterialResponseList, activeMaterialResponseList);
     }
 
     /**
