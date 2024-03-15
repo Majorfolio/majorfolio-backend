@@ -13,6 +13,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import majorfolio.backend.root.global.argument_resolver.custom_annotation.ValidFile;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.ValidGrade;
+import majorfolio.backend.root.global.argument_resolver.custom_annotation.ValidScore;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -38,16 +40,13 @@ public class AssignmentUploadRequest {
     private String semester;
     @NotBlank(message = "subjectName : 과목명이 비어있으면 안됩니다.")
     private String subjectName;
-    @NotBlank(message = "professor : 교수명이 비어있으면 안됩니다.")
     private String professor;
-    @Pattern(regexp = "A[+-]?|B[+-]?|C[+-]?|D[+-]?|F|P|NP", message = "grade : 올바른 학점 형식이어야 합니다.")
+    @ValidGrade(message = "grade : 올바른 학점 형식이어야 합니다.")
     private String grade;
-    @NotNull(message = "fullScore : 총점이 비어있으면 안됩니다.")
-    @Digits(integer = 4, fraction = 1, message = "float : 소수점 첫째 자리까지 입력하세요. 혹은 점수는 천의자리까지만 입력 가능합니다.")
-    private float fullScore;
-    @NotNull(message = "score : 점수가 비어있으면 안됩니다.")
-    @Digits(integer = 4, fraction = 1, message = "float : 소수점 첫째 자리까지 입력하세요. 혹은 점수는 천의자리까지만 입력 가능합니다.")
-    private float score;
+    @ValidScore(message = "fullScore : 만점은 소수점 첫째 자리까지 입력하셔야 합니다.")
+    private Float fullScore;
+    @ValidScore(message = "score : 점수는 소수점 첫째 자리까지 입력하셔야 합니다.")
+    private Float score;
     @NotBlank(message = "description : 설명이 쓰여 있어야 합니다.")
     @Size(max = 80, message = "description : 설명은 10자 이상 80자이내로 제한됩니다.")
     private String description;

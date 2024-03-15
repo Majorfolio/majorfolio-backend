@@ -19,9 +19,13 @@ public enum StatusEnum implements DBstatus{
     MATERIAL_ACTIVE("Material", "active", "활성상태"),
     MATERIAL_REVIEWING("Material", "reviewing", "대기상태"),
     MATERIAL_OLD("Material", "old", "수정전 파일"),
-    MATERIAL_BEN("Material", "ben", "신고당한 파일");
+    MATERIAL_BEN("Material", "ben", "신고당한 파일"),
 
-
+    //BuyInfo테이블 쪽 status
+    BUYINFO_BUYCOMPLETE("BuyInfo", "buyComplete", "구매확정"),
+    BUYINFO_AFTER_PAY("BuyInfo", "afterPay", "구매완료"),
+    BUYINFO_CANCLE("BuyInfo", "cancle", "구매취소"),
+    BUYINFO_AFTER_REFUND("BuyInfo", "afterRefund", "환불완료");
 
 
     private final String DBTable;

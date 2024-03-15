@@ -157,6 +157,21 @@ public class BaseExceptionControllerAdvice {
                     return makeResponse(FLOAT_ERROR);
                 }
             }
+
+            if(bindAnnotation.equals("ValidScore")){
+                if(errorVariable.equals("fullScore")){
+                    return makeResponse(FLOAT_ERROR);
+                }
+                if(errorVariable.equals("score")){
+                    return makeResponse(FLOAT_ERROR);
+                }
+            }
+
+            if(bindAnnotation.equals("ValidGrade")){
+                if(errorVariable.equals("grade")){
+                    return makeResponse(GRADE_PATTERN_ERROR);
+                }
+            }
         }
         return new BaseErrorResponse(BAD_REQUEST);
     }

@@ -23,7 +23,7 @@ public class MaterialMyDetailResponse {
     private String univ;
     private String major;
     private String semester;
-    private String subjectTitle;
+    private String className;
     private String professor;
     private String grade;
     private float score;
@@ -65,7 +65,7 @@ public class MaterialMyDetailResponse {
                 .univ(university)
                 .major(major)
                 .semester(semester)
-                .subjectTitle(subjectTitle)
+                .className(subjectTitle)
                 .professor(professor)
                 .grade(grade)
                 .score(score)

@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+import static majorfolio.backend.root.global.status.StatusEnum.MATERIAL_REVIEWING;
+
 /**
  * material 테이블 생성
  * @author 김태혁
@@ -34,8 +36,8 @@ public class Material {
     private String className;
     private String major;
     private String grade;
-    private float score;
-    private float fullScore;
+    private Float score;
+    private Float fullScore;
     private int page;
     private String status;
     private int price;
@@ -56,7 +58,7 @@ public class Material {
 
     public static Material of(String name, String description, String type, String semester,
                               String professor, String className, String major,
-                              String grade, float score, float fullScore, int page,
+                              String grade, Float score, Float fullScore, int page,
                               String link, Member member, Preview preview){
         return Material.builder()
                 .name(name)
@@ -72,7 +74,7 @@ public class Material {
                 .score(score)
                 .fullScore(fullScore)
                 .page(page)
-                .status("reviewing")
+                .status(MATERIAL_REVIEWING.getStatus())
                 .price(4700)
                 .link(link)
                 .member(member)
