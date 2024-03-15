@@ -23,7 +23,7 @@ public class MaterialMyDetailResponse {
     private String univ;
     private String major;
     private String semester;
-    private String subjectTitle;
+    private String className;
     private String professor;
     private String grade;
     private float score;
