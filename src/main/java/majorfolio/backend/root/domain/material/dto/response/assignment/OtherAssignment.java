@@ -29,7 +29,7 @@ public class OtherAssignment {
     private Long id;
     private String title;
     private String nickname;
-    private String university;
+    private String univ;
     private String major;
     private String semester;
     private String professor;
@@ -41,7 +41,7 @@ public class OtherAssignment {
                 .id(id)
                 .title(title)
                 .nickname(nickname)
-                .university(university)
+                .univ(university)
                 .major(major)
                 .semester(semester)
                 .professor(professor)

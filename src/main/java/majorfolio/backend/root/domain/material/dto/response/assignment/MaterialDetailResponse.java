@@ -38,7 +38,7 @@ public class MaterialDetailResponse {
     private String description;
     private Long sell;
     private Long follower;
-    private String university;
+    private String univ;
     private String major;
     private String semester;
     private String subjectTitle;
@@ -88,7 +88,7 @@ public class MaterialDetailResponse {
                 .description(description)
                 .sell(sell)
                 .follower(follower)
-                .university(university)
+                .univ(university)
                 .major(major)
                 .semester(semester)
                 .subjectTitle(subjectTitle)

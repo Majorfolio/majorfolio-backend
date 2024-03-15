@@ -20,7 +20,7 @@ public class MaterialMyDetailResponse {
     private int bookmark;
     private String title;
     private String description;
-    private String university;
+    private String univ;
     private String major;
     private String semester;
     private String subjectTitle;
@@ -62,7 +62,7 @@ public class MaterialMyDetailResponse {
                 .bookmark(bookmark)
                 .title(title)
                 .description(description)
-                .university(university)
+                .univ(university)
                 .major(major)
                 .semester(semester)
                 .subjectTitle(subjectTitle)
