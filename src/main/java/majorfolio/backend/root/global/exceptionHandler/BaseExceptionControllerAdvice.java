@@ -108,7 +108,7 @@ public class BaseExceptionControllerAdvice {
                 if(errorVariable.equals("semester")){
                     return makeResponse(NOT_BLANK_MATERIAL_SEMESTER);
                 }
-                if(errorVariable.equals("subjectName")){
+                if(errorVariable.equals("className")){
                     return makeResponse(NOT_BLANK_SUBJECT_NAME);
                 }
                 if(errorVariable.equals("professor")){
