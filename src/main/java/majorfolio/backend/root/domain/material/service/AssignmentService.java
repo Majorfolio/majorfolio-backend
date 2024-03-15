@@ -71,7 +71,7 @@ import java.util.*;
 
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
-import static majorfolio.backend.root.global.status.StatusEnum.MATERIAL_OLD;
+import static majorfolio.backend.root.global.status.StatusEnum.*;
 
 /**
  * assignment/** 요청의 서비스 구현
@@ -869,8 +869,8 @@ public class AssignmentService {
         String className = material.getClassName();
         String professor = material.getProfessor();
         String grade = material.getGrade();
-        float score = material.getScore();
-        float fullscore = material.getFullScore();
+        Float score = material.getScore();
+        Float fullscore = material.getFullScore();
         int pages = material.getPage();
 
         Long memberId = member.getId();
@@ -978,7 +978,15 @@ public class AssignmentService {
     private Boolean isBuy(BuyList buyList, Material material) {
         log.info(buyList.getId().toString());
         log.info(material.getId().toString());
-        return buyListItemRepository.existsByBuyListAndMaterial(buyList, material);
+
+        BuyListItem buyListItem = buyListItemRepository.findByBuyListAndMaterial(buyList, material);
+        if(buyListItem == null){
+            return false;
+        }
+        BuyInfo buyInfo = buyListItem.getBuyInfo();
+        log.info(buyInfo.getStatus());
+        return !buyInfo.getStatus().equals(BUYINFO_CANCLE.getStatus())
+                && !buyInfo.getStatus().equals(BUYINFO_AFTER_REFUND.getStatus());
     }
 
     /**

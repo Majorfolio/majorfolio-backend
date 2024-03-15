@@ -44,8 +44,8 @@ public class MaterialDetailResponse {
     private String subjectTitle;
     private String professor;
     private String grade;
-    private float score;
-    private float fullScore;
+    private Float score;
+    private Float fullScore;
     private int pages;
     private Boolean isMemberBookmark; // 북마크 체크 여부
     private Boolean isMemberLike; // 좋아요 체크 여부
@@ -69,8 +69,8 @@ public class MaterialDetailResponse {
             String subjectTitle,
             String professor,
             String grade,
-            float score,
-            float fullScore,
+            Float score,
+            Float fullScore,
             int pages,
             Boolean isMemberBookmark,
             Boolean isMemberLike,
