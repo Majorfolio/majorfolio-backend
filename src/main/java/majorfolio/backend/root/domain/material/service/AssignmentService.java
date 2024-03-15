@@ -182,7 +182,7 @@ public class AssignmentService {
                 "pdf",
                 assignmentUploadRequest.getSemester(),
                 assignmentUploadRequest.getProfessor(),
-                assignmentUploadRequest.getSubjectName(),
+                assignmentUploadRequest.getClassName(),
                 assignmentUploadRequest.getMajor(),
                 assignmentUploadRequest.getGrade(),
                 assignmentUploadRequest.getScore(),
