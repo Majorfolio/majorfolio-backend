@@ -38,8 +38,8 @@ public class AssignmentUploadRequest {
     @NotBlank(message = "semester : 학기정보가 비어있으면 안됩니다.")
     @Pattern(regexp = "\\d{2}-\\d", message = "semester : 학기 정보 형식은 00-0형식이어야 합니다.")
     private String semester;
-    @NotBlank(message = "subjectName : 과목명이 비어있으면 안됩니다.")
-    private String subjectName;
+    @NotBlank(message = "className : 과목명이 비어있으면 안됩니다.")
+    private String className;
     private String professor;
     @ValidGrade(message = "grade : 올바른 학점 형식이어야 합니다.")
     private String grade;
