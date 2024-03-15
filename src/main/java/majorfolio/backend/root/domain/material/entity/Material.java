@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+import static majorfolio.backend.root.global.status.StatusEnum.MATERIAL_REVIEWING;
+
 /**
  * material 테이블 생성
  * @author 김태혁
@@ -72,7 +74,7 @@ public class Material {
                 .score(score)
                 .fullScore(fullScore)
                 .page(page)
-                .status("reviewing")
+                .status(MATERIAL_REVIEWING.getStatus())
                 .price(4700)
                 .link(link)
                 .member(member)
