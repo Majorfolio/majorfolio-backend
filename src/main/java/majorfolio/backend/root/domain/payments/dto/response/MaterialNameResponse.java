@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class MaterialNameResponse {
-    private String assignmentName;
+    private String title;
 
     public static MaterialNameResponse of(String assignmentName){
         return MaterialNameResponse
                 .builder()
-                .assignmentName(assignmentName)
+                .title(assignmentName)
                 .build();
     }
 }
