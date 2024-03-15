@@ -65,7 +65,7 @@ public class MaterialMyDetailResponse {
                 .univ(university)
                 .major(major)
                 .semester(semester)
-                .subjectTitle(subjectTitle)
+                .className(subjectTitle)
                 .professor(professor)
                 .grade(grade)
                 .score(score)

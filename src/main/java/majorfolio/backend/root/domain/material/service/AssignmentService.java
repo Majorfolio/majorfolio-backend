@@ -128,8 +128,10 @@ public class AssignmentService {
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
 
-        if(assignmentUploadRequest.getScore() > assignmentUploadRequest.getFullScore()){
-            throw new MaterialException(SCORE_IS_BIGGER_THAN_FULL_SCORE);
+        if(assignmentUploadRequest.getScore() != null && assignmentUploadRequest.getFullScore() != null){
+            if(assignmentUploadRequest.getScore() > assignmentUploadRequest.getFullScore()){
+                throw new MaterialException(SCORE_IS_BIGGER_THAN_FULL_SCORE);
+            }
         }
         if(member.getPhoneNumber() == null || member.getPhoneNumber().isEmpty()){
             throw new UserException(NONE_PHONE_NUMBER);
