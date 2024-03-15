@@ -71,7 +71,7 @@ import java.util.*;
 
 import static java.time.temporal.ChronoField.DAY_OF_WEEK;
 import static majorfolio.backend.root.global.response.status.BaseExceptionStatus.*;
-import static majorfolio.backend.root.global.status.StatusEnum.MATERIAL_OLD;
+import static majorfolio.backend.root.global.status.StatusEnum.*;
 
 /**
  * assignment/** 요청의 서비스 구현
@@ -128,8 +128,10 @@ public class AssignmentService {
         Member member = kakaoSocialLoginRepository.findById(kakaoId).get().getMember();
         Long memberId = member.getId();
 
-        if(assignmentUploadRequest.getScore() > assignmentUploadRequest.getFullScore()){
-            throw new MaterialException(SCORE_IS_BIGGER_THAN_FULL_SCORE);
+        if(assignmentUploadRequest.getScore() != null && assignmentUploadRequest.getFullScore() != null){
+            if(assignmentUploadRequest.getScore() > assignmentUploadRequest.getFullScore()){
+                throw new MaterialException(SCORE_IS_BIGGER_THAN_FULL_SCORE);
+            }
         }
         if(member.getPhoneNumber() == null || member.getPhoneNumber().isEmpty()){
             throw new UserException(NONE_PHONE_NUMBER);
@@ -867,8 +869,8 @@ public class AssignmentService {
         String className = material.getClassName();
         String professor = material.getProfessor();
         String grade = material.getGrade();
-        float score = material.getScore();
-        float fullscore = material.getFullScore();
+        Float score = material.getScore();
+        Float fullscore = material.getFullScore();
         int pages = material.getPage();
 
         Long memberId = member.getId();
@@ -976,7 +978,15 @@ public class AssignmentService {
     private Boolean isBuy(BuyList buyList, Material material) {
         log.info(buyList.getId().toString());
         log.info(material.getId().toString());
-        return buyListItemRepository.existsByBuyListAndMaterial(buyList, material);
+
+        BuyListItem buyListItem = buyListItemRepository.findByBuyListAndMaterial(buyList, material);
+        if(buyListItem == null){
+            return false;
+        }
+        BuyInfo buyInfo = buyListItem.getBuyInfo();
+        log.info(buyInfo.getStatus());
+        return !buyInfo.getStatus().equals(BUYINFO_CANCLE.getStatus())
+                && !buyInfo.getStatus().equals(BUYINFO_AFTER_REFUND.getStatus());
     }
 
     /**
@@ -1085,12 +1095,21 @@ public class AssignmentService {
         Preview preview = material.getPreview();
         //S3객체의 Url에서 파일명 추출하기
         String image = previewImagesRepository.findByPreviewAndPosition(preview, 1).getImageUrl();
-        String[] imageS3UrlPacket = amazonS3.getUrl(s3Bucket, image).toString().split("/");
+        String[] imageS3UrlPacket = image.split("/");
         String imageS3Name = imageS3UrlPacket[imageS3UrlPacket.length-1];
         Long memberId = member.getId();
         log.info(imageS3Name);
         image = S3Util.makeSignedUrl(imageS3Name, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         return image;
+
+        /*
+        for (int i = 1; i <= previewImageCount; i++) {
+            String link = previewImagesRepository.findByPreviewAndPosition(preview, i).getImageUrl();
+            String[] linkList = link.split("/");
+            link = linkList[linkList.length - 1];
+            link = S3Util.makeSignedUrl(link, s3Bucket, memberId, materialId, "Previews", privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
+            previewImages.add(link);
+        }*/
     }
 
     /**

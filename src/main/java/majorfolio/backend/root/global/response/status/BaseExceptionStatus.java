@@ -123,7 +123,7 @@ public enum BaseExceptionStatus implements ResponseStatus{
     TOO_MANY_DESCRIPTION(10010, HttpStatus.BAD_REQUEST.value(), "설명은 80자로 제한됩니다."),
     SEMESTER_PATTERN_ERROR(10011, HttpStatus.BAD_REQUEST.value(), "학기 정보 형식은 00-0형식이어야 합니다."),
     NONE_PHONE_NUMBER(10012, HttpStatus.BAD_REQUEST.value(), "전화번호를 입력해주세요"),
-    FLOAT_ERROR(10013, HttpStatus.BAD_REQUEST.value(), "소수점 첫째 자리 까지 입력해주세요 혹은 점수는 천의자리까지만 입력 가능합니다."),
+    FLOAT_ERROR(10013, HttpStatus.BAD_REQUEST.value(), "소수점 첫째 자리 까지 입력해주세요."),
     SCORE_IS_BIGGER_THAN_FULL_SCORE(10014,HttpStatus.BAD_REQUEST.value(), "점수가 만점보가 높습니다"),
 
     /**
