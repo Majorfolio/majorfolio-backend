@@ -81,14 +81,14 @@ public class TransactionService {
     private List<TransactionResponse> convertToTransactionResponseListByBuyListItem(List<BuyListItem> buyListItems) {
         List<TransactionResponse> lists = new ArrayList<>();
         for(BuyListItem buyListItem : buyListItems)
-            lists.add(TransactionResponse.of(buyListItem.getMaterial(), buyListItem.getBuyInfo().getUpdatedAt()));
+            lists.add(TransactionResponse.of(buyListItem.getMaterial(), buyListItem.getBuyInfo().getUpdatedAt(), buyListItem.getBuyInfo().getId()));
         return lists;
     }
 
     private List<TransactionResponse> convertToDownTransactionResponseListByBuyListItem(List<BuyListItem> buyListItems) {
         List<TransactionResponse> lists = new ArrayList<>();
         for(BuyListItem buyListItem : buyListItems)
-            lists.add(TransactionResponse.of(buyListItem.getMaterial(), buyListItem.getUpdatedAt()));
+            lists.add(TransactionResponse.of(buyListItem.getMaterial(), buyListItem.getUpdatedAt(), buyListItem.getBuyInfo().getId()));
         return lists;
     }
 
@@ -122,7 +122,7 @@ public class TransactionService {
     private List<TransactionResponse> convertToTransactionSaleResponseListByMaterial(List<Material> materials) {
         List<TransactionResponse> lists = new ArrayList<>();
         for(Material material : materials)
-            lists.add(TransactionResponse.of(material, material.getUpdatedAt()));
+            lists.add(TransactionResponse.saleOf(material, material.getUpdatedAt()));
         return lists;
     }
 }

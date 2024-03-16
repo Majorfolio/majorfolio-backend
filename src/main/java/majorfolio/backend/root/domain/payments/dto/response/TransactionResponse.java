@@ -20,8 +20,21 @@ public class TransactionResponse {
     private String univ;
     private int price;
     LocalDate updateAt;
+    private Long buyInfoId;
 
-    public static TransactionResponse of(Material material, LocalDateTime updateAt){
+    public static TransactionResponse of(Material material, LocalDateTime updateAt, Long buyInfoId){
+        return TransactionResponse.builder()
+                .id(material.getId())
+                .className(material.getClassName())
+                .major(material.getMajor())
+                .univ(material.getMember().getUniversityName())
+                .price(material.getPrice())
+                .updateAt(updateAt.toLocalDate())
+                .buyInfoId(buyInfoId)
+                .build();
+    }
+
+    public static TransactionResponse saleOf(Material material, LocalDateTime updateAt){
         return TransactionResponse.builder()
                 .id(material.getId())
                 .className(material.getClassName())
