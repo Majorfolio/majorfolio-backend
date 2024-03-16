@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import majorfolio.backend.root.domain.material.dto.response.*;
 import majorfolio.backend.root.domain.material.service.MyService;
 import majorfolio.backend.root.domain.material.service.ProfileService;
+import majorfolio.backend.root.domain.member.dto.request.MyInfoRequest;
 import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
 import majorfolio.backend.root.global.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
@@ -140,5 +141,10 @@ public class MyController {
     @GetMapping("/event/{eventId}")
     public BaseResponse<ShowEventDetailResponse> showEventDetail(@PathVariable(name = "eventId") Long eventId) throws InvalidKeySpecException, IOException {
         return new BaseResponse<>(myService.showEventDetail(eventId));
+    }
+
+    @PatchMapping("/change")
+    public BaseResponse<String> changeMyInfo(@RequestBody MyInfoRequest myInfoRequest, HttpServletRequest request){
+        return new BaseResponse<>(myService.changeMyInfo(myInfoRequest,request));
     }
  }
