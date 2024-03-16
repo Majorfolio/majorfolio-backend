@@ -45,6 +45,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.util.Matrix;
@@ -403,10 +404,7 @@ public class AssignmentService {
 
         //워터마크 표기
 
-        //현재 날짜 가져오기(다운로드 날짜)
-        LocalDate currentDate = LocalDate.now();
-        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String watermarkText = "Majorfolio" + "/" + member.getNickName() + "/" + memberId + "/" + member.getUniversityName() + "/" + member.getMajor1() + "/" + formattedDate;
+        String watermarkText = "Majorfolio" + "/" + member.getUniversityName() + "/" + member.getMajor1() + "/" + member.getNickName() + "/" + buyInfo.getCreatedAt();
         String outputFile = "downloadMode"+fileLink;
         // 먼저 폰트를 한 번 로드하여 재사용합니다.
         String fontPath = "NanumBarunGothic.ttf";
@@ -428,21 +426,25 @@ public class AssignmentService {
             contentStream.beginText();
             log.info("contentStream 사용");
 
-            contentStream.setFont(font, 20);
+            int fontSize = 15;
+            contentStream.setFont(font, fontSize);
             contentStream.setNonStrokingColor(234, 234, 234); // 워터마크의 색상 설정
+            contentStream.setLeading(0);
+
 
             // 중앙 위치 계산
-            float centerX = (pageWidth / 12);
-            float centerY = (pageHeight / 28);
+            float centerX = pageWidth / 2;
+            float centerY = pageHeight / 2;
 
             // 텍스트 위치 및 회전 설정
             Matrix matrix = new Matrix();
             matrix.translate(centerX, centerY); // 중앙으로 이동
-            matrix.rotate(Math.toRadians(50)); // 25도 회전
+            matrix.rotate(Math.toRadians(30)); // 30도 회전
 
             contentStream.setTextMatrix(matrix);
             // 텍스트 위치 설정
-            contentStream.newLineAtOffset(centerX, centerY); // 중앙으로 이동
+            float textWidth = font.getStringWidth(watermarkText) / 1000 * fontSize;
+            contentStream.newLineAtOffset(-textWidth / 2, 0); // 중앙으로 이동
 
             contentStream.showText(watermarkText);
             contentStream.endText();
