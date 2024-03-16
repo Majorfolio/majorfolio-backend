@@ -15,6 +15,7 @@ public class ProfileResponse {
     private String nickName;
     private String univ;
     private String major;
+    private String major2;
     private String image_url;
     private Long upload;
     private Long sell;
@@ -25,6 +26,7 @@ public class ProfileResponse {
                 .nickName(member.getNickName())
                 .univ(member.getUniversityName())
                 .major(member.getMajor1())
+                .major2(member.getMajor2())
                 .image_url(member.getProfileImage())
                 .upload(upload)
                 .sell(sell)

@@ -19,6 +19,7 @@ import majorfolio.backend.root.domain.admin.repository.NoticeRepository;
 import majorfolio.backend.root.domain.material.dto.response.*;
 import majorfolio.backend.root.domain.material.entity.Material;
 import majorfolio.backend.root.domain.material.repository.MaterialRepository;
+import majorfolio.backend.root.domain.member.dto.request.MyInfoRequest;
 import majorfolio.backend.root.domain.member.dto.request.ProfileImageRequest;
 import majorfolio.backend.root.domain.member.entity.Bookmark;
 import majorfolio.backend.root.domain.member.entity.KakaoSocialLogin;
@@ -339,5 +340,28 @@ public class MyService {
         Event event = eventRepository.findById(eventId).get();
         String link = S3Util.makeSignedUrl(event.getLink(), s3Bucket, 0L, 0L, EVENTS3.getS3DirectoryName(), privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
         return ShowEventDetailResponse.of(event.getTitle(), link);
+    }
+
+    public String changeMyInfo(MyInfoRequest myInfoRequest, HttpServletRequest request) {
+        Member member = memberGlobalService.getMemberByToken(request).getMember();
+
+        if (myInfoRequest.getNickName() != null) {
+            member.setNickName(myInfoRequest.getNickName());
+        }
+        if (myInfoRequest.getMajor1() != null) {
+            member.setMajor1(myInfoRequest.getMajor1());
+        }
+        if (myInfoRequest.getMajor2() != null) {
+            member.setMajor2(myInfoRequest.getMajor2());
+        }
+        if (myInfoRequest.getStudentId() != 0) { // Check for non-zero studentId
+            member.setStudentId(myInfoRequest.getStudentId());
+        }
+        if (myInfoRequest.getPhoneNumber() != null) {
+            member.setPhoneNumber(myInfoRequest.getPhoneNumber());
+        }
+
+        memberRepository.save(member);
+        return "정상적으로 유저의 정보가 변경되었습니다.";
     }
 }
