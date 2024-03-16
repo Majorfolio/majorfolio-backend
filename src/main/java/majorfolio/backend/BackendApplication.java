@@ -17,7 +17,7 @@ import java.util.TimeZone;
 public class BackendApplication {
 	@PostConstruct
 	public void setTimeZone(){
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC+9"));
 	}
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
