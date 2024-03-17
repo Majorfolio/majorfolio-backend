@@ -11,10 +11,7 @@
 package majorfolio.backend.root.domain.university.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * University DB테이블 정의
@@ -25,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Getter @Setter
 @Entity
 public class University {
     @Id
