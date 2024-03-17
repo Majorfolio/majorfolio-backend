@@ -215,12 +215,5 @@ public class AssignmentController {
         return new BaseResponse<>(assignmentService.modifyAssignment(memberId, materialId, assignmentUploadRequest));
     }
 
-    /**
-     * 다운로드url 테스트용
-     */
-    @GetMapping("/download/{materialId}/test")
-    public BaseResponse<String> downloadTest(@PathVariable (name = "materialId") Long materialId) throws InvalidKeySpecException, IOException {
-        return new BaseResponse<>(assignmentService.downloadTest(materialId));
-    }
 
 }

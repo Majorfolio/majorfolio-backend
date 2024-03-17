@@ -782,13 +782,7 @@ public class AssignmentService {
         return assignmentUploadResponse;
     }
 
-    public String downloadTest(Long materialId) throws InvalidKeySpecException, IOException {
-        String materialName = materialRepository.findById(materialId).get().getLink();
-        Member uploader = materialRepository.findById(materialId).get().getMember();
-        String signedUrl = S3Util.makeSignedUrl(materialName, s3Bucket, uploader.getId(), materialId, "originalFile",
-                privateKeyFilePath, distributionDomain, keyPairId, amazonS3);
-        return signedUrl;
-    }
+
 
     /**
      * 스프링의 MultipartFile 인터페이스를 구현하는 InMemoryMultipartFile 클래스 정의
