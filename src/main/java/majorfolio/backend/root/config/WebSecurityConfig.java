@@ -79,7 +79,8 @@ public class WebSecurityConfig {
                 HttpMethod.POST.name(),
                 HttpMethod.PUT.name(),
                 HttpMethod.DELETE.name(),
-                HttpMethod.OPTIONS.name())
+                HttpMethod.OPTIONS.name(),
+                HttpMethod.PATCH.name())
         );
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
