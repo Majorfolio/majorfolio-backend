@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ProfileImageRequest {
-    private String imageUrl;
+    private String profileImage;
 }

@@ -275,7 +275,7 @@ public class MyService {
 
     public String changeProfileImage(ProfileImageRequest profileImageRequest, HttpServletRequest request) {
         KakaoSocialLogin kakaoSocialLogin = memberGlobalService.getMemberByToken(request);
-        String profileImageId = profileImageRequest.getImageUrl();
+        String profileImageId = profileImageRequest.getProfileImage();
         System.out.println("profileImageId = " + profileImageId);
 
         Member member = kakaoSocialLogin.getMember();
