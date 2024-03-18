@@ -14,7 +14,7 @@ import majorfolio.backend.root.domain.material.entity.Material;
 public class MaterialResponse {
     private final Long id;
     private final Long memberId;
-    private final String imageUrl;
+    private final String profileImage;
     private final String nickName;
     private final String className;
     private final String univ;
@@ -32,7 +32,7 @@ public class MaterialResponse {
         return MaterialResponse.builder()
                 .id(material.getId())
                 .memberId(material.getMember().getId())
-                .imageUrl(material.getMember().getProfileImage())
+                .profileImage(material.getMember().getProfileImage())
                 .nickName(material.getMember().getNickName())
                 .className(material.getClassName())
                 .univ(material.getMember().getUniversityName())
