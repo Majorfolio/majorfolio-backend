@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class UploadMaterialResponse {
     private final Long id;
-    private final String imageUrl;
+    private final String profileImage;
     private final String nickName;
     private final String className;
     private final String univ;
@@ -26,7 +26,7 @@ public class UploadMaterialResponse {
     public static UploadMaterialResponse of(Material material) {
         return UploadMaterialResponse.builder()
                 .id(material.getId())
-                .imageUrl(material.getMember().getProfileImage())
+                .profileImage(material.getMember().getProfileImage())
                 .nickName(material.getMember().getNickName())
                 .className(material.getClassName())
                 .univ(material.getMember().getUniversityName())
