@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class SellerMaterialResponse {
     private final Long id;
     private final Long memberId;
-    private final String imageUrl;
+    private final String profileImage;
     private final String nickName;
     private final String title;
     private final String univ;
@@ -36,7 +36,7 @@ public class SellerMaterialResponse {
         return SellerMaterialResponse.builder()
                 .id(material.getId())
                 .memberId(material.getMember().getId())
-                .imageUrl(material.getMember().getProfileImage())
+                .profileImage(material.getMember().getProfileImage())
                 .nickName(material.getMember().getNickName())
                 .title(material.getName())
                 .univ(material.getMember().getUniversityName())
