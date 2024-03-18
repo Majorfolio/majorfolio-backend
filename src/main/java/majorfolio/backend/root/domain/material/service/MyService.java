@@ -275,11 +275,11 @@ public class MyService {
 
     public String changeProfileImage(ProfileImageRequest profileImageRequest, HttpServletRequest request) {
         KakaoSocialLogin kakaoSocialLogin = memberGlobalService.getMemberByToken(request);
-        int profileImageId = profileImageRequest.getProfileImage();
+        String profileImageId = profileImageRequest.getImageUrl();
         System.out.println("profileImageId = " + profileImageId);
 
         Member member = kakaoSocialLogin.getMember();
-        member.setProfileImage(Integer.toString(profileImageId));
+        member.setProfileImage(profileImageId);
         memberRepository.save(member);
         return "이미지가 변경되었습니다.";
     }
