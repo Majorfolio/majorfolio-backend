@@ -24,7 +24,7 @@ public class MyMaterial {
     private Long materialId;
     private Long memberId;
     private String nickName;
-    private String profileUrl;
+    private String profileImage;
     private String className;
     private String univ;
     private String major;
@@ -46,7 +46,7 @@ public class MyMaterial {
                 .materialId(materialId)
                 .memberId(memberId)
                 .nickName(nickName)
-                .profileUrl(profileUrl)
+                .profileImage(profileUrl)
                 .className(className)
                 .univ(university)
                 .major(major)
